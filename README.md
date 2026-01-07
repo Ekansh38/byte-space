@@ -1,7 +1,6 @@
 <div align="center">
 
 <!-- Logo/Branding - Replace with actual image -->
-<img src="./assets/logo.svg" alt="byte-space" width="180"/>
 
 # byte-space
 
