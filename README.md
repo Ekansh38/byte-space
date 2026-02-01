@@ -1,78 +1,80 @@
-<div align="center">
+# byte-space
 
-<img src="https://github.com/user-attachments/assets/35ab24fc-0016-49a1-866d-3f9782d589c9" 
-     alt="byte-space" 
-     width="320" />
+Terminal-based internet simulator from the early internet era. Build networks, browse websites in terminals, send email, and watch packets flow in real-time.
 
-### **Simulating the Early Internet, Circa 1986**
+Written in Go.
 
-*A terminal-based internet simulator where you build networks, browse websites, send email, and watch packets flow in real-time*
+## What It Does
 
----
+byte-space creates a simulated internet environment where you can:
 
-[![Go Version](https://img.shields.io/badge/Go-1.21+-00ADD8?style=for-the-badge&logo=go&logoColor=white)](https://go.dev)
-[![License](https://img.shields.io/badge/License-MIT-success?style=for-the-badge)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active%20Development-orange?style=for-the-badge)](https://github.com/ekansh38/byte-space)
+- Spawn virtual computers with their own filesystems and shells
+- Connect nodes using simulated network protocols
+- Watch packets travel through the network in real-time
+- Browse websites rendered in your terminal
+- Send email between virtual machines
+- Learn how networking fundamentals work hands-on
 
-[![Inspired by The Cuckoo's Egg](https://img.shields.io/badge/📚%20Inspired%20by-The%20Cuckoo's%20Egg-FF6B6B?style=flat-square)](https://en.wikipedia.org/wiki/The_Cuckoo%27s_Egg_(book))
-[![Built with Ebiten](https://img.shields.io/badge/🎮%20Visualization-Ebiten-blueviolet?style=flat-square)](https://ebiten.org)
-[![Uses Afero](https://img.shields.io/badge/💾%20Virtual%20FS-Afero-blue?style=flat-square)](https://github.com/spf13/afero)
+Think of it as a complete network in a box—virtual computers, routers, protocols, and all—running entirely in your terminal.
 
----
+## Architecture
 
-<table>
-<tr>
-<td align="center" width="25%">
-  
-**🖥️ Custom Shell**
+The system consists of four separate programs:
 
-Bash-like interpreter<br>built from scratch
+- **Simulation Engine** - Manages all virtual computers, routes packets, handles simulation state
+- **Admin CLI** - Spawn and configure nodes, manage the network
+- **User CLI** - Connect to nodes, run commands, interact with the simulated internet
+- **Visualizer** - Real-time packet animation using Ebiten
 
-</td>
-<td align="center" width="25%">
-  
-**📝 Terminal Markup**
+All programs communicate via Unix domain sockets using a JSON protocol. Virtual computers run inside the engine as goroutines, each with their own filesystem (using afero), shell instance, and packet queue.
 
-HTML-like language<br>for terminals
+## What's Custom Built
 
-</td>
-<td align="center" width="25%">
-  
-**📡 Live Packets**
+Everything networking-related is built from scratch for educational purposes:
 
-Watch data flow<br>in real-time
+- Custom shell interpreter (ByteShell)
+- Markup language for terminal rendering (think HTML for terminals)
+- HTTP server for terminal-based websites
+- SMTP for email
+- DNS for domain resolution
+- Telnet for remote access
+- Packet routing system
+- Terminal renderer
 
-</td>
-<td align="center" width="25%">
-  
-**🔧 Classic Protocols**
+The only libraries used are afero (virtual filesystems), Ebiten (visualization), and Go's standard library.
 
-HTTP • SMTP<br>DNS • Telnet • FTP
+## How Simulation Works
 
-</td>
-</tr>
-</table>
+The engine uses a tick-based system (100ms per tick). Packets travel through the network over multiple ticks, allowing you to watch them move in real-time. Speed is configurable:
 
----
+- `instant` - No delay, packets arrive immediately
+- `fast` - 1-2 ticks (~0.1-0.2s)
+- `normal` - 5-10 ticks (~0.5-1s) [default]
+- `slow` - 20-30 ticks (~2-3s)
+- `very-slow` - 50-100 ticks (~5-10s)
 
-**Experience:** Telnet into servers · Browse terminal websites · Send email via SMTP · Hunt intruders · Trace packets
+Use instant mode for practical work, slower modes for learning and visualization.
 
-[✨ Features](#features) • [🚀 Quick Start](#quick-start) • [📖 Documentation](#documentation) • [🗺️ Roadmap](#roadmap) • [🤝 Contributing](#contributing)
+## Shell Commands
 
-</div>
+The custom shell includes standard Unix commands:
 
+```
+pwd, ls, mkdir, cd, rm, cp, mv, cat, echo
+```
 
+Plus networking commands:
 
+```
+curl, telnet, mail, dig, traceroute, ping
+```
 
-## Custom-Shell Commands
+Each virtual computer has its own authentication system with `/etc/passwd`, customizable banners (`/etc/issue`, `/etc/motd`), and shell prompts (`/etc/prompt`).
 
-pwd
-ls
-mkdir
-cd 
-rm
-cp
-mv
+## Current Status
 
+Active development. Building core features incrementally with working milestones at each stage. See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design documentation.
 
-curl
+## License
+
+MIT
