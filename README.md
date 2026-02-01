@@ -6,7 +6,7 @@
 
 ### **Simulating the Early Internet, Circa 1986**
 
-*A terminal-based network simulator with custom shell, markup language, and real-time packet visualization*
+*A terminal-based internet simulator where you build networks, browse websites, send email, and watch packets flow in real-time*
 
 ---
 
@@ -60,3 +60,19 @@ HTTP • SMTP<br>DNS • Telnet • FTP
 [✨ Features](#features) • [🚀 Quick Start](#quick-start) • [📖 Documentation](#documentation) • [🗺️ Roadmap](#roadmap) • [🤝 Contributing](#contributing)
 
 </div>
+
+
+
+
+## Custom-Shell Commands
+
+pwd
+ls
+mkdir
+cd 
+rm
+cp
+mv
+
+
+curl
