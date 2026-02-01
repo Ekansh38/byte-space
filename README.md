@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="400" alt="byte-space logo" src="https://github.com/user-attachments/assets/35ab24fc-0016-49a1-866d-3f9782d589c9" />
+<img width="400" alt="byte-space logo" src="./assets/logo.svg" />
 
 <br>
 
@@ -77,85 +77,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
-## Project Structure
-
-### Package: engine
-
-#### Struct: Engine
-
-Fields:
-
-- Nodes map[string]\*computer.Computer // Keyed by IP address
-
-Methods:
-
-- HandleIPCMessage(data []byte, clientID string)
-- GetNode(ip string) \*computer.Computer
-- SendResponse(clientID string, requestID int, output string, err error)
-- SpawnNode(name, ip, nodeType string)
-
-Package Methods:
-
-- NewEngine() \*Engine
-
-#### Struct: Message
-
-Fields:
-
-- Program string
-- RequestID int
-- IP string
-- Command string
-
-Package Methods:
-
-- NewMessage(data []byte) (\*Message, error)
-
-#### Struct: Response
-
-Fields:
-
-- RequestID int
-- Output string
-- Error string
-
-Package Methods:
-
-- NewResponse(requestID int, output string, err error) \*Response
-
-### Package: computer
-
-#### Struct: Computer
-
-Fields:
-
-- Name string
-- IP string
-- Type string
-- Filesystem afero.Fs
-
-Package Methods:
-
-- New(name, ip, nodeType string) \*Computer
-
-### Package: shell
-
-#### Struct: Shell
-
-Fields:
-
-- Comp \*computer.Computer
-
-Methods:
-
-- RunCommand(line string) (string, error)
-- Parse
-- Blabla shell stuf
-
-Package Methods:
-
-- New(comp \*computer.Computer) \*Shell
 
 ## License
 
