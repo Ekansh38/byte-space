@@ -13,7 +13,7 @@
 
 **Terminal-Based Network Simulation** • **Real-Time Packet Visualization** • **Custom Markup Language**
 
-*Experience the early internet — Telnet, FTP, SMTP, and packet tracing*
+_Experience the early internet — Telnet, FTP, SMTP, and packet tracing_
 
 [Installation](#installation) • [Quick Start](#quick-start) • [Features](#features) • [Architecture](#architecture) • [Contributing](#contributing)
 
@@ -77,6 +77,85 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## Project Structure
+
+### Package: engine
+
+#### Struct: Engine
+
+Fields:
+
+- Nodes map[string]\*computer.Computer // Keyed by IP address
+
+Methods:
+
+- HandleIPCMessage(data []byte, clientID string)
+- GetNode(ip string) \*computer.Computer
+- SendResponse(clientID string, requestID int, output string, err error)
+- SpawnNode(name, ip, nodeType string)
+
+Package Methods:
+
+- NewEngine() \*Engine
+
+#### Struct: Message
+
+Fields:
+
+- Program string
+- RequestID int
+- IP string
+- Command string
+
+Package Methods:
+
+- NewMessage(data []byte) (\*Message, error)
+
+#### Struct: Response
+
+Fields:
+
+- RequestID int
+- Output string
+- Error string
+
+Package Methods:
+
+- NewResponse(requestID int, output string, err error) \*Response
+
+### Package: computer
+
+#### Struct: Computer
+
+Fields:
+
+- Name string
+- IP string
+- Type string
+- Filesystem afero.Fs
+
+Package Methods:
+
+- New(name, ip, nodeType string) \*Computer
+
+### Package: shell
+
+#### Struct: Shell
+
+Fields:
+
+- Comp \*computer.Computer
+
+Methods:
+
+- RunCommand(line string) (string, error)
+- Parse
+- Blabla shell stuf
+
+Package Methods:
+
+- New(comp \*computer.Computer) \*Shell
 
 ## License
 
