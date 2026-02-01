@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="400" alt="byte-space logo" src="./assets/logo.svg" />
+<img width="600" alt="byte-space logo" src="./assets/logo.png" />
 
 <br>
 
