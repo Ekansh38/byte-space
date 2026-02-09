@@ -73,22 +73,6 @@ Using libraries:
 - Ebiten - 2D visualization
 - Go stdlib - Everything else
 
-## Code Structure
-
-### engine package
-**Engine struct** - Network operations, routing, tick system, IPC
-- `engine.go` - Core struct + methods
-- `ipc.go` - IPC handling
-- `nodes.go` - Node management
-
-**VirtualComputer struct** - Node operations, command execution, packet handling
-
-### computer package
-**Computer struct** - Node data and filesystem
-
-### shell package
-**Shell struct** - Command parsing and execution
-
 ## Project Structure
 
 ### Package: engine
