@@ -4,10 +4,11 @@
 
 Four separate programs communicate via Unix domain socket:
 
-- **Simulation Engine** - Manages virtual computers, routes packets, handles state
+- **Simulation Engine** - Manages virtual computers, routes packets, handles state (backend work)
 - **Admin CLI** - Spawn/manage nodes, configure network
 - **User CLI** - Connect to nodes, run commands
-- **Visualizer** - Real-time packet animation (Ebiten)
+- **Visualizer** - Packet animation (Ebiten)
+- **Launcher** - Launches these other four programs
 
 ## Communication Layers
 
@@ -87,6 +88,7 @@ Methods:
 - GetNode(ip string) \*computer.Computer
 - SendResponse(clientID string, requestID int, output string, err error)
 - SpawnNode(name, ip, nodeType string)
+- Run()
 
 Package Methods:
 - NewEngine() \*Engine
@@ -139,3 +141,15 @@ Methods:
 
 Package Methods:
 - New(comp \*computer.Computer) \*Shell
+
+### Package: client (admin or user)
+
+uses mode param to distinguish between admin or user.
+
+
+Connects to simulation engine.
+Takes input and sends ICP messages to simulation engine.
+
+### Package: launcher
+
+launches admin panel, simulation engine and user cli in different terminals, but simulation engine in background.
