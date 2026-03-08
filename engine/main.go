@@ -17,6 +17,27 @@ type EngineICPMessage struct {
 	Result string `json:"result"`
 }
 
+func replyToClient(c net.Conn) {
+	for {
+		var data []byte = make([]byte, 1024)
+		n, err := c.Read(data)
+		if err != nil {
+			log.Printf("Error reading data: %s", err.Error())
+			return
+		}
+
+		fmt.Printf("Received data: %s\n", string(data[:n]))
+
+		sendData := newICPMessage("hey...")
+		jsonData, err := json.Marshal(sendData)
+		if err != nil {
+			log.Fatalf("Error occurred during marshalling: %s", err.Error())
+		}
+		fmt.Printf("Sending data: %s\n", string(jsonData))
+		c.Write([]byte(jsonData))
+	}
+}
+
 func (e *Engine) Run() {
 	os.Remove("/tmp/engine.sock");
 	l, err := net.Listen("unix", "/tmp/engine.sock");
@@ -32,20 +53,7 @@ func (e *Engine) Run() {
 			log.Fatal(err)
 		}
 		fmt.Println("Received a connection")
-		go func(c net.Conn) {
-			var data []byte = make([]byte, 1024)
-			c.Read(data)
-
-			fmt.Printf("Received data: %s\n", string(data))
-
-			sendData := newICPMessage("hey...")
-			jsonData, err := json.Marshal(sendData)
-			if err != nil {
-				log.Fatalf("Error occurred during marshalling: %s", err.Error())
-			}
-			fmt.Printf("Sending data: %s\n", string(jsonData))
-			c.Write([]byte(jsonData))
-		}(conn)
+		go replyToClient(conn)
 	}
 
 
