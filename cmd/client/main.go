@@ -3,13 +3,14 @@ package main
 import (
 	"main/utils"
 	"main/engine"
-//	"bufio"
+  	"bufio"
 	"flag"
 	"fmt"
 	"net"
 	"os"
 	"log"
 	"encoding/json"
+	"strings"
 )
 
 // error enum
@@ -18,8 +19,8 @@ const (
 	couldNotConnectToEngine = 2
 )
 
-func writeToEngine(c net.Conn, s string) {
-	data := utils.ClientICPMessage{Program: getModeFlag(), RequestId: 1, IP: "nil", Command: s}
+func writeToEngine(c net.Conn, s string, mode string) {
+	data := utils.ClientICPMessage{Program: mode, RequestId: 1, IP: "nil", Command: s}
 
 
 	jsonData, err := json.Marshal(data)
@@ -31,12 +32,10 @@ func writeToEngine(c net.Conn, s string) {
 	if err != nil {
 		log.Println("Could not write to server!")
 	}
-	fmt.Printf("wrote %s\n", jsonData)
 }
 
 func engineReader(c net.Conn) {
-	writeToEngine(c, "hey... from client")
-	for {
+//	for {
 		var data  = make([]byte, 1024)
 		n, err := c.Read(data);
 		if err != nil {
@@ -49,9 +48,9 @@ func engineReader(c net.Conn) {
 		}
 
 		fmt.Println(message.Result)
+	
 
-
-	}
+//	}
 }
 
 // private
@@ -68,19 +67,47 @@ func getModeFlag() string {
 	return modeFlag
 }
 
-func connectToEngine() {
+func connectToEngine(mode string) {
 	c, err := net.Dial("unix", "/tmp/engine.sock")
 	if err != nil {
 		fmt.Println("Could not connect to engine!")
 		os.Exit(couldNotConnectToEngine)
 	}
 
-	engineReader(c)
+	commandLoop(c, mode)
+}
+
+func commandLoop(c net.Conn, mode string) {
+	for {
+		fmt.Print("> ")
+
+		reader := bufio.NewReader(os.Stdin)
+
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			fmt.Println("An error occurred while reading input:", err)
+			return
+		}
+
+		input = strings.TrimSuffix(input, "\n")
+
+		// common checks
+		if (input == ""){
+			continue
+		}
+		if (input == "exit"){
+			return
+		}
+
+		writeToEngine(c, input, mode)
+		engineReader(c)
+	}
 }
 
 func main() {
 
-	connectToEngine()
+	mode := getModeFlag()
+	connectToEngine(mode)
 
 	
 }
