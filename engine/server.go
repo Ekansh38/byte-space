@@ -1,4 +1,4 @@
-// package engine is the main sim
+// Package engine is the main sim
 package engine
 
 import (

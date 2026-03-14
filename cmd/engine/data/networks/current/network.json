@@ -1,33 +1,8 @@
 {
   "nodes": [
     {
-      "name": "Ekansh's-Workstation",
-      "ip": "100.100.100.2",
-      "type": "computer"
-    },
-    {
-      "name": "asd",
-      "ip": "asd",
-      "type": "computer"
-    },
-    {
-      "name": "test",
-      "ip": "test",
-      "type": "computer"
-    },
-    {
-      "name": "sat",
-      "ip": "oioioi",
-      "type": "computer"
-    },
-    {
-      "name": "asdf",
-      "ip": "asdf",
-      "type": "computer"
-    },
-    {
-      "name": "newnode",
-      "ip": "123",
+      "name": "PAPA",
+      "ip": "100.1010",
       "type": "computer"
     }
   ]
