@@ -23,6 +23,10 @@ func (e *Engine) runAdminCommand(command string) (string, int){
 	switch commandParsed[0] {
 	case "spawn":
 		return e.spawnNode(commandParsed)
+	case "list-nodes":
+		return e.listNodes(commandParsed)
+	case "delete":
+		return e.deleteNode(commandParsed)
 	case "reset-network":
 		return e.resetNetwork()
 	default:
@@ -76,4 +80,60 @@ func (e *Engine) spawnNode(commandParsed []string) (string, int) {
 }
 
 
+func (e *Engine) listNodes(commandParsed []string) (string, int) {
+	if len(commandParsed) != 1 {
+		message := "Usage: list-nodes"
+		fmt.Println(message)
+		return message, utils.Error
+	}
 
+	message := "" 
+
+	for _, node := range(e.nodes) {
+		message += fmt.Sprintf("%s: %s: %s\n", node.Type, node.Name, node.IP)
+	}
+
+	fmt.Println(message)
+	return message, utils.Success
+
+}
+
+func (e *Engine) deleteNode(commandParsed []string) (string, int) {
+	if len(commandParsed) != 2 {
+		message := "Usage: delete <name>"
+		fmt.Println(message)
+		return message, utils.Error
+	}
+
+	nodeName := commandParsed[1]
+	message := ""
+	status := utils.Success
+
+	node, found := getNodeByName(e, nodeName)
+	if !found {
+		message = fmt.Sprintf("No node with the name %s found", nodeName)
+		status = utils.Error
+		fmt.Println(message)
+		return message, status
+	}
+
+	delete(e.nodes, node.IP)
+	message = fmt.Sprintf("Node %s deleted successfully", nodeName)
+	status =  utils.Success
+
+	fmt.Println(message)
+
+	return message, status
+
+}
+
+func getNodeByName(e *Engine, name string) (*computer.Computer, bool) {
+	for _, node := range e.nodes {
+		if node.Name == name {
+			return node, true
+		}
+	}
+
+	return nil, false
+
+}
