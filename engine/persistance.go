@@ -83,6 +83,8 @@ func (e *Engine) resetNetwork() (string, int) {
     
     // Clear from memory
     e.nodes = make(map[string]*computer.Computer)
+
+
     
     return "Network reset (memory + disk cleared)", utils.Success
 }

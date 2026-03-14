@@ -3,13 +3,13 @@ package engine
 type ClientIPCMessage struct {
 	Program string `json:"program"`
 	RequestID int `json:"request_id"`
-	IP string `json:"ip"`
+	SessionID int `json:"session_id"`
 	Command string `json:"command"`
 }
 
 
 type EngineIPCMessage struct {
-	Response int `json:"response_id"`
+	ResponseID int `json:"response_id"`
 	Status int `json:"status"`
 	Result string `json:"result"`
 }
