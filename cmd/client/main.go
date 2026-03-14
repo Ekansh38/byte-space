@@ -1,6 +1,6 @@
 package main
 
-import "main/client"
+import "byte-space/client"
 
 func main() {
 

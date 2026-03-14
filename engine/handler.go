@@ -8,8 +8,19 @@ import (
 	"net"
 )
 
+func sendIPCMessage(c net.Conn, message string, status int) {
 
-func handleClient(c net.Conn) {
+		sendData := newIPCMessage(message, status)
+		jsonData, err := json.Marshal(sendData)
+		if err != nil {
+			log.Fatalf("Error occurred during marshalling: %s", err.Error())
+		}
+		fmt.Printf("Sending data: %s\n", string(jsonData))
+		c.Write([]byte(jsonData))
+
+}
+
+func (e *Engine) handleClient(c net.Conn) {
 	for {
 		var data []byte = make([]byte, 1024)
 		n, err := c.Read(data)
@@ -23,15 +34,21 @@ func handleClient(c net.Conn) {
 			log.Fatalf("Error unmarshalling JSON: %v", err)
 		}
 
-		fmt.Printf("Received data: %s\n", message.Command)
+		returnValue := ""
 
-		sendData := newIPCMessage("hey...")
-		jsonData, err := json.Marshal(sendData)
-		if err != nil {
-			log.Fatalf("Error occurred during marshalling: %s", err.Error())
+		if message.Command == "exit" {
+			sendIPCMessage(c, "Exiting...", 10)
+			c.Close()
+			fmt.Println("Connection closed")
+			return
 		}
-		fmt.Printf("Sending data: %s\n", string(jsonData))
-		c.Write([]byte(jsonData))
+
+		if message.Program == "admin" {
+			returnValue = e.runAdminCommand(message.Command)
+		}
+
+		sendIPCMessage(c, returnValue, 0)
+
+
 	}
 }
-
