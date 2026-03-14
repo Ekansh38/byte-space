@@ -9,7 +9,7 @@ type ClientIPCMessage struct {
 
 
 type EngineIPCMessage struct {
-	RequestID int `json:"request_id"`
+	Response int `json:"response_id"`
 	Status int `json:"status"`
 	Result string `json:"result"`
 }

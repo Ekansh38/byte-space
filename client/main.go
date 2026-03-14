@@ -19,24 +19,23 @@ func commandLoop(c net.Conn, mode string) {
 	var history []string
 	historyIdx := -1
 	var buf []byte
+	cursorPos := 0
 
-	printPrompt := func() {
-		fmt.Print("\r> " + string(buf) + "\033[K")
+	redraw := func() {
+		fmt.Printf("\r%s%s\033[K", adminPrompt, string(buf))
+		if moveBack := len(buf) - cursorPos; moveBack > 0 {
+			fmt.Printf("\033[%dD", moveBack)
+		}
 	}
 
-	redrawLine := func(newBuf []byte) {
-		buf = newBuf
-		fmt.Print("\r> " + string(buf) + "\033[K")
-	}
-
-	printPrompt()
+	redraw()
 
 	b := make([]byte, 1)
 	for {
 		_, err := os.Stdin.Read(b)
 		if err != nil {
 			term.Restore(fd, oldState)
-			fmt.Println("\r")
+			fmt.Print("\r\n")
 			return
 		}
 
@@ -45,16 +44,17 @@ func commandLoop(c net.Conn, mode string) {
 			fmt.Print("\r\n")
 			input := string(buf)
 			buf = buf[:0]
+			cursorPos = 0
 			historyIdx = -1
 
 			if input == "" {
-				printPrompt()
+				redraw()
 				continue
 			}
 
 			if input == clearCommand {
 				fmt.Print("\033[H\033[2J")
-				printPrompt()
+				redraw()
 				continue
 			}
 
@@ -63,19 +63,19 @@ func commandLoop(c net.Conn, mode string) {
 			term.Restore(fd, oldState)
 			writeToEngine(c, input, mode)
 			if engineReader(c) == 10 {
-				fmt.Println("Exiting client...")
 				return
 			}
 			oldState, _ = term.MakeRaw(fd)
-			printPrompt()
+			redraw()
 
 		case 0x7f, 0x08: // Backspace
-			if len(buf) > 0 {
-				buf = buf[:len(buf)-1]
-				fmt.Print("\r> " + string(buf) + "\033[K")
+			if cursorPos > 0 {
+				buf = append(buf[:cursorPos-1], buf[cursorPos:]...)
+				cursorPos--
+				redraw()
 			}
 
-		case 0x1b: // Escape sequence (arrow keys)
+		case 0x1b: // arrow keys
 			seq := make([]byte, 2)
 			os.Stdin.Read(seq)
 			if seq[0] != '[' {
@@ -91,7 +91,9 @@ func commandLoop(c net.Conn, mode string) {
 				} else if historyIdx > 0 {
 					historyIdx--
 				}
-				redrawLine([]byte(history[historyIdx]))
+				buf = []byte(history[historyIdx])
+				cursorPos = len(buf)
+				redraw()
 			case 'B': // Down arrow
 				if historyIdx == -1 {
 					continue
@@ -99,21 +101,36 @@ func commandLoop(c net.Conn, mode string) {
 				historyIdx++
 				if historyIdx >= len(history) {
 					historyIdx = -1
-					redrawLine([]byte{})
+					buf = []byte{}
+					cursorPos = 0
 				} else {
-					redrawLine([]byte(history[historyIdx]))
+					buf = []byte(history[historyIdx])
+					cursorPos = len(buf)
+				}
+				redraw()
+			case 'C': // Right arrow
+				if cursorPos < len(buf) {
+					cursorPos++
+					redraw()
+				}
+			case 'D': // Left arrow
+				if cursorPos > 0 {
+					cursorPos--
+					redraw()
 				}
 			}
 
 		case 0x03: // Ctrl+C
-			term.Restore(fd, oldState)
-			fmt.Print("\r\n")
-			os.Exit(0)
+			fmt.Print("\r\nPlease use the 'exit' command to quit.\r\n")
+			redraw()
 
 		default:
 			if b[0] >= 0x20 { // printable chars only
-				buf = append(buf, b[0])
-				fmt.Print("\r> " + string(buf) + "\033[K")
+				buf = append(buf, 0)
+				copy(buf[cursorPos+1:], buf[cursorPos:])
+				buf[cursorPos] = b[0]
+				cursorPos++
+				redraw()
 			}
 		}
 	}

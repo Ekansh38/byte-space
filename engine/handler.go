@@ -2,6 +2,7 @@ package engine
 
 
 import (
+	"byte-space/utils"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -35,19 +36,20 @@ func (e *Engine) handleClient(c net.Conn) {
 		}
 
 		returnValue := ""
+		status := utils.Success
 
 		if message.Command == "exit" {
-			sendIPCMessage(c, "Exiting...", 10)
+			sendIPCMessage(c, "Exiting...", utils.Exit)
 			c.Close()
 			fmt.Println("Connection closed")
 			return
 		}
 
 		if message.Program == "admin" {
-			returnValue = e.runAdminCommand(message.Command)
+			returnValue, status = e.runAdminCommand(message.Command)
 		}
 
-		sendIPCMessage(c, returnValue, 0)
+		sendIPCMessage(c, returnValue, status)
 
 
 	}
