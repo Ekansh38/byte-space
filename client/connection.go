@@ -1,4 +1,4 @@
-// package client handles the connection to the engine and the communication between them. It also contains the main loop for the client.
+// Package client handles the connection to the engine and the communication between them. It also contains the main loop for the client.
 package client 
 
 import (
