@@ -1,8 +1,8 @@
 {
   "nodes": [
     {
-      "name": "PAPA",
-      "ip": "100.1010",
+      "name": "test",
+      "ip": "test",
       "type": "computer"
     }
   ]

@@ -45,7 +45,7 @@ func (e *Engine) handleClient(c net.Conn) {
 			return
 		}
 
-		if message.Program == "admin" {
+		if message.Program == "admin" || message.Program == "connection" {
 			returnValue, status = e.runAdminCommand(message.Command)
 		}
 

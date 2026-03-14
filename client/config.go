@@ -8,4 +8,5 @@ const (
 const (
 	invalidMode = 1
 	couldNotConnectToEngine = 2
+	noWorkstationsFound = 3
 )
