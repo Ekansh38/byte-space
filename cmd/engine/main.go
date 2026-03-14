@@ -1,6 +1,6 @@
 package main
 import (
-	"main/engine"
+	"byte-space/engine"
 )
 
 func main() {

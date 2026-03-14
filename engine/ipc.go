@@ -14,6 +14,6 @@ type EngineIPCMessage struct {
 	Result string `json:"result"`
 }
 
-func newIPCMessage(s string) *EngineIPCMessage {
-	return &EngineIPCMessage{Result: s}
+func newIPCMessage(s string, status int) *EngineIPCMessage {
+	return &EngineIPCMessage{Result: s, Status: status}
 }
