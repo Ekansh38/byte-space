@@ -1,7 +1,7 @@
 package client
 
 const (
-	adminPrompt = "> "
+	adminPrompt = "admin> "
 	clearCommand = "clear"
 )
 
