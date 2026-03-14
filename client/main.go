@@ -8,7 +8,7 @@ import (
 	"log"
 )
 
-func commandLoop(c net.Conn, mode string) {
+func commandLoop(c net.Conn, mode string, prompt string) {
 	fd := int(os.Stdin.Fd())
 	oldState, err := term.MakeRaw(fd)
 	if err != nil {
@@ -22,7 +22,7 @@ func commandLoop(c net.Conn, mode string) {
 	cursorPos := 0
 
 	redraw := func() {
-		fmt.Printf("\r%s%s\033[K", adminPrompt, string(buf))
+		fmt.Printf("\r%s%s\033[K", prompt, string(buf))
 		if moveBack := len(buf) - cursorPos; moveBack > 0 {
 			fmt.Printf("\033[%dD", moveBack)
 		}
@@ -62,7 +62,8 @@ func commandLoop(c net.Conn, mode string) {
 
 			term.Restore(fd, oldState)
 			writeToEngine(c, input, mode)
-			if engineReader(c) == 10 {
+			i, _ := engineReader(c, true)
+			if i == 10 {
 				return
 			}
 			oldState, _ = term.MakeRaw(fd)
