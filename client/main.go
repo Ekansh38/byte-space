@@ -26,12 +26,12 @@ func commandLoop(c net.Conn, mode string) {
 		if (input == ""){
 			continue
 		}
-		if (input == "exit"){
-			return
-		}
 
 		writeToEngine(c, input, mode)
-		engineReader(c)
+		if engineReader(c) == 10 {
+			fmt.Println("Exiting client...")
+			return
+		}
 	}
 }
 

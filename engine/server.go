@@ -1,3 +1,4 @@
+// package engine is the main sim
 package engine
 
 import (
@@ -23,7 +24,8 @@ func (e *Engine) Run() {
 			log.Fatal(err)
 		}
 		fmt.Println("Received a connection")
-		go handleClient(conn)
+		go e.handleClient(conn)
+
 	}
 
 
