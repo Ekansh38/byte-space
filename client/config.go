@@ -2,6 +2,7 @@ package client
 
 const (
 	adminPrompt = "> "
+	clearCommand = "clear"
 )
 
 const (

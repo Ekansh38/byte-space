@@ -44,6 +44,7 @@ func engineReader(c net.Conn) int {
 	return 0
 }
 
+
 func ConnectToEngine(mode string) {
 	c, err := net.Dial("unix", "/tmp/engine.sock")
 	if err != nil {
