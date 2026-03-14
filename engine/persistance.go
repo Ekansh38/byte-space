@@ -35,7 +35,7 @@ func (e *Engine) SaveNetwork() error {
 		config.Nodes = append(config.Nodes, NodeConfig{
 			Name: node.Name,
 			IP:   node.IP,
-			Type: "computer",
+			Type: node.Type,
 		})
 	}
 
