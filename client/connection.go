@@ -1,4 +1,5 @@
-package client // package client is the main client application
+// package client handles the connection to the engine and the communication between them. It also contains the main loop for the client.
+package client 
 
 import (
 	"encoding/json"
@@ -36,7 +37,7 @@ func engineReader(c net.Conn) int {
 		log.Fatalf("Error unmarshalling JSON: %v", err)
 	}
 
-	fmt.Println(message.Result)
+	displayResponse(&message)
 
 	if message.Status == 10 { // exit status
 		return 10

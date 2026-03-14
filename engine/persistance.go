@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"byte-space/computer"
+	"byte-space/utils"
 )
 
 const networkPath = "./data/networks/current/"
@@ -77,12 +78,12 @@ func (e *Engine) LoadNetwork() error {
 }
 
 
-func (e *Engine) resetNetwork() string {
+func (e *Engine) resetNetwork() (string, int) {
     os.RemoveAll(networkPath)
     
     // Clear from memory
     e.nodes = make(map[string]*computer.Computer)
     
-    return "Network reset (memory + disk cleared)"
+    return "Network reset (memory + disk cleared)", utils.Success
 }
 
