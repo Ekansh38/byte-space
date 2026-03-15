@@ -6,13 +6,19 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"byte-space/utils"
 	"os"
 
 	"byte-space/engine"
 )
 
+var (
+	sessionID = ""
+	prompt = adminPrompt
+)
+
 func writeToEngine(c net.Conn, s string, mode string) {
-	data := engine.ClientIPCMessage{Program: mode, RequestID: 1, Command: s}
+	data := engine.ClientIPCMessage{Program: mode, RequestID: 1, Command: s, SessionID: sessionID}
 
 	jsonData, err := json.Marshal(data)
 	if err != nil {
@@ -25,7 +31,7 @@ func writeToEngine(c net.Conn, s string, mode string) {
 	}
 }
 
-func engineReader(c net.Conn, output bool) (int, string) {
+func engineReader(c net.Conn, output bool) engine.EngineIPCMessage {
 	data := make([]byte, 1024)
 	n, err := c.Read(data)
 	if err != nil {
@@ -37,19 +43,19 @@ func engineReader(c net.Conn, output bool) (int, string) {
 		log.Fatalf("Error unmarshalling JSON: %v", err)
 	}
 
+	if message.Status == utils.Exit {
+		displayResponse(&message)
+		os.Exit(0)
+	}
+
 	if output {
 		displayResponse(&message)
+	} else {
+		return message
 	}
 
-	if message.Status == 10 { // exit status
-		return 10, ""
-	}
-	
-	if !output {
-		return message.Status, message.Result
-	}
 
-	return 0, ""
+	return engine.EngineIPCMessage{}
 }
 
 
@@ -59,15 +65,14 @@ func ConnectToEngine(mode string) {
 		fmt.Println("Could not connect to engine!")
 		os.Exit(couldNotConnectToEngine)
 	}
+
 	
 	if mode == "user" {
-
 		connectToWorkstation(c)
-
 	}
 
 
-	commandLoop(c, mode, adminPrompt)
+	commandLoop(c, mode, prompt)
 }
 
 func getInput(prompt string) string {
@@ -85,30 +90,37 @@ func connectToWorkstation(c net.Conn) {
 
 	writeToEngine(c, "list-nodes computer", "admin")
 	fmt.Println("Select a workstation to connect to:")
-	_, msg := engineReader(c, false) 
-	if msg == "No machines on network" {
+	msg := engineReader(c, false) 
+	if msg.Result == "No machines on network" {
 		fmt.Println("No workstations found on the network. Please add a workstation before connecting.")
 		os.Exit(noWorkstationsFound)
 	}
 
-	fmt.Println(msg)
+	fmt.Println(msg.Result)
 
 	workstation := getInput("Enter workstation name (case-sensitive): ")
 	
 	writeToEngine(c, fmt.Sprintf("connect %s", workstation), "connection")
 
-	status, _ := engineReader(c, true)
-	if status != 0 {
+	msg = engineReader(c, false)
+	if msg.Status != utils.Success {
 		fmt.Printf("Could not connect to workstation %s. Please check the name and try again.\n", workstation)
 		os.Exit(noWorkstationsFound)
 	}
+	fmt.Printf("%s", msg.Result)
 	username := getInput("")
 	writeToEngine(c, fmt.Sprintf("username %s", username), "connection")
 	engineReader(c, true)
 	password := getInput("")
 	writeToEngine(c, fmt.Sprintf("login %s %s %s", workstation, username, password), "connection")
-	engineReader(c, true)
-
+	loginMsg := engineReader(c, false)
+	if loginMsg.Status != utils.Success {
+		displayResponse(&engine.EngineIPCMessage{Status: loginMsg.Status, Result: "Login failed. Please check your credentials and try again."})
+		os.Exit(invalidCredentials)
+	}
+	prompt = loginMsg.Prompt
+	sessionID = loginMsg.SessionID
+	fmt.Printf("Successfully connected to workstation %s with username %s. Session ID: %s\n", workstation, username, sessionID)
 }
 
 

@@ -9,9 +9,8 @@ import (
 	"net"
 )
 
-func sendIPCMessage(c net.Conn, message string, status int) {
+func sendIPCMessage(c net.Conn, sendData *EngineIPCMessage) {
 
-		sendData := newIPCMessage(message, status)
 		jsonData, err := json.Marshal(sendData)
 		if err != nil {
 			log.Fatalf("Error occurred during marshalling: %s", err.Error())
@@ -35,21 +34,26 @@ func (e *Engine) handleClient(c net.Conn) {
 			log.Fatalf("Error unmarshalling JSON: %v", err)
 		}
 
-		returnValue := ""
-		status := utils.Success
+		msg := newIPCMessage("", utils.Success)
 
 		if message.Command == "exit" {
-			sendIPCMessage(c, "Exiting...", utils.Exit)
+			data := newIPCMessage("Exiting...", utils.Exit)
+			sendIPCMessage(c, data)
 			c.Close()
 			fmt.Println("Connection closed")
 			return
 		}
 
 		if message.Program == "admin" || message.Program == "connection" {
-			returnValue, status = e.runAdminCommand(message.Command)
+			msg = e.runAdminCommand(message.Command)
 		}
 
-		sendIPCMessage(c, returnValue, status)
+		if message.Program == "user" {
+			session := e.sessions[message.SessionID]
+			msg = newIPCMessage(fmt.Sprintf("hey hey hey user. is this your data? %s %s %s %s", session.CurrentUser, session.Computer.IP, session.SessionID, session.Computer.Name), utils.Success)
+		}
+
+		sendIPCMessage(c, msg)
 
 
 	}

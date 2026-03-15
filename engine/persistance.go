@@ -78,7 +78,7 @@ func (e *Engine) LoadNetwork() error {
 }
 
 
-func (e *Engine) resetNetwork() (string, int) {
+func (e *Engine) resetNetwork()  *EngineIPCMessage{
     os.RemoveAll(networkPath)
     
     // Clear from memory
@@ -86,6 +86,6 @@ func (e *Engine) resetNetwork() (string, int) {
 
 
     
-    return "Network reset (memory + disk cleared)", utils.Success
+    return newIPCMessage("Network reset (memory + disk cleared)", utils.Success)
 }
 

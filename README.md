@@ -29,7 +29,7 @@ byte-space creates a simulated internet environment where you can spawn virtual 
 
 ## Features
 
-- **Virtual Computers** - Spawn nodes with their own filesystems and shells
+- **Virtual Computers** - Spawn nodes with their own file system's and shells
 - **Network Simulation** - Connect machines and watch packets flow between them
 - **Terminal Web Browser** - Browse websites rendered in your terminal using a custom markup language
 - **Email System** - Send mail between virtual machines using SMTP
