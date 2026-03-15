@@ -62,8 +62,8 @@ func commandLoop(c net.Conn, mode string, prompt string) {
 
 			term.Restore(fd, oldState)
 			writeToEngine(c, input, mode)
-			i, _ := engineReader(c, true)
-			if i == 10 {
+			i := engineReader(c, true)
+			if i.Status == 10 {
 				return
 			}
 			oldState, _ = term.MakeRaw(fd)

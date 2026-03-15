@@ -2,6 +2,8 @@ package engine
 
 import (
 	"byte-space/computer"
+	"byte-space/utils"
+	"fmt"
 	"log"
 )
 
@@ -19,7 +21,7 @@ type Session struct {
 }
 
 func NewEngine() *Engine {
-	e := &Engine{nodes: make(map[string]*computer.Computer)}
+	e := &Engine{nodes: make(map[string]*computer.Computer), sessions: make(map[string]*Session)}
 
 	// load network
 	err := e.LoadNetwork()
@@ -31,3 +33,33 @@ func NewEngine() *Engine {
 
 }
 
+func (e *Engine) NewSession(node *computer.Computer, username string) (int, string) {
+
+	// generate unique session ID
+	sessionID := e.generateSessionID()
+	workingDir := "/"
+
+	if username == "root" {
+		workingDir = "/"
+	} else {
+		workingDir = "/home/" + username
+	}
+
+	e.sessions[sessionID] = &Session{
+		SessionID: sessionID,
+		Computer: node,
+		CurrentUser: username,
+		WorkingDir: workingDir,
+		Environment: make(map[string]string),
+	}
+
+	return utils.Success, sessionID
+
+}
+
+func (e *Engine) generateSessionID() string {
+	// count number of active sessions
+	count := len(e.sessions)
+	sessionID := fmt.Sprintf("session-%d", count+1)
+	return sessionID
+}

@@ -21,17 +21,22 @@ func initFileSystem(fs afero.Fs, hostname string, ip string) {
 
 	fs.MkdirAll("/var/log/", 0755)
 	fs.MkdirAll("/etc/", 0755)
+	    
+    // Helper to create file only if doesn't exist
+    createIfNotExists := func(path, content string) {
+        if _, err := fs.Stat(path); os.IsNotExist(err) {
+            f, _ := fs.Create(path)
+            f.WriteString(content)
+            f.Close()
+        }
+    }
+    
+    createIfNotExists("/var/log/lastlogin", "")
+    createIfNotExists("/etc/passwd", "")
+    createIfNotExists("/etc/hostname", hostname)
+    createIfNotExists("/etc/issue", fmt.Sprintf(defaultEtcIssue, hostname, ip))
+    createIfNotExists("/etc/motd", fmt.Sprintf(defaultEtcMotd))
 
-	fs.Create("/var/log/lastlogin")
-	fs.Create("/etc/passwd")
-	f, _ := fs.Create("/etc/hostname")
-	f.WriteString(hostname)
-
-	f, _ = fs.Create("/etc/issue")
-	f.WriteString(fmt.Sprintf(defaultEtcIssue, hostname, ip))
-
-	f, _ = fs.Create("/etc/motd")
-	f.WriteString(fmt.Sprintf(defaultEtcMotd))
 
 }
 
