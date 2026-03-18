@@ -1,8 +1,8 @@
 {
   "nodes": [
     {
-      "name": "mymachine",
-      "ip": "192.168.1.0",
+      "name": "bigot",
+      "ip": "123123123",
       "type": "computer"
     }
   ]

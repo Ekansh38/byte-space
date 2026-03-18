@@ -31,6 +31,9 @@ func displayResponse(msg *engine.EngineIPCMessage) {
 		fmt.Printf("%s",msg.Result)
 		return
 	}
+	if msg.Status == utils.SuccessDoNotDisplay {
+		return
+	}
 
 	switch msg.Status {
 	case utils.Success:

@@ -18,6 +18,7 @@ type Session struct {
     CurrentUser string
     WorkingDir  string
     Environment map[string]string
+	Shell *Shell
 }
 
 func NewEngine() *Engine {
