@@ -48,6 +48,12 @@ func engineReader(c net.Conn, output bool) engine.EngineIPCMessage {
 		os.Exit(0)
 	}
 
+	// check if prompt change:
+
+	if message.Prompt != "" {
+		prompt = message.Prompt
+	}
+
 	if output {
 		displayResponse(&message)
 	} else {
@@ -72,7 +78,7 @@ func ConnectToEngine(mode string) {
 	}
 
 
-	commandLoop(c, mode, prompt)
+	commandLoop(c, mode)
 }
 
 func getInput(prompt string) string {

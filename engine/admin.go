@@ -15,32 +15,32 @@ func (e *Engine) runAdminCommand(command string) *EngineIPCMessage {
 
 	// parse the command	
 
-	commandParsed := strings.Fields(command)
+	commandP := parseCommand(command)
 
-	if len(commandParsed) == 0 {
+	if len(commandP) == 0 {
 		message := "No command provided" // this should be filtered out by the client but if the API is used directly.
 		fmt.Println(message)
 		data := newIPCMessage(message, utils.Error)
 		return data
 	}
 
-	switch commandParsed[0] {
+	switch commandP[0] {
 	case "spawn":
-		return e.spawnNode(commandParsed)
+		return e.spawnNode(commandP)
 	case "list-nodes":
-		return e.listNodes(commandParsed)
+		return e.listNodes(commandP)
 	case "delete":
-		return e.deleteNode(commandParsed)
+		return e.deleteNode(commandP)
 	case "reset-network":
 		return e.resetNetwork()
 	case "adduser":
-		return e.addUser(commandParsed)
+		return e.addUser(commandP)
 	case "connect":
-		return e.connectUserToNode(commandParsed)
+		return e.connectUserToNode(commandP)
 	case "username":
-		return e.username(commandParsed)
+		return e.username(commandP)
 	case "login":
-		return e.login(commandParsed)
+		return e.login(commandP)
 
 	default:
 		return newIPCMessage("not implemented", utils.Warning)
@@ -121,6 +121,9 @@ func (e *Engine) listNodes(commandParsed []string) *EngineIPCMessage {
 		message = "No machines on network"	
 	}
 
+	if len(e.nodes) != 0 {
+		message = message[:len(message)-1]
+	}
 
 	fmt.Println(message)
 	return newIPCMessage(message, utils.Success)
