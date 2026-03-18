@@ -2,13 +2,14 @@ package client
 
 import (
 	"fmt"
-	"net"
 	"golang.org/x/term"
-	"os"
 	"log"
+	"net"
+	"os"
+	"strings"
 )
 
-func commandLoop(c net.Conn, mode string, prompt string) {
+func commandLoop(c net.Conn, mode string) {
 	fd := int(os.Stdin.Fd())
 	oldState, err := term.MakeRaw(fd)
 	if err != nil {
@@ -47,7 +48,7 @@ func commandLoop(c net.Conn, mode string, prompt string) {
 			cursorPos = 0
 			historyIdx = -1
 
-			if input == "" {
+			if strings.TrimSpace(input) == "" {
 				redraw()
 				continue
 			}

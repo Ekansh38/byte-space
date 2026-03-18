@@ -50,7 +50,8 @@ func (e *Engine) handleClient(c net.Conn) {
 
 		if message.Program == "user" {
 			session := e.sessions[message.SessionID]
-			msg = newIPCMessage(fmt.Sprintf("hey hey hey user. is this your data? %s %s %s %s", session.CurrentUser, session.Computer.IP, session.SessionID, session.Computer.Name), utils.Success)
+			shell := &Shell{Session: session}
+			msg = shell.Run(message.Command)
 		}
 
 		sendIPCMessage(c, msg)
