@@ -275,7 +275,7 @@ func addUserToNode(node *computer.Computer, username string, password string, ui
 
 	line := ""
 	if username == "root" {
-		line = fmt.Sprintf("%s:%s:%d:*", username, password, uid)
+		line = fmt.Sprintf("%s:%s:%d:/root", username, password, uid)
 	} else{
 		line = fmt.Sprintf("%s:%s:%d:/home/%s", username, password, uid, username)
 	}
