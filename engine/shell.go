@@ -1,11 +1,12 @@
 package engine
 
 import (
-	"path"
-	"fmt"
-	"strings"
-	"github.com/spf13/afero"
 	"byte-space/utils"
+	"fmt"
+	"path"
+	"strings"
+
+	"github.com/spf13/afero"
 )
 
 type Shell struct {
@@ -34,6 +35,8 @@ func (s *Shell) RunCommand(command []string) *EngineIPCMessage {
 		return s.cd(command)
 	case "pwd":
 		return s.pwd(command)
+	case "whoami":
+		return s.whoami(command)
 	default:
 		return newIPCMessage("not implemented", utils.Warning)
 	}
@@ -101,7 +104,6 @@ func (s *Shell) cd(commandParsed []string) *EngineIPCMessage {
 	dir = path.Clean(dir)
 
 
-
 	_, err := afero.ReadDir(s.Session.Computer.Filesystem, dir)
 	if err != nil {
 		message := "Invalid directory"
@@ -123,8 +125,21 @@ func parseCommand(command string) []string {
 
 
 func (s *Shell) pwd(commandParsed []string) *EngineIPCMessage {
+	if len(commandParsed) > 1 {
+		return newIPCMessage("pwd: too many arguments", utils.Error)
+	}
 	return &EngineIPCMessage{
 		Result: s.Session.WorkingDir,
+		Status: utils.Success,
+	}
+}
+
+func (s *Shell) whoami(commandParsed []string) *EngineIPCMessage {
+	if len(commandParsed) > 1 {
+		return newIPCMessage("usage: whoami", utils.Error)
+	}
+	return &EngineIPCMessage{
+		Result: s.Session.CurrentUser,
 		Status: utils.Success,
 	}
 }
