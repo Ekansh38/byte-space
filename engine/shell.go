@@ -238,7 +238,20 @@ func (s *Shell) rm(commandParsed []string) *EngineIPCMessage {
 	}
 
 	if !flags["r"] {
-		err := s.Session.Computer.Filesystem.Remove(target)
+		fileInfo, err := s.Session.Computer.Filesystem.Stat(target)
+		if err != nil && !flags["f"] {
+			message := "Failed to remove file"
+			if strings.HasSuffix(err.Error(), "no such file or directory") {
+				message = "No such file or directory"
+			}
+			return newIPCMessage(message, utils.Error)
+		}
+
+		if fileInfo.IsDir() {
+			return newIPCMessage("rm: cannot remove directory: Is a directory", utils.Error)
+		}
+
+		err = s.Session.Computer.Filesystem.Remove(target)
 		if err != nil && !flags["f"] {
 			message := "Failed to remove file"
 			if strings.HasSuffix(err.Error(), "no such file or directory") {
