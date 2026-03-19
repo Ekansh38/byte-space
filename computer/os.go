@@ -51,3 +51,10 @@ func (o *OS) Login(username string, password string) int {
     return 1  // fail
 }
 
+func (o *OS) HasDirectory(path string) bool {
+	info, err := o.Computer.Filesystem.Stat(path)
+	if err != nil {
+		return false
+	}
+	return info.IsDir()
+}	
