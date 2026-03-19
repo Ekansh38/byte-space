@@ -44,6 +44,8 @@ func (s *Shell) RunCommand(command []string) *EngineIPCMessage {
 		return s.rm(command)
 	case "touch":
 		return s.touch(command)
+	case "cat":
+		return s.cat(command)
 	default:
 		return newIPCMessage("not implemented", utils.Warning)
 	}
@@ -330,3 +332,40 @@ func (s *Shell) touch(commandParsed []string) *EngineIPCMessage {
 
 	return newIPCMessage("", utils.SuccessDoNotDisplay)
 }
+
+func (s *Shell) cat(commandParsed []string) *EngineIPCMessage {
+	_, targets := s.flagsHelper(commandParsed)
+
+	if len(targets) == 0 {
+		return newIPCMessage("cat: missing file operand", utils.Error)
+	} else if len(targets) > 1 {
+		return newIPCMessage("cat: too many file operands", utils.Error)
+	}
+
+	target := s.expandPath(targets[0])
+
+	if !strings.HasPrefix(target, "/") {
+		target = path.Join(s.Session.WorkingDir, target)
+	}
+
+	target = s.expandPath(target) 
+
+	file, err := s.Session.Computer.Filesystem.Open(target)
+	if err != nil {
+		message := "Failed to open file"
+		if strings.HasSuffix(err.Error(), "no such file or directory") {
+			message = "cat: cannot open: No such file or directory"
+		}
+		return newIPCMessage(message, utils.Error)
+	}
+	defer file.Close()
+
+	content, err := afero.ReadAll(file)
+	if err != nil {
+		message := "Failed to read file"
+		return newIPCMessage(message, utils.Error)
+	}
+
+	return newIPCMessage(string(content), utils.Success)
+}
+
