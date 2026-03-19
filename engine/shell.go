@@ -2,6 +2,7 @@ package engine
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"strings"
 
@@ -41,6 +42,8 @@ func (s *Shell) RunCommand(command []string) *EngineIPCMessage {
 		return s.mkdir(command)
 	case "rm":
 		return s.rm(command)
+	case "touch":
+		return s.touch(command)
 	default:
 		return newIPCMessage("not implemented", utils.Warning)
 	}
@@ -154,7 +157,7 @@ func (s *Shell) mkdir(commandParsed []string) *EngineIPCMessage {
 	} else if len(targets) > 1 {
 		return newIPCMessage("mkdir: too many operands", utils.Error)
 	}
- 
+
 	dir := s.expandPath(targets[0])
 
 	if !strings.HasPrefix(dir, "/") {
@@ -167,7 +170,7 @@ func (s *Shell) mkdir(commandParsed []string) *EngineIPCMessage {
 		return newIPCMessage("mkdir: cannot create directory: File exists", utils.Error)
 	}
 
-	err := s.Session.Computer.Filesystem.Mkdir(dir, 0o755)
+	err := s.Session.Computer.Filesystem.Mkdir(dir, 0755)
 	if err != nil {
 		message := "Failed to create directory"
 		if strings.HasSuffix(err.Error(), "no such file or directory") {
@@ -281,4 +284,36 @@ func (s *Shell) flagsHelper(commandParsed []string) (map[string]bool, []string) 
 	}
 
 	return flags, targets
+}
+
+func (s *Shell) touch(commandParsed []string) *EngineIPCMessage {
+	_, targets := s.flagsHelper(commandParsed)
+
+	if len(targets) == 0 {
+		return newIPCMessage("touch: missing file operand", utils.Error)
+	} else if len(targets) > 1 {
+		return newIPCMessage("touch: too many file operands", utils.Error)
+	}
+
+	target := s.expandPath(targets[0])
+
+	if !strings.HasPrefix(target, "/") {
+		target = path.Join(s.Session.WorkingDir, target)
+	}
+
+	target = s.expandPath(target)
+
+	target = path.Clean(target)
+
+	file, err := s.Session.Computer.Filesystem.OpenFile(target, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		message := "Failed to create file"
+		if strings.HasSuffix(err.Error(), "no such file or directory") {
+			message = "touch: cannot touch: No such file or directory"
+		}
+		return newIPCMessage(message, utils.Error)
+	}
+	file.Close()
+
+	return newIPCMessage("", utils.SuccessDoNotDisplay)
 }
