@@ -48,18 +48,11 @@ func (s *Shell) RunCommand(command []string) *EngineIPCMessage {
 
 func (s *Shell) ls(commandParsed []string) *EngineIPCMessage {
 	lsDir := s.Session.WorkingDir
-	output := ""
-	if len(commandParsed) > 1 {
-		for _, arg := range commandParsed[1:] {
-			if strings.HasPrefix(arg, "-") {
-				return newIPCMessage("Flags not supported yet", utils.Error)
-			}
-			if strings.HasPrefix(arg, "/") {
-				lsDir = arg
-			} else {
-				lsDir = s.Session.WorkingDir + "/" + arg
-			}
-		}
+
+	_, targets := s.flagsHelper(commandParsed)
+
+	if len(targets) > 1 {
+		return newIPCMessage("ls: too many arguments", utils.Error)
 	}
 
 	lsDir = s.expandPath(lsDir)
@@ -70,6 +63,7 @@ func (s *Shell) ls(commandParsed []string) *EngineIPCMessage {
 		return newIPCMessage(message, utils.Error)
 	}
 
+	output := ""
 	for _, file := range files {
 		if file.IsDir() {
 			output += fmt.Sprintf("\033[34m%s\033[0m\n", file.Name())
@@ -87,13 +81,22 @@ func (s *Shell) ls(commandParsed []string) *EngineIPCMessage {
 }
 
 func (s *Shell) cd(commandParsed []string) *EngineIPCMessage {
-	if len(commandParsed) == 1 {
-		return newIPCMessage("No directory provided", utils.Error)
-	}
-	for _, arg := range commandParsed[1:] {
-		if strings.HasPrefix(arg, "-") {
-			return newIPCMessage("Flags not supported yet", utils.Error)
+	_, targets := s.flagsHelper(commandParsed)
+
+	if len(targets) == 0 {
+		// if no target is provided, cd to home directory
+		if s.Session.CurrentUser == "root" {
+			s.Session.WorkingDir = "/root"
+		} else {
+			s.Session.WorkingDir = fmt.Sprintf("/home/%s", s.Session.CurrentUser)
 		}
+		return &EngineIPCMessage{
+			Result: "",
+			Status: utils.SuccessDoNotDisplay,
+			Prompt: s.Session.WorkingDir + "$ ",
+		}
+	} else if len(targets) > 1 {
+		return newIPCMessage("cd: too many arguments", utils.Error)
 	}
 
 	dir := commandParsed[1]
@@ -144,16 +147,15 @@ func (s *Shell) whoami(commandParsed []string) *EngineIPCMessage {
 }
 
 func (s *Shell) mkdir(commandParsed []string) *EngineIPCMessage {
-	if len(commandParsed) != 2 {
-		return newIPCMessage("mkdir: missing operand", utils.Error)
-	}
-	for _, arg := range commandParsed[1:] {
-		if strings.HasPrefix(arg, "-") {
-			return newIPCMessage("Flags not supported yet", utils.Error)
-		}
-	}
+	_, targets := s.flagsHelper(commandParsed)
 
-	dir := commandParsed[1]
+	if len(targets) == 0 {
+		return newIPCMessage("mkdir: missing operand", utils.Error)
+	} else if len(targets) > 1 {
+		return newIPCMessage("mkdir: too many operands", utils.Error)
+	}
+ 
+	dir := s.expandPath(targets[0])
 
 	if !strings.HasPrefix(dir, "/") {
 		dir = path.Join(s.Session.WorkingDir, dir)
@@ -207,29 +209,15 @@ func (s *Shell) rm(commandParsed []string) *EngineIPCMessage {
 
 	// Flags
 
-	flags := make(map[string]bool)
-	numTargets := 0
-	target := ""
-	if len(commandParsed) >= 2 {
-		for _, arg := range commandParsed[1:] {
-			if strings.HasPrefix(arg, "-") {
-				for _, flag := range arg[1:] {
-					flags[string(flag)] = true
-				}
-			} else {
-				target = arg
-				numTargets++
-			}
-		}
-	}
+	flags, targets := s.flagsHelper(commandParsed)
 
-	if numTargets == 0 {
+	if len(targets) == 0 {
 		return newIPCMessage("rm: missing operand", utils.Error)
-	} else if numTargets > 1 {
+	} else if len(targets) > 1 {
 		return newIPCMessage("rm: too many operands", utils.Error)
 	}
 
-	target = s.expandPath(target)
+	target := s.expandPath(targets[0])
 
 	if !strings.HasPrefix(target, "/") {
 		target = path.Join(s.Session.WorkingDir, target)
@@ -275,4 +263,22 @@ func (s *Shell) expandPath(target string) string {
 	}
 
 	return target
+}
+
+func (s *Shell) flagsHelper(commandParsed []string) (map[string]bool, []string) {
+	flags := make(map[string]bool)
+	targets := []string{}
+	if len(commandParsed) >= 2 {
+		for _, arg := range commandParsed[1:] {
+			if strings.HasPrefix(arg, "-") {
+				for _, flag := range arg[1:] {
+					flags[string(flag)] = true
+				}
+			} else {
+				targets = append(targets, arg)
+			}
+		}
+	}
+
+	return flags, targets
 }
