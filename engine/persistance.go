@@ -23,7 +23,7 @@ type NodeConfig struct {
 }
 
 func (e *Engine) SaveNetwork() error {
-	err := os.MkdirAll(networkPath, 0755)
+	err := os.MkdirAll(networkPath, 0o755)
 	if err != nil {
 		return err
 	}
@@ -77,15 +77,11 @@ func (e *Engine) LoadNetwork() error {
 	return nil
 }
 
+func (e *Engine) resetNetwork() *EngineIPCMessage {
+	os.RemoveAll(networkPath)
 
-func (e *Engine) resetNetwork()  *EngineIPCMessage{
-    os.RemoveAll(networkPath)
-    
-    // Clear from memory
-    e.nodes = make(map[string]*computer.Computer)
+	// Clear from memory
+	e.nodes = make(map[string]*computer.Computer)
 
-
-    
-    return newIPCMessage("Network reset (memory + disk cleared)", utils.Success)
+	return newIPCMessage("Network reset (memory + disk cleared)", utils.Success)
 }
-

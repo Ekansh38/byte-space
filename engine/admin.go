@@ -27,7 +27,7 @@ func (e *Engine) runAdminCommand(command string) *EngineIPCMessage {
 	switch commandP[0] {
 	case "spawn":
 		return e.spawnNode(commandP)
-	case "list-nodes":
+	case "list-nodes", "ls":
 		return e.listNodes(commandP)
 	case "delete":
 		return e.deleteNode(commandP)
