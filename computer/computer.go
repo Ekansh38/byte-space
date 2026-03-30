@@ -40,7 +40,7 @@ func initFileSystem(fs afero.Fs, hostname string, ip string) {
 
 }
 
-func New(name string, ip string, nodeType string) *Computer {
+func NewComputer(name string, ip string, nodeType string) *Computer {
     basePath := fmt.Sprintf("./data/networks/current/nodes/%s", name) // uniqueness of name is checked in the handler.go of the engine package.
     os.MkdirAll(basePath, 0755)
 

@@ -13,6 +13,16 @@ type Engine struct {
 	sessions map[string]*Session           // by session IP
 }
 
+// API
+
+func (e *Engine) ListMachinesOnNetwork() []computer.Computer {
+	var computers []computer.Computer
+	for _, computer := range e.nodes {
+		computers = append(computers, *computer)
+	}
+	return computers
+}
+
 type Session struct {
 	SessionID   string
 	Computer    *computer.Computer

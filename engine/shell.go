@@ -96,9 +96,8 @@ func (s *Shell) cd(commandParsed []string) *EngineIPCMessage {
 			s.Session.WorkingDir = fmt.Sprintf("/home/%s", s.Session.CurrentUser)
 		}
 		return &EngineIPCMessage{
-			Result: "",
+			Result: s.Session.WorkingDir + "$ ",
 			Status: utils.SuccessDoNotDisplay,
-			Prompt: s.Session.WorkingDir + "$ ",
 		}
 	} else if len(targets) > 1 {
 		return newIPCMessage("cd: too many arguments", utils.Error)
@@ -121,9 +120,8 @@ func (s *Shell) cd(commandParsed []string) *EngineIPCMessage {
 	s.Session.WorkingDir = dir
 
 	return &EngineIPCMessage{
-		Result: "",
+		Result: s.Session.WorkingDir + "$ ",
 		Status: utils.SuccessDoNotDisplay,
-		Prompt: s.Session.WorkingDir + "$ ",
 	}
 }
 

@@ -1,15 +1,15 @@
 package client
 
 import (
-	"fmt"
-	"golang.org/x/term"
+	"byte-space/utils"
 	"log"
 	"net"
 	"os"
-	"strings"
+
+	"golang.org/x/term"
 )
 
-func commandLoop(c net.Conn, mode string) {
+func commandLoop(c net.Conn, mode string, done <-chan struct{}) {
 	fd := int(os.Stdin.Fd())
 	oldState, err := term.MakeRaw(fd)
 	if err != nil {
@@ -17,123 +17,58 @@ func commandLoop(c net.Conn, mode string) {
 	}
 	defer term.Restore(fd, oldState)
 
-	var history []string
-	historyIdx := -1
-	var buf []byte
-	cursorPos := 0
+	input := make(chan []byte)
+	keystroke := make([]byte, 0)
 
-	redraw := func() {
-		fmt.Printf("\r%s%s\033[K", prompt, string(buf))
-		if moveBack := len(buf) - cursorPos; moveBack > 0 {
-			fmt.Printf("\033[%dD", moveBack)
-		}
-	}
+	go readLoop(input)
 
-	redraw()
-
-	b := make([]byte, 1)
 	for {
-		_, err := os.Stdin.Read(b)
-		if err != nil {
-			term.Restore(fd, oldState)
-			fmt.Print("\r\n")
-			return
-		}
-
-		switch b[0] {
-		case 0x0d, 0x0a: // Enter
-			fmt.Print("\r\n")
-			input := string(buf)
-			buf = buf[:0]
-			cursorPos = 0
-			historyIdx = -1
-
-			if strings.TrimSpace(input) == "" {
-				redraw()
-				continue
-			}
-
-			if input == clearCommand {
-				fmt.Print("\033[H\033[2J")
-				redraw()
-				continue
-			}
-
-			history = append(history, input)
-
-			term.Restore(fd, oldState)
-			writeToEngine(c, input, mode)
-			i := engineReader(c, true)
-			if i.Status == 10 {
+		select {
+		case b, ok := <-input:
+			if !ok {
 				return
 			}
-			oldState, _ = term.MakeRaw(fd)
-			redraw()
+			canWrite := true
 
-		case 0x7f, 0x08: // Backspace
-			if cursorPos > 0 {
-				buf = append(buf[:cursorPos-1], buf[cursorPos:]...)
-				cursorPos--
-				redraw()
-			}
-
-		case 0x1b: // arrow keys
-			seq := make([]byte, 2)
-			os.Stdin.Read(seq)
-			if seq[0] != '[' {
-				continue
-			}
-			switch seq[1] {
-			case 'A': // Up arrow
-				if len(history) == 0 {
-					continue
+			if len(keystroke) == 0 {
+				keystroke = append(keystroke, b[0])
+				if int(b[0]) == 27 {
+					canWrite = false
 				}
-				if historyIdx == -1 {
-					historyIdx = len(history) - 1
-				} else if historyIdx > 0 {
-					historyIdx--
+			} else if len(keystroke) == 1 {
+				if int(b[0]) == 91 && int(keystroke[0]) == 27{
+					keystroke = append(keystroke, b[0])
+					canWrite = false
 				}
-				buf = []byte(history[historyIdx])
-				cursorPos = len(buf)
-				redraw()
-			case 'B': // Down arrow
-				if historyIdx == -1 {
-					continue
-				}
-				historyIdx++
-				if historyIdx >= len(history) {
-					historyIdx = -1
-					buf = []byte{}
-					cursorPos = 0
-				} else {
-					buf = []byte(history[historyIdx])
-					cursorPos = len(buf)
-				}
-				redraw()
-			case 'C': // Right arrow
-				if cursorPos < len(buf) {
-					cursorPos++
-					redraw()
-				}
-			case 'D': // Left arrow
-				if cursorPos > 0 {
-					cursorPos--
-					redraw()
+			} else if len(keystroke) == 2 {
+				if int(keystroke[1]) == 91 && int(keystroke[0]) == 27{
+					keystroke = append(keystroke, b[0])
+					canWrite = true
 				}
 			}
 
-		case 0x03: // Ctrl+C
-			fmt.Print("\r\nPlease use the 'exit' command to quit.\r\n")
-			redraw()
-
-		default:
-			if b[0] >= 0x20 { // printable chars only
-				buf = append(buf, 0)
-				copy(buf[cursorPos+1:], buf[cursorPos:])
-				buf[cursorPos] = b[0]
-				cursorPos++
-				redraw()
+			if canWrite {
+				if writeToEngine(c, string(keystroke), mode) == utils.Error {
+					return
+				}
+				keystroke = make([]byte, 0)
 			}
+
+		case <-done:
+			return
 		}
 	}
 }
+
+func readLoop(input chan []byte) {
+	for {
+		b := make([]byte, 1)
+		n, err := os.Stdin.Read(b)
+		if err != nil {
+			close(input)
+			return
+		}
+		input <- b[:n]
+	}
+}
+
