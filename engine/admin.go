@@ -82,7 +82,8 @@ func (e *Engine) spawnNode(commandParsed []string) *EngineIPCMessage {
 		}
 	}
 
-	newNode := computer.New(name, ip, nodeType)
+	newNode := computer.NewComputer(name, ip, nodeType)
+	newNode.OS.Network = e
 	e.nodes[ip] = newNode
 
 	e.SaveNetwork()

@@ -69,7 +69,7 @@ func (e *Engine) LoadNetwork() error {
 	}
 
 	for _, nodeConfig := range config.Nodes {
-		node := computer.New(nodeConfig.Name, nodeConfig.IP, nodeConfig.Type)
+		node := computer.NewComputer(nodeConfig.Name, nodeConfig.IP, nodeConfig.Type)
 		e.nodes[nodeConfig.IP] = node
 	}
 

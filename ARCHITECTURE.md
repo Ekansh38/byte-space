@@ -13,19 +13,26 @@ Four separate programs communicate via Unix domain socket:
 ## Communication Layers
 
 ### IPC (CLI ↔ Engine)
-- Protocol: JSON over Unix socket (`/tmp/byte-space.sock`)
-- Purpose: Real communication between programs
-- Speed: Instant
 
-Request format:
-```json
-{
-  "program": "client|admin|viz",
-  "request_id": 1,
-  "ip": "192.fake.2.5",
-  "command": "ls"
-}
-```
+
+#### Client -> Engine
+
+Program string ("admin", "user")
+SessionID string ("session-x")
+Command string ("ls")
+
+
+#### Engine -> Client
+
+SessionID string ("session-x")
+Commands string[] 
+
+Commands I need:
+
+MY OWN ANSI. BANASI.
+
+
+
 
 ### Virtual Packets (Node ↔ Node)
 - Protocol: Custom packet structure

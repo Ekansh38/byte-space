@@ -1,12 +1,18 @@
 package computer
 
 import (
-	"github.com/spf13/afero"
 	"strings"
+
+	"github.com/spf13/afero"
 )
 
+type NetworkAPI interface {
+    // Whatever programs need, like send packet and stuf
+}
+
 type OS struct {
-	Computer    *Computer
+	Computer *Computer
+	Network  NetworkAPI
 }
 
 func (o *OS) GetIssue() string {
@@ -26,29 +32,30 @@ func (o *OS) GetMotd() string {
 	}
 	return string(data)
 }
+
 func (o *OS) Login(username string, password string) int {
-    path := "/etc/passwd"
-    data, err := afero.ReadFile(o.Computer.Filesystem, path)
-    if err != nil {
-        return 1
-    }
-    
-    lines := strings.Split(string(data), "\n")
-    
-    for _, line := range lines {
-        if line == "" {
-            continue  
-        }
-        
-        fields := strings.Split(line, ":")
-        
-        if len(fields) >= 2 && fields[0] == username && fields[1] == password {
-            // Login successful
-            return 0
-        }
-    }
-    
-    return 1  // fail
+	path := "/etc/passwd"
+	data, err := afero.ReadFile(o.Computer.Filesystem, path)
+	if err != nil {
+		return 1
+	}
+
+	lines := strings.Split(string(data), "\n")
+
+	for _, line := range lines {
+		if line == "" {
+			continue
+		}
+
+		fields := strings.Split(line, ":")
+
+		if len(fields) >= 2 && fields[0] == username && fields[1] == password {
+			// Login successful
+			return 0
+		}
+	}
+
+	return 1 // fail
 }
 
 func (o *OS) HasDirectory(path string) bool {
@@ -57,4 +64,4 @@ func (o *OS) HasDirectory(path string) bool {
 		return false
 	}
 	return info.IsDir()
-}	
+}
