@@ -2,6 +2,10 @@ package engine
 
 import (
 	"fmt"
+	"os/user"
+	"strings"
+
+	"byte-space/computer"
 	"byte-space/utils"
 )
 
@@ -10,7 +14,7 @@ type LoginProgram struct {
 	id       string
 	tty      *TTY // if not foreground then nil
 	graphics *GraphicsAPI
-	Engine *Engine
+	Engine   *Engine
 }
 
 func (p *LoginProgram) AddGraphicsAPI(api *GraphicsAPI) {
@@ -22,26 +26,74 @@ func (p *LoginProgram) RemoveGraphicsAPI() {
 }
 
 func (p *LoginProgram) Run(returnStatus chan int) {
+	// data
+	ip_address := ""
+	username := ""
+	password := ""
+
 	p.done = make(chan struct{})
 	if p.graphics == nil {
 		returnStatus <- utils.Error
 		return
 	}
 
-	computers := p.Engine.ListMachinesOnNetwork()
-	var choices string
-	for i := 0; i < len(computers); i++ {
-		choices += fmt.Sprintf("%s: %s\n", computers[i].IP, computers[i].Name)
-	}
-	choices += "\n\n\rIP ADDRESS: "
+	computers := p.Engine.ListMachinesOnNetwork() // used a string builder because += is not efficient
+	var choices strings.Builder
 
-	p.graphics.Write(choices)
+	for i := range computers {
+		fmt.Fprintf(&choices, "%s: %s\n", computers[i].IP, computers[i].Name)
+	}
+	fmt.Fprintf(&choices, "\n\n\rIP ADDRESS: ")
+
+	p.graphics.Write(choices.String())
+
+	var mainComputer *computer.Computer
 
 	for {
 		value, status := p.tty.Read(p, p.done)
-		if status == utils.Success {
-			fmt.Printf("VALUE TO LOGIN PROGRAM: %q\n\n", value)
-		} else if status == utils.Exit {
+		switch status {
+		case utils.Success:
+
+			if ip_address == "" {
+				ip_address = value
+				ok := false
+				if mainComputer, ok = p.Engine.nodes[ip_address]; ok {
+					p.graphics.Write(mainComputer.OS.GetIssue())
+					p.graphics.Write("\nUSERNAME: ") // change to mainComputer.OS.GetUsernamePrompt or sm
+				} else {
+					// p.graphics.Write("Invalid IP address, no computer on network!")
+					returnStatus <- utils.Error
+					return
+				}
+			} else if username == "" {
+				username = value
+				p.graphics.Write("\nPASSWORD: ") // change to mainComputer.OS.GetPasswordPrompt or sm
+
+			} else if password == "" {
+				password = value
+				// try login
+				if mainComputer.OS.Login(username, password) == utils.Success {
+					p.graphics.Write(mainComputer.OS.GetMotd())
+
+					sessionStatus, sessionID := p.Engine.NewSession(mainComputer, username)
+					if sessionStatus != utils.Success {
+						returnStatus <- utils.Error
+						return
+					}
+
+					p.tty.Session = p.Engine.sessions[sessionID]
+					// create and run the shell, set the foreground too.
+
+					returnStatus <- utils.Success
+					return
+
+				} else {
+					returnStatus <- utils.Error
+					return
+				}
+			}
+
+		case utils.Exit:
 			returnStatus <- utils.Error
 			return
 		}
@@ -62,70 +114,4 @@ func (p *LoginProgram) HandleSignal(sig Signal) {
 
 func (p *LoginProgram) ID() string {
 	return p.id
-}
-
-func (e *Engine) connectUserToNode(commandParsed []string) *EngineIPCMessage {
-	if len(commandParsed) != 2 {
-		message := "Usage: connect <username>"
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
-
-	name := commandParsed[1]
-	node, status := getNodeByName(e, name)
-	if !status {
-		message := fmt.Sprintf("No node with the name %s found", name)
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
-
-	message := node.OS.GetIssue() + "\nusername: "
-	fmt.Println(message)
-	return newIPCMessage(message, utils.Success)
-}
-
-func (e *Engine) username(commandParsed []string) *EngineIPCMessage {
-	if len(commandParsed) != 2 {
-		message := "Usage: username <username>"
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
-
-	return newIPCMessage("password: ", utils.Success)
-}
-
-func (e *Engine) login(commandParsed []string) *EngineIPCMessage {
-	if len(commandParsed) != 4 {
-		message := "Usage: login <username> <password>"
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
-
-	name := commandParsed[1]
-	username := commandParsed[2]
-	password := commandParsed[3]
-	node, status := getNodeByName(e, name)
-	if !status {
-		message := fmt.Sprintf("No node with the name %s found", name)
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
-
-	loginStatus := node.OS.Login(username, password)
-
-	if loginStatus == 0 {
-		message := node.OS.GetMotd()
-		fmt.Println(message)
-		// create new session
-		sessionStatus, sessionID := e.NewSession(node, username)
-		if sessionStatus != utils.Success {
-			message := "Failed to create session"
-			return newIPCMessage(message, utils.Error)
-		}
-		return &EngineIPCMessage{Result: message, Status: utils.Success, SessionID: sessionID}
-	}
-
-	message := "Invalid username or password"
-	fmt.Println(message)
-	return newIPCMessage(message, utils.Error)
 }
