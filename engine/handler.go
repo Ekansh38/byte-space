@@ -36,6 +36,19 @@ func (e *Engine) monitorLoginStatusForExit(loginStatus chan int, c net.Conn) {
 }
 
 func (e *Engine) handleClient(c net.Conn) {
+	//mode := ""
+	//scanner := bufio.NewScanner(c)
+	//for scanner.Scan() {
+	//line := scanner.Text()
+	//var message ClientIPCMessage
+	//if err := json.Unmarshal([]byte(line), &message); err != nil {
+	//log.Println("Error unmarshalling JSON:", err)
+	//continue
+	//}
+	//mode = message.Program
+	//break
+	//}
+
 	// create the TTY, and run the login program in a goroutine
 	tty := NewTTY(c)
 	loginProgram := &LoginProgram{id: "0", tty: tty, Engine: e}

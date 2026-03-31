@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-func (e *Engine) runAdminCommand(command string) *EngineIPCMessage {
+func (e *Engine) RunAdminCommand(command string) *EngineIPCMessage {
 	fmt.Printf("Running admin command: %s\n", command)
 
 	// parse the command	
