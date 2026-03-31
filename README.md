@@ -15,7 +15,7 @@
 
 **Terminal-Based Network Simulation** • **Real-Time Packet Visualization** • **Custom Markup Language**
 
-_Experience the early internet — Telnet, FTP, SMTP, and packet tracing_
+_Experience the early internet: Telnet, FTP, SMTP, and packet tracing_
 
 [Installation](#installation) • [Quick Start](#quick-start) • [Features](#features) • [Architecture](#architecture) • [Contributing](#contributing)
 
@@ -23,19 +23,18 @@ _Experience the early internet — Telnet, FTP, SMTP, and packet tracing_
 
 </div>
 
-Terminal-based internet simulator from the early internet era. Build networks, browse websites in terminals, send email, and watch packets flow in real-time.
-
-byte-space creates a simulated internet environment where you can spawn virtual computers, connect them with networks, and watch packets travel in real-time as you browse websites and send email—all in your terminal.
+Terminal-based internet simulator from the early internet era. Build networks, browse websites in terminals, send email, and watch packets travel in real-time with the visualizer.
 
 ## Features
 
-- **Virtual Computers** - Spawn nodes with their own file system's and shells
-- **Network Simulation** - Connect machines and watch packets flow between them
-- **Terminal Web Browser** - Browse websites rendered in your terminal using a custom markup language
-- **Email System** - Send mail between virtual machines using SMTP
-- **Custom Protocols** - Built-from-scratch implementations of DNS, Telnet, HTTP, and more
-- **Packet Visualization** - Real-time graphical view of network traffic using Ebiten
-- **Time Control** - Tick-based system with adjustable network speed (instant to slow-motion)
+- Virtual Computers - Spawn nodes with their own file system's, shells, TTY's and terminal subsystems
+- Network Simulation - Connect machines and watch packets travel between them, routing tables, ip maps, etc.
+- Terminal Web Browser - Browse websites rendered in your terminal using a custom terminal based markup language
+- Email System - Send mail between virtual machines using SMTP
+- Custom Protocols - Built-from-scratch implementations of DNS, Telnet, HTTP, and more
+- Packet Visualization - Real-time graphical view of network traffic using Ebiten
+- Time Control - Tick-based system with adjustable network speed (instant to slow-motion)
+- some more cool stuff
 
 ## Installation
 
@@ -67,8 +66,6 @@ The system consists of four programs that communicate via Unix domain sockets:
 - **Admin CLI** - Create and configure nodes, manage network topology
 - **User CLI** - Connect to virtual machines, run commands, browse the network
 - **Visualizer** - Real-time packet flow animation
-
-See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design documentation.
 
 ## Contributing
 
