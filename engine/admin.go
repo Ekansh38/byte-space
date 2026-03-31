@@ -35,12 +35,6 @@ func (e *Engine) RunAdminCommand(command string) *EngineIPCMessage {
 		return e.resetNetwork()
 	case "adduser":
 		return e.addUser(commandP)
-	case "connect":
-		return e.connectUserToNode(commandP)
-	case "username":
-		return e.username(commandP)
-	case "login":
-		return e.login(commandP)
 
 	default:
 		return newIPCMessage("not implemented", utils.Warning)

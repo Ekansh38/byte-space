@@ -2,7 +2,7 @@ package engine
 
 import (
 	"fmt"
-	"os/user"
+	//"os/user"
 	"strings"
 
 	"byte-space/computer"
@@ -72,6 +72,7 @@ func (p *LoginProgram) Run(returnStatus chan int) {
 			} else if password == "" {
 				password = value
 				// try login
+				fmt.Printf("USRNAME: %s, PASWD: %s", username, password)
 				if mainComputer.OS.Login(username, password) == utils.Success {
 					p.graphics.Write(mainComputer.OS.GetMotd())
 
