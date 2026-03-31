@@ -117,7 +117,9 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 
 			switch receivedData {
 			case "\r":
-				return t.Buffer, utils.Success
+				data := t.Buffer
+				t.Buffer = ""
+				return data, utils.Success
 			case "\x7f": // delete
 				if len(t.Buffer) > 0 {
 					t.Buffer = t.Buffer[:len(t.Buffer)-1]
