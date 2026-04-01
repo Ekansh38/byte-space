@@ -59,13 +59,20 @@ func (s *Shell) Run(returnStatus chan int) {
 			case "exit":
 				returnStatus <- utils.Success
 				return
+			case "pwd":
+				if len(value) != 1 {
+					s.graphicsAPI.Write("Usage: pwd\n")
+					break
+				}
+				dataToDisplay := fmt.Sprintf("%s\n", s.tty.Session.WorkingDir)
+				s.graphicsAPI.Write(dataToDisplay)
 			case "cd":
 				if len(flags) > 0 {
 					s.graphicsAPI.Write("No flags implemented\n")
 					break
 				}
 				if len(value) != 2 {
-					s.graphicsAPI.Write("Use cd <path>\n")
+					s.graphicsAPI.Write("Usage: cd <path>\n")
 					break
 				}
 
@@ -85,12 +92,11 @@ func (s *Shell) Run(returnStatus chan int) {
 				}
 
 				s.tty.Session.WorkingDir = dir
-			case "ls":
-				//ls := &Ls{tty}// bla bla
-				s.tty.SetForegroundProcess(ls)
-				ls.Run()
-				s.tty.SetForegroundProcess(s)
-
+			//case "ls":
+				// ls := &Ls{tty}// bla bla
+				//s.tty.SetForegroundProcess(ls)
+				//ls.Run()
+				//s.tty.SetForegroundProcess(s)
 
 			case "":
 				break
