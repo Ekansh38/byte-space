@@ -109,11 +109,17 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				s.graphicsAPI.Write("\n")
 
 			case "ls":
-				ls := &Ls{tty: s.tty, id: getUniqueID(runningPrograms)}
+				ls := &Ls{tty: s.tty, id: "ls-" + getUniqueID(runningPrograms)}
 				s.tty.SetForegroundProcess(ls)
 
 				params := append(value[1:], flags...)
 				status := make(chan int)
+
+				s.tty.engine.EventBus.Publish(EventProgramStarted, map[string]interface{}{
+					"program_id": ls.ID(),
+					"tty_id":     s.tty.id,
+				})
+
 				go ls.Run(status, params)
 
 				<-status
@@ -121,11 +127,17 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				// set shell back to foreground
 				s.tty.SetForegroundProcess(s)
 			case "clear":
-				clear := &Clear{tty: s.tty, id: getUniqueID(runningPrograms)}
+				clear := &Clear{tty: s.tty, id: "clear-" + getUniqueID(runningPrograms)}
 				s.tty.SetForegroundProcess(clear)
 
 				params := append(value[1:], flags...)
 				status := make(chan int)
+				
+				s.tty.engine.EventBus.Publish(EventProgramStarted, map[string]interface{}{
+					"program_id": clear.ID(),
+					"tty_id":     s.tty.id,
+				})
+
 				go clear.Run(status, params)
 
 				<-status
@@ -134,11 +146,17 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				s.tty.SetForegroundProcess(s)
 
 			case "cat":
-				cat := &Cat{tty: s.tty, id: getUniqueID(runningPrograms)}
+				cat := &Cat{tty: s.tty, id: "cat-" + getUniqueID(runningPrograms)}
 				s.tty.SetForegroundProcess(cat)
 
 				params := append(value[1:], flags...)
 				status := make(chan int)
+
+				s.tty.engine.EventBus.Publish(EventProgramStarted, map[string]interface{}{
+					"program_id": cat.ID(),
+					"tty_id":     s.tty.id,
+				})
+
 				go cat.Run(status, params)
 
 				<-status

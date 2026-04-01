@@ -1,11 +1,32 @@
 package main
+
 import (
+	"fmt"
+	"os"
+
+	tea "github.com/charmbracelet/bubbletea"
 	"byte-space/engine"
+	"byte-space/tui"
 )
 
 func main() {
-	var engine *engine.Engine = engine.NewEngine()	
-	//engine.RunAdminCommand("spawn computer ekansh 192.168.1.1")
-	//engine.RunAdminCommand("adduser ekansh root 1234")
-	engine.Run()
+	// Create engine
+	eng := engine.NewEngine()
+
+	// Subscribe to events
+	events := eng.EventBus.Subscribe()
+
+	// Start engine in background
+	go eng.Run()
+
+	// Start TUI
+	p := tea.NewProgram(
+		tui.NewModel(events),
+		tea.WithAltScreen(),
+	)
+
+	if _, err := p.Run(); err != nil {
+		fmt.Printf("Error: %v\n", err)
+		os.Exit(1)
+	}
 }

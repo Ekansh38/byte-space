@@ -6,20 +6,18 @@ import (
 	"fmt"
 	"log"
 	"net"
-//	"net/url"
+	//	"net/url"
 
 	"byte-space/utils"
 )
 
 func writeToClient(c net.Conn, sendData *EngineIPCMessage) {
-	fmt.Printf("Keystroke: %q\n", sendData.Result)
 	jsonData, err := json.Marshal(sendData)
 	if err != nil {
 		log.Fatalf("Error occurred during marshalling: %s", err.Error())
 	}
 
 	jsonData = append(jsonData, '\n')
-	fmt.Printf("Sending data: %s\n", string(jsonData))
 	c.Write([]byte(jsonData))
 }
 
@@ -33,7 +31,7 @@ func (e *Engine) monitroLoginAndShellStatusForExit(loginStatus chan int, c net.C
 		return
 	} else {
 		// create the shell, set the foreground, run the shell.
-		shell := &Shell{tty: tty, id: "1"}
+		shell := &Shell{tty: tty, id: "shell-0"}
 		tty.SetForegroundProcess(shell)
 		var returnStatus chan int = make(chan int)
 		go shell.Run(returnStatus, []string{})
@@ -62,8 +60,14 @@ func (e *Engine) handleClient(c net.Conn) {
 	//}
 
 	// create the TTY, and run the login program in a goroutine
-	tty := NewTTY(c)
-	loginProgram := &LoginProgram{id: "0", tty: tty, Engine: e}
+	ttyID := fmt.Sprintf("tty-%d", len(e.ttys))
+	e.EventBus.Publish(EventTTYCreated, map[string]interface{}{
+		"tty_id": ttyID,
+	})
+
+	tty := NewTTY(c, e, ttyID)
+	e.ttys = append(e.ttys, tty)
+	loginProgram := &LoginProgram{id: "login-0", tty: tty, Engine: e}
 	tty.SetForegroundProcess(loginProgram)
 
 	loginStatus := make(chan int)
@@ -79,10 +83,12 @@ func (e *Engine) handleClient(c net.Conn) {
 				log.Println("Error unmarshalling JSON:", err)
 				continue
 			}
+			e.EventBus.Publish(EventClientToEngine, map[string]interface{}{
+				"key": message.Keystroke,
+				"tty": ttyID,
+			})
 
 			tty.HandleKeystroke(message.Keystroke)
-
-			fmt.Printf("%q\n", message.Keystroke)
 
 			// msg := newIPCMessage("", utils.Success)
 

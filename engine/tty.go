@@ -29,6 +29,8 @@ type Program interface {
 
 type TTY struct {
 	io.Writer
+	engine            *Engine
+	id                string
 	ForegroundProgram Program
 	Canonical         bool
 	Echo              bool
@@ -39,7 +41,7 @@ type TTY struct {
 	// Echo & Canonical false is RAW mode
 }
 
-func NewTTY(c net.Conn) *TTY {
+func NewTTY(c net.Conn, engine *Engine, id string) *TTY {
 	handsomeNewTTY := &TTY{
 		ForegroundProgram: nil,
 		Canonical:         true,
@@ -48,6 +50,8 @@ func NewTTY(c net.Conn) *TTY {
 		dataChannel:       make(chan string),
 		Session:           nil,
 		Connection:        c,
+		engine:            engine,
+		id:                id,
 	}
 
 	return handsomeNewTTY
@@ -63,6 +67,14 @@ const (
 )
 
 func (t *TTY) HandleKeystroke(keystroke string) {
+	if t.engine != nil && t.engine.EventBus != nil {
+		t.engine.EventBus.Publish(EventEngineToTTY, map[string]interface{}{
+			"key":       keystroke,
+			"canonical": t.Canonical,
+			"tty":       t.id,
+		})
+	}
+
 	switch keystroke {
 	case "\x03": // ctrl-c
 		if t.ForegroundProgram != nil {
@@ -74,6 +86,13 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 }
 
 func (t *TTY) SetForegroundProcess(program Program) (string, int) {
+	if t.engine != nil && t.engine.EventBus != nil {
+		t.engine.EventBus.Publish(EventForegroundChanged, map[string]interface{}{
+			"program": program.ID(),
+			"tty_id":  t.id,
+		})
+	}
+
 	// GraphicsAPI is only for the ForegroundProgram so that they can write to TTY
 	if program.ID() != "" {
 		if t.ForegroundProgram != nil {
@@ -112,6 +131,12 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			}
 
 			if !t.Canonical {
+				if t.engine != nil && t.engine.EventBus != nil {
+					t.engine.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
+						"key":  receivedData,
+						"prog": program.ID(),
+					})
+				}
 				return receivedData, utils.Success
 			}
 
@@ -119,6 +144,13 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			case "\r":
 				data := t.Buffer
 				t.Buffer = ""
+
+				if t.engine != nil && t.engine.EventBus != nil {
+					t.engine.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
+						"cmd":  t.Buffer,
+						"prog": program.ID(),
+					})
+				}
 				return data, utils.Success
 			case "\x7f": // delete
 				if len(t.Buffer) > 0 {
@@ -139,6 +171,12 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 }
 
 func (t *TTY) Write(str []byte) (int, error) {
+	if t.engine != nil && t.engine.EventBus != nil {
+		t.engine.EventBus.Publish(EventTTYToClient, map[string]interface{}{
+			"output": string(str),
+			"tty":    t.id,
+		})
+	}
 	data := newIPCMessage(string(str), utils.Success)
 	writeToClient(t.Connection, data)
 	return len(str), nil
