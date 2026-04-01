@@ -18,6 +18,20 @@ type Shell struct {
 	graphicsAPI *GraphicsAPI
 }
 
+func getUniqueID(runningPrograms []string) string {
+	existing := make(map[string]bool)
+	for _, p := range runningPrograms {
+		existing[p] = true
+	}
+
+	id := "0"
+	for existing[id] {
+		id += id
+	}
+
+	return id
+}
+
 func parse(value string) ([]string, []string) {
 	parts := strings.Fields(value)
 
@@ -39,7 +53,7 @@ func parse(value string) ([]string, []string) {
 	return commands, flags
 }
 
-func (s *Shell) Run(returnStatus chan int) {
+func (s *Shell) Run(returnStatus chan int, params []string) {
 	s.done = make(chan struct{})
 	if s.graphicsAPI == nil {
 		returnStatus <- utils.Error
@@ -49,6 +63,7 @@ func (s *Shell) Run(returnStatus chan int) {
 	s.graphicsAPI.Write(prompt)
 	prompt = fmt.Sprintf("%s$ ", s.tty.Session.WorkingDir)
 
+	var runningPrograms []string
 	for {
 		data, status := s.tty.Read(s, s.done)
 		switch status {
@@ -92,11 +107,30 @@ func (s *Shell) Run(returnStatus chan int) {
 				}
 
 				s.tty.Session.WorkingDir = dir
-			//case "ls":
-				// ls := &Ls{tty}// bla bla
-				//s.tty.SetForegroundProcess(ls)
-				//ls.Run()
-				//s.tty.SetForegroundProcess(s)
+			case "ls":
+				ls := &Ls{tty: s.tty, id: getUniqueID(runningPrograms)}
+				s.tty.SetForegroundProcess(ls)
+
+				params := append(value[1:], flags...)
+				status := make(chan int)
+				go ls.Run(status, params)
+
+				<-status
+
+				// set shell back to foreground
+				s.tty.SetForegroundProcess(s)
+			case "clear":
+				clear := &Clear{tty: s.tty, id: getUniqueID(runningPrograms)}
+				s.tty.SetForegroundProcess(clear)
+
+				params := append(value[1:], flags...)
+				status := make(chan int)
+				go clear.Run(status, params)
+
+				<-status
+
+				// set shell back to foreground
+				s.tty.SetForegroundProcess(s)
 
 			case "":
 				break
