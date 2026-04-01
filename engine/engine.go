@@ -11,6 +11,8 @@ import (
 type Engine struct {
 	nodes    map[string]*computer.Computer // by IP address
 	sessions map[string]*Session           // by session IP
+	EventBus *EventBus                     // to transmit events to tui
+	ttys     []*TTY
 }
 
 // API
@@ -31,7 +33,7 @@ type Session struct {
 }
 
 func NewEngine() *Engine {
-	e := &Engine{nodes: make(map[string]*computer.Computer), sessions: make(map[string]*Session)}
+	e := &Engine{nodes: make(map[string]*computer.Computer), sessions: make(map[string]*Session), EventBus: NewEventBus()}
 
 	// load network
 	err := e.LoadNetwork()
@@ -46,6 +48,8 @@ func (e *Engine) NewSession(node *computer.Computer, username string) (int, stri
 	// generate unique session ID
 	sessionID := e.generateSessionID()
 	workingDir := "/"
+
+
 
 	if username == "root" {
 		workingDir = "/root"

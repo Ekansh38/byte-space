@@ -11,7 +11,6 @@ import (
 )
 
 func (e *Engine) RunAdminCommand(command string) *EngineIPCMessage {
-	fmt.Printf("Running admin command: %s\n", command)
 
 	// parse the command	
 

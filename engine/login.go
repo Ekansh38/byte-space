@@ -76,7 +76,6 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 			} else if password == "" {
 				password = value
 				// try login
-				fmt.Printf("USRNAME: %s, PASWD: %s", username, password)
 				if mainComputer.OS.Login(username, password) == utils.Success {
 					p.graphicsAPI.Write(mainComputer.OS.GetMotd())
 
