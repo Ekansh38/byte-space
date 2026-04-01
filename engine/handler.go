@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+//	"net/url"
 
 	"byte-space/utils"
 )
@@ -22,7 +23,7 @@ func writeToClient(c net.Conn, sendData *EngineIPCMessage) {
 	c.Write([]byte(jsonData))
 }
 
-func (e *Engine) monitorLoginStatusForExit(loginStatus chan int, c net.Conn) {
+func (e *Engine) monitroLoginAndShellStatusForExit(loginStatus chan int, c net.Conn, tty *TTY) {
 	loginStatusValue := <-loginStatus
 	if loginStatusValue == utils.Error {
 		data := newIPCMessage("Invalid login conditionals or exit login program.\r\n", utils.Exit)
@@ -31,6 +32,17 @@ func (e *Engine) monitorLoginStatusForExit(loginStatus chan int, c net.Conn) {
 		fmt.Println("Connection closed")
 		return
 	} else {
+		// create the shell, set the foreground, run the shell.
+		shell := &Shell{tty: tty, id: "1"}
+		tty.SetForegroundProcess(shell)
+		var returnStatus chan int = make(chan int)
+		go shell.Run(returnStatus)
+		theValue := <-returnStatus
+		if theValue == utils.Success {
+			writeToClient(c, newIPCMessage("Exiting...", utils.Exit))
+		} else {
+			writeToClient(c, newIPCMessage("Exiting with an error", utils.Exit))
+		}
 		return
 	}
 }
@@ -56,7 +68,7 @@ func (e *Engine) handleClient(c net.Conn) {
 
 	loginStatus := make(chan int)
 	go loginProgram.Run(loginStatus)
-	go e.monitorLoginStatusForExit(loginStatus, c)
+	go e.monitroLoginAndShellStatusForExit(loginStatus, c, tty)
 
 	for {
 		scanner := bufio.NewScanner(c)

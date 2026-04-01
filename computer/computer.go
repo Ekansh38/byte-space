@@ -15,6 +15,7 @@ type Computer struct {
 	Filesystem afero.Fs
 }
 
+
 func initFileSystem(fs afero.Fs, hostname string, ip string) {
 
 	// root:password:uid:homedir

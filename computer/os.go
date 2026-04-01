@@ -15,6 +15,10 @@ type OS struct {
 	Network  NetworkAPI
 }
 
+func (o *OS) Mkdir(path string)  {
+	o.Computer.Filesystem.MkdirAll(path, 0755)
+}
+
 func (o *OS) GetIssue() string {
 	path := "/etc/issue"
 	data, err := afero.ReadFile(o.Computer.Filesystem, path)
