@@ -10,19 +10,19 @@ import (
 )
 
 type LoginProgram struct {
-	done     chan struct{}
-	id       string
-	tty      *TTY // if not foreground then nil
-	graphics *GraphicsAPI
-	Engine   *Engine
+	done        chan struct{}
+	id          string
+	tty         *TTY
+	graphicsAPI *GraphicsAPI // if not foreground then nil
+	Engine      *Engine
 }
 
 func (p *LoginProgram) AddGraphicsAPI(api *GraphicsAPI) {
-	p.graphics = api
+	p.graphicsAPI = api
 }
 
 func (p *LoginProgram) RemoveGraphicsAPI() {
-	p.graphics = nil
+	p.graphicsAPI = nil
 }
 
 func (p *LoginProgram) Run(returnStatus chan int) {
@@ -32,7 +32,7 @@ func (p *LoginProgram) Run(returnStatus chan int) {
 	password := ""
 
 	p.done = make(chan struct{})
-	if p.graphics == nil {
+	if p.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
 	}
@@ -45,7 +45,7 @@ func (p *LoginProgram) Run(returnStatus chan int) {
 	}
 	fmt.Fprintf(&choices, "\n\n\rIP ADDRESS: ")
 
-	p.graphics.Write(choices.String())
+	p.graphicsAPI.Write(choices.String())
 
 	var mainComputer *computer.Computer
 
@@ -53,13 +53,17 @@ func (p *LoginProgram) Run(returnStatus chan int) {
 		value, status := p.tty.Read(p, p.done)
 		switch status {
 		case utils.Success:
+			if value == "" {
+				returnStatus <- utils.Error
+				return
+			}
 
 			if ip_address == "" {
 				ip_address = value
 				ok := false
 				if mainComputer, ok = p.Engine.nodes[ip_address]; ok {
-					p.graphics.Write(mainComputer.OS.GetIssue())
-					p.graphics.Write("\nUSERNAME: ") // change to mainComputer.OS.GetUsernamePrompt or sm
+					p.graphicsAPI.Write(mainComputer.OS.GetIssue())
+					p.graphicsAPI.Write("\nUSERNAME: ") // change to mainComputer.OS.GetUsernamePrompt or sm
 				} else {
 					// p.graphics.Write("Invalid IP address, no computer on network!")
 					returnStatus <- utils.Error
@@ -67,14 +71,14 @@ func (p *LoginProgram) Run(returnStatus chan int) {
 				}
 			} else if username == "" {
 				username = value
-				p.graphics.Write("\nPASSWORD: ") // change to mainComputer.OS.GetPasswordPrompt or sm
+				p.graphicsAPI.Write("\nPASSWORD: ") // change to mainComputer.OS.GetPasswordPrompt or sm
 
 			} else if password == "" {
 				password = value
 				// try login
 				fmt.Printf("USRNAME: %s, PASWD: %s", username, password)
 				if mainComputer.OS.Login(username, password) == utils.Success {
-					p.graphics.Write(mainComputer.OS.GetMotd())
+					p.graphicsAPI.Write(mainComputer.OS.GetMotd())
 
 					sessionStatus, sessionID := p.Engine.NewSession(mainComputer, username)
 					if sessionStatus != utils.Success {
@@ -83,8 +87,6 @@ func (p *LoginProgram) Run(returnStatus chan int) {
 					}
 
 					p.tty.Session = p.Engine.sessions[sessionID]
-					// create and run the shell, set the foreground too.
-
 					returnStatus <- utils.Success
 					return
 

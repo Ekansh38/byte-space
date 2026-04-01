@@ -28,8 +28,6 @@ type Session struct {
 	Computer    *computer.Computer
 	CurrentUser string
 	WorkingDir  string
-	Environment map[string]string
-	Shell       *Shell
 }
 
 func NewEngine() *Engine {
@@ -60,12 +58,10 @@ func (e *Engine) NewSession(node *computer.Computer, username string) (int, stri
 		Computer:    node,
 		CurrentUser: username,
 		WorkingDir:  workingDir,
-		Environment: make(map[string]string),
 	}
 
-	shell := &Shell{Session: e.sessions[sessionID]}
-	if !(shell.Session.Computer.OS.HasDirectory(workingDir)) {
-		shell.mkdir([]string{"mkdir", workingDir})
+	if !(e.sessions[sessionID].Computer.OS.HasDirectory(workingDir)) {
+		e.sessions[sessionID].Computer.OS.Mkdir(workingDir)
 	}
 
 	return utils.Success, sessionID

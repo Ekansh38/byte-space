@@ -15,7 +15,7 @@ func (e *Engine) RunAdminCommand(command string) *EngineIPCMessage {
 
 	// parse the command	
 
-	commandP := parseCommand(command)
+	commandP :=strings.Fields(command)
 
 	if len(commandP) == 0 {
 		message := "No command provided" // this should be filtered out by the client but if the API is used directly.
