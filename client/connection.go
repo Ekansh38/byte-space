@@ -67,7 +67,7 @@ func runBanansi(message *engine.EngineIPCMessage) {
 		case '\x7f':
 			fmt.Print("\b \b") // move cursor back, overwrite with space, move back again
 		case '\r':
-			fmt.Print("\n\r")
+			fmt.Print("\r")
 		case '\n':
 			fmt.Print("\n\r")
 		default:
