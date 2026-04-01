@@ -21,7 +21,7 @@ func (g *GraphicsAPI) Write(str string) (int, error) {
 
 type Program interface {
 	ID() string
-	Run(returnStatus chan int)
+	Run(returnStatus chan int, params []string)
 	HandleSignal(sig Signal)
 	AddGraphicsAPI(api *GraphicsAPI)
 	RemoveGraphicsAPI()

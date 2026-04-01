@@ -36,7 +36,7 @@ func (e *Engine) monitroLoginAndShellStatusForExit(loginStatus chan int, c net.C
 		shell := &Shell{tty: tty, id: "1"}
 		tty.SetForegroundProcess(shell)
 		var returnStatus chan int = make(chan int)
-		go shell.Run(returnStatus)
+		go shell.Run(returnStatus, []string{})
 		theValue := <-returnStatus
 		if theValue == utils.Success {
 			writeToClient(c, newIPCMessage("Exiting...", utils.Exit))
@@ -67,7 +67,7 @@ func (e *Engine) handleClient(c net.Conn) {
 	tty.SetForegroundProcess(loginProgram)
 
 	loginStatus := make(chan int)
-	go loginProgram.Run(loginStatus)
+	go loginProgram.Run(loginStatus, []string{})
 	go e.monitroLoginAndShellStatusForExit(loginStatus, c, tty)
 
 	for {

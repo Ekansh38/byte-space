@@ -7,7 +7,7 @@ import (
 )
 
 type NetworkAPI interface {
-    // Whatever programs need, like send packet and stuf
+	// Whatever programs need, like send packet and stuf
 }
 
 type OS struct {
@@ -15,9 +15,10 @@ type OS struct {
 	Network  NetworkAPI
 }
 
-func (o *OS) Mkdir(path string)  {
-	o.Computer.Filesystem.MkdirAll(path, 0755)
+func (o *OS) Mkdir(path string) {
+	o.Computer.Filesystem.MkdirAll(path, 0o755)
 }
+
 
 func (o *OS) GetIssue() string {
 	path := "/etc/issue"

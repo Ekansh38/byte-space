@@ -25,7 +25,7 @@ func (p *LoginProgram) RemoveGraphicsAPI() {
 	p.graphicsAPI = nil
 }
 
-func (p *LoginProgram) Run(returnStatus chan int) {
+func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 	// data
 	ip_address := ""
 	username := ""
