@@ -105,8 +105,9 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 					s.graphicsAPI.Write(message)
 					break
 				}
-
 				s.tty.Session.WorkingDir = dir
+				s.graphicsAPI.Write("\n")
+
 			case "ls":
 				ls := &Ls{tty: s.tty, id: getUniqueID(runningPrograms)}
 				s.tty.SetForegroundProcess(ls)
@@ -126,6 +127,19 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				params := append(value[1:], flags...)
 				status := make(chan int)
 				go clear.Run(status, params)
+
+				<-status
+
+				// set shell back to foreground
+				s.tty.SetForegroundProcess(s)
+
+			case "cat":
+				cat := &Cat{tty: s.tty, id: getUniqueID(runningPrograms)}
+				s.tty.SetForegroundProcess(cat)
+
+				params := append(value[1:], flags...)
+				status := make(chan int)
+				go cat.Run(status, params)
 
 				<-status
 
