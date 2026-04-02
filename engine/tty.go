@@ -171,7 +171,7 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			case "\x7f": // delete
 				runes := []rune(t.Buffer)
 
-				if t.CursorPosition >= 0 {
+				if t.CursorPosition < len(runes) {
 					runes = append(runes[:t.CursorPosition], runes[t.CursorPosition+1:]...)
 					t.Buffer = string(runes)
 
