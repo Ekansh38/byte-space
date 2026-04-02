@@ -64,8 +64,6 @@ func engineReader(c net.Conn, done chan struct{}) {
 func runBanansi(message *engine.EngineIPCMessage) {
 	for _, char := range message.Result {
 		switch char {
-		case '\x7f':
-			fmt.Print("\b \b") // move cursor back, overwrite with space, move back again
 		case '\r':
 			fmt.Print("\r")
 		case '\n':
