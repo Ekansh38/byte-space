@@ -55,7 +55,6 @@ func engineReader(c net.Conn, done chan struct{}) {
 				fmt.Printf("\n\r\n") // avoid that annoying % from zsh.
 				return
 			}
-
 			runBanansi(&message)
 		}
 	}

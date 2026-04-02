@@ -79,7 +79,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 					s.graphicsAPI.Write("Usage: pwd\n")
 					break
 				}
-				dataToDisplay := fmt.Sprintf("%s\n", s.tty.Session.WorkingDir)
+				dataToDisplay := fmt.Sprintf("\n%s\n", s.tty.Session.WorkingDir)
 				s.graphicsAPI.Write(dataToDisplay)
 			case "cd":
 				if len(flags) > 0 {
