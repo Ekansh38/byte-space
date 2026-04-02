@@ -10,17 +10,14 @@ import (
 )
 
 var (
-	clientEngineStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("226")).
+	keystrokeStyle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#4275ff"))
+
+	executeStyle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("213")).
 		Bold(true)
 
-	engineTTYStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("51"))
-
-	ttyProgramStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("213"))
-
-	ttyClientStyle = lipgloss.NewStyle().
+	outputStyle = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("111"))
 
 	stateChangeStyle = lipgloss.NewStyle().
@@ -32,9 +29,6 @@ var (
 
 	detailStyle = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("252"))
-
-	borderStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("238"))
 
 	hexStyle = lipgloss.NewStyle().
 		Foreground(lipgloss.Color("93"))
@@ -98,7 +92,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.updateState(e)
 		logLine := formatEvent(e)
 		
-		// Only add non-empty lines
 		if logLine != "" {
 			m.logLines = append(m.logLines, logLine)
 		}
@@ -180,35 +173,41 @@ func formatEvent(e engine.Event) string {
 	var eventType, details string
 	
 	switch e.Type {
-	// Skip individual keystroke events
+	// Show keystroke (collapsed from client→engine→tty into one line)
+	case engine.EventEngineToTTY:
+		eventType = keystrokeStyle.Render("KEYSTROKE    ")
+		key := formatKey(e.Data["key"])
+		details = key
+		
+	// Skip the client→engine event (redundant with engine→tty)
 	case engine.EventClientToEngine:
 		return ""
-	case engine.EventEngineToTTY:
-		return ""
 		
-	// Show command execution (collapsed journey)
+	// Command execution
 	case engine.EventTTYToProgram:
 		if cmd, ok := e.Data["cmd"]; ok {
-			// Command executed - show full journey
-			eventType = clientEngineStyle.Render("KEYSTROKE→CMD ")
+			eventType = executeStyle.Render("EXECUTE      ")
 			cmdStr := bufferStyle.Render(fmt.Sprintf("%q", cmd))
 			prog := detailStyle.Render(fmt.Sprintf("→ %v", e.Data["prog"]))
 			details = fmt.Sprintf("%s %s", cmdStr, prog)
 		} else {
-			// Raw mode keystroke - still skip
-			return ""
+			// Raw mode keystroke to program
+			eventType = keystrokeStyle.Render("KEYSTROKE    ")
+			key := formatKey(e.Data["key"])
+			prog := detailStyle.Render(fmt.Sprintf("→ %v", e.Data["prog"]))
+			details = fmt.Sprintf("%s %s", key, prog)
 		}
 		
 	case engine.EventTTYToClient:
-		eventType = ttyClientStyle.Render("OUTPUT       ")
+		eventType = outputStyle.Render("OUTPUT       ")
 		output := fmt.Sprintf("%v", e.Data["output"])
 		
-		// Truncate and show escapes
 		if len(output) > 40 {
 			output = output[:40] + "..."
 		}
 		output = strings.ReplaceAll(output, "\n", "\\n")
 		output = strings.ReplaceAll(output, "\r", "\\r")
+		output = strings.ReplaceAll(output, "\b", "\\b")
 		
 		details = fmt.Sprintf("%q", output)
 		
@@ -248,23 +247,18 @@ func (m Model) View() string {
 		return "Loading..."
 	}
 	
-	// Calculate widths
 	stateWidth := 35
 	logWidth := m.width - stateWidth - 3
 	
-	// Build state panel (FIXED HEIGHT)
 	statePanel := m.renderStatePanel(stateWidth)
 	stateLines := strings.Split(statePanel, "\n")
 	
-	// Build log panel (SCROLLS)
 	logPanel := m.renderLogPanel(logWidth)
 	logLines := strings.Split(logPanel, "\n")
 	
-	// Combine with fixed state height
 	var result strings.Builder
 	
 	for i := 0; i < m.height; i++ {
-		// Left side (state) - fixed, doesn't scroll
 		if i < len(stateLines) {
 			line := stateLines[i]
 			result.WriteString(line)
@@ -273,14 +267,11 @@ func (m Model) View() string {
 				result.WriteString(strings.Repeat(" ", padding))
 			}
 		} else {
-			// After state panel ends, just show empty space
 			result.WriteString(strings.Repeat(" ", stateWidth))
 		}
 		
-		// Divider
 		result.WriteString(" │ ")
 		
-		// Right side (log) - scrolls
 		if i < len(logLines) {
 			result.WriteString(logLines[i])
 		}
@@ -334,7 +325,6 @@ func (m Model) renderLogPanel(width int) string {
 	s.WriteString(titleStyle.Render("EVENT LOG") + "\n")
 	s.WriteString(strings.Repeat("─", width) + "\n")
 	
-	// Show last N lines that fit
 	maxLogLines := m.height - 2
 	start := 0
 	if len(m.logLines) > maxLogLines {

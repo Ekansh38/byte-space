@@ -62,6 +62,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 	prompt := fmt.Sprintf("\n\r%s$ ", s.tty.Session.WorkingDir)
 	s.graphicsAPI.Write(prompt)
 	prompt = fmt.Sprintf("%s$ ", s.tty.Session.WorkingDir)
+	prefix := ""
 
 	var runningPrograms []string
 	for {
@@ -165,14 +166,15 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				s.tty.SetForegroundProcess(s)
 
 			case "":
+				prefix = "\n"
 				break
 
 			default:
-				s.graphicsAPI.Write("no such command!\n")
+				s.graphicsAPI.Write("\nno such command!\n")
 
 			}
 
-			prompt = fmt.Sprintf("%s$ ", s.tty.Session.WorkingDir)
+			prompt = fmt.Sprintf("%s%s$ ",prefix, s.tty.Session.WorkingDir)
 			s.graphicsAPI.Write(prompt)
 		case utils.Exit:
 			returnStatus <- utils.Error
