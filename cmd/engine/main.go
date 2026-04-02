@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	//"fmt"
+	//"os"
 
-	tea "github.com/charmbracelet/bubbletea"
+	//tea "github.com/charmbracelet/bubbletea"
 	"byte-space/engine"
-	"byte-space/tui"
+	//"byte-space/tui"
 )
 
 func main() {
@@ -14,19 +14,19 @@ func main() {
 	eng := engine.NewEngine()
 
 	// Subscribe to events
-	events := eng.EventBus.Subscribe()
+	//events := eng.EventBus.Subscribe()
 
 	// Start engine in background
-	go eng.Run()
+	eng.Run()
 
 	// Start TUI
-	p := tea.NewProgram(
-		tui.NewModel(events),
-		tea.WithAltScreen(),
-	)
+//	p := tea.NewProgram(
+//		tui.NewModel(events),
+//		tea.WithAltScreen(),
+//	)
 
-	if _, err := p.Run(); err != nil {
-		fmt.Printf("Error: %v\n", err)
-		os.Exit(1)
-	}
+//	if _, err := p.Run(); err != nil {
+//		fmt.Printf("Error: %v\n", err)
+//		os.Exit(1)
+//	}
 }

@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"fmt"
 	"io"
 	"net"
 
@@ -35,6 +36,7 @@ type TTY struct {
 	Canonical         bool
 	Echo              bool
 	Buffer            string
+	CursorPosition    int
 	dataChannel       chan string
 	Session           *Session
 	Connection        net.Conn
@@ -118,15 +120,26 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 				ansiData := receivedData
 
 				if receivedData == "\x7f" { // delete -> backspace ANSI
-					if len(t.Buffer) > 0 {
-						ansiData = "\x7f"
+					if t.CursorPosition > 0 {
+						ansiData = "\b \b"
+						t.CursorPosition--
 					} else {
 						ansiData = ""
 					}
-				} else if receivedData == "\x1b[C" || receivedData == "\x1b[A" || receivedData == "\x1b[B" || receivedData == "\x1b[D" {
+				} else if receivedData == "\x1b[A" || receivedData == "\x1b[B" {
 					ansiData = ""
+				} else if receivedData == "\x1b[C" {
+					if t.CursorPosition == len(t.Buffer) {
+						ansiData = ""
+					}
+				} else if receivedData == "\x1b[D" {
+					if t.CursorPosition == 0 {
+						ansiData = ""
+					}
 				}
+
 				data := newIPCMessage(ansiData, utils.Success)
+
 				writeToClient(t.Connection, data)
 			}
 
@@ -143,7 +156,6 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			switch receivedData {
 			case "\r":
 				data := t.Buffer
-				t.Buffer = ""
 
 				if t.engine != nil && t.engine.EventBus != nil {
 					t.engine.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
@@ -151,15 +163,51 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 						"prog": program.ID(),
 					})
 				}
+
+				t.CursorPosition = 0
+				t.Buffer = ""
+
 				return data, utils.Success
 			case "\x7f": // delete
-				if len(t.Buffer) > 0 {
-					t.Buffer = t.Buffer[:len(t.Buffer)-1]
+				runes := []rune(t.Buffer)
+
+				if t.CursorPosition >= 0 {
+					runes = append(runes[:t.CursorPosition], runes[t.CursorPosition+1:]...)
+					t.Buffer = string(runes)
+
+					if t.Echo {
+						right := string(runes[t.CursorPosition:])
+						output := right + " "
+						output += fmt.Sprintf("\x1b[%dD", len(right)+1)
+						writeToClient(t.Connection, newIPCMessage(output, utils.Success))
+					}
 				}
-			case "\x1b[C", "\x1b[A", "\x1b[B", "\x1b[D": // arrow keys
+			case "\x1b[A", "\x1b[B":
 				continue
+			case "\x1b[C":
+				if t.CursorPosition != len(t.Buffer) {
+					t.CursorPosition += 1
+				}
+			case "\x1b[D":
+				if t.CursorPosition != 0 {
+					t.CursorPosition -= 1
+				}
+
 			default:
-				t.Buffer += receivedData
+				index := t.CursorPosition
+				r := []rune(receivedData)
+				runes := []rune(t.Buffer)
+				runes = append(runes[:index], append(r, runes[index:]...)...)
+				newStr := string(runes)
+				t.Buffer = newStr
+				t.CursorPosition += len(r)
+				if t.Echo {
+					right := string(runes[t.CursorPosition:])
+					output := right + " "
+					output += fmt.Sprintf("\x1b[%dD", len(right)+1)
+					writeToClient(t.Connection, newIPCMessage(output, utils.Success))
+				}
+
 			}
 
 		case <-done:

@@ -169,6 +169,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 			default:
 				s.graphicsAPI.Write("no such command!\n")
+
 			}
 
 			prompt = fmt.Sprintf("%s$ ", s.tty.Session.WorkingDir)
