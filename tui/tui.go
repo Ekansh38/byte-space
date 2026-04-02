@@ -10,53 +10,66 @@ import (
 )
 
 var (
-	// Arrow/flow colors
 	clientEngineStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("226")).  // Bright yellow
+		Foreground(lipgloss.Color("226")).
 		Bold(true)
 
 	engineTTYStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("51"))  // Bright cyan
+		Foreground(lipgloss.Color("51"))
 
 	ttyProgramStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("213"))  // Bright pink
-
-	programTTYStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("83"))  // Bright green
+		Foreground(lipgloss.Color("213"))
 
 	ttyClientStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("111"))  // Light blue
+		Foreground(lipgloss.Color("111"))
 
-	// Event type colors
 	stateChangeStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("196")).  // Red
+		Foreground(lipgloss.Color("196")).
 		Bold(true)
 
 	timestampStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("240"))  // Dark gray
+		Foreground(lipgloss.Color("240"))
 
 	detailStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("252"))  // Light gray
+		Foreground(lipgloss.Color("252"))
 
 	borderStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("238")).
-		Bold(true)
+		Foreground(lipgloss.Color("238"))
 
 	hexStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("93"))  // Purple
+		Foreground(lipgloss.Color("93"))
+		
+	bufferStyle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("228")).
+		Bold(true)
+		
+	titleStyle = lipgloss.NewStyle().
+		Foreground(lipgloss.Color("196")).
+		Bold(true)
 )
 
 type Model struct {
-	events   chan engine.Event
-	logLines []string
-	width    int
-	height   int
+	events      chan engine.Event
+	logLines    []string
+	ttyState    *TTYState
+	width       int
+	height      int
+}
+
+type TTYState struct {
+	Mode           string
+	Echo           bool
+	Buffer         string
+	CursorPos      int
+	ForegroundProg string
+	SessionUser    string
 }
 
 func NewModel(events chan engine.Event) Model {
 	return Model{
-		events:   events,
-		logLines: make([]string, 0),
+		events:    events,
+		logLines:  make([]string, 0),
+		ttyState:  &TTYState{Mode: "CANONICAL", Echo: true},
 	}
 }
 
@@ -82,10 +95,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case eventMsg:
 		e := engine.Event(msg)
+		m.updateState(e)
 		logLine := formatEvent(e)
-		m.logLines = append(m.logLines, logLine)
+		
+		// Only add non-empty lines
+		if logLine != "" {
+			m.logLines = append(m.logLines, logLine)
+		}
 
-		if len(m.logLines) > 500 {
+		if len(m.logLines) > 1000 {
 			m.logLines = m.logLines[1:]
 		}
 
@@ -100,157 +118,126 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+func (m *Model) updateState(e engine.Event) {
+	switch e.Type {
+	case engine.EventEngineToTTY:
+		if mode, ok := e.Data["canonical"].(bool); ok {
+			if mode {
+				m.ttyState.Mode = "CANONICAL"
+			} else {
+				m.ttyState.Mode = "RAW"
+			}
+		}
+		if echo, ok := e.Data["echo"].(bool); ok {
+			m.ttyState.Echo = echo
+		}
+	case engine.EventForegroundChanged:
+		if prog, ok := e.Data["program"].(string); ok {
+			m.ttyState.ForegroundProg = prog
+		}
+	case engine.EventSessionCreated:
+		if user, ok := e.Data["user"].(string); ok {
+			m.ttyState.SessionUser = user
+		}
+	}
+}
+
 func formatKey(key interface{}) string {
 	keyStr := fmt.Sprintf("%v", key)
 	
-	// Show special keys
 	switch keyStr {
 	case "\r":
-		return hexStyle.Render("CR") + detailStyle.Render(" (0x0d)")
+		return hexStyle.Render("CR")
 	case "\n":
-		return hexStyle.Render("LF") + detailStyle.Render(" (0x0a)")
+		return hexStyle.Render("LF")
 	case "\x03":
-		return hexStyle.Render("^C") + detailStyle.Render(" (SIGINT)")
-	case "\x04":
-		return hexStyle.Render("^D") + detailStyle.Render(" (EOF)")
+		return hexStyle.Render("^C")
 	case "\x7f":
-		return hexStyle.Render("BS") + detailStyle.Render(" (backspace)")
+		return hexStyle.Render("DEL")
 	case "\x1b[A":
-		return hexStyle.Render("↑") + detailStyle.Render(" (up)")
+		return hexStyle.Render("↑")
 	case "\x1b[B":
-		return hexStyle.Render("↓") + detailStyle.Render(" (down)")
+		return hexStyle.Render("↓")
 	case "\x1b[C":
-		return hexStyle.Render("→") + detailStyle.Render(" (right)")
+		return hexStyle.Render("→")
 	case "\x1b[D":
-		return hexStyle.Render("←") + detailStyle.Render(" (left)")
+		return hexStyle.Render("←")
+	case " ":
+		return hexStyle.Render("SPC")
+	case "\t":
+		return hexStyle.Render("TAB")
 	default:
-		// Show printable + hex
 		if len(keyStr) == 1 && keyStr[0] >= 32 && keyStr[0] <= 126 {
-			hex := fmt.Sprintf("0x%02x", keyStr[0])
-			return hexStyle.Render(keyStr) + detailStyle.Render(fmt.Sprintf(" (%s)", hex))
+			return hexStyle.Render(fmt.Sprintf("'%s'", keyStr))
 		}
 		return hexStyle.Render(fmt.Sprintf("%q", keyStr))
 	}
 }
 
-func truncate(s string, max int) string {
-	if len(s) > max {
-		return s[:max] + detailStyle.Render("...")
-	}
-	return s
-}
-
 func formatEvent(e engine.Event) string {
-	timestamp := timestampStyle.Render(e.Timestamp.Format("15:04:05.000"))
+	timestamp := timestampStyle.Render(e.Timestamp.Format("15:04:05"))
 	
 	var eventType, details string
 	
 	switch e.Type {
+	// Skip individual keystroke events
 	case engine.EventClientToEngine:
-		eventType = clientEngineStyle.Render("CLIENT→ENGINE")
-		key := formatKey(e.Data["key"])
-		tty := detailStyle.Render(fmt.Sprintf("tty=%v", e.Data["tty"]))
-		details = fmt.Sprintf("%s %s", key, tty)
-		
+		return ""
 	case engine.EventEngineToTTY:
-		eventType = engineTTYStyle.Render("ENGINE→TTY   ")
-		key := formatKey(e.Data["key"])
+		return ""
 		
-		mode := "raw"
-		if canonical, ok := e.Data["canonical"].(bool); ok && canonical {
-			mode = "canonical"
-		}
-		echo := "echo=off"
-		if echoOn, ok := e.Data["echo"].(bool); ok && echoOn {
-			echo = "echo=on"
-		}
-		
-		modeInfo := detailStyle.Render(fmt.Sprintf("mode=%s %s", mode, echo))
-		tty := detailStyle.Render(fmt.Sprintf("tty=%v", e.Data["tty"]))
-		details = fmt.Sprintf("%s %s %s", key, modeInfo, tty)
-		
+	// Show command execution (collapsed journey)
 	case engine.EventTTYToProgram:
-		eventType = ttyProgramStyle.Render("TTY→PROGRAM  ")
-		prog := detailStyle.Render(fmt.Sprintf("prog=%v", e.Data["prog"]))
-		
 		if cmd, ok := e.Data["cmd"]; ok {
-			cmdStr := hexStyle.Render(fmt.Sprintf("%q", cmd))
-			bufLen := detailStyle.Render(fmt.Sprintf("len=%d", len(fmt.Sprintf("%v", cmd))))
-			details = fmt.Sprintf("cmd=%s %s %s", cmdStr, bufLen, prog)
+			// Command executed - show full journey
+			eventType = clientEngineStyle.Render("KEYSTROKE→CMD ")
+			cmdStr := bufferStyle.Render(fmt.Sprintf("%q", cmd))
+			prog := detailStyle.Render(fmt.Sprintf("→ %v", e.Data["prog"]))
+			details = fmt.Sprintf("%s %s", cmdStr, prog)
 		} else {
-			key := formatKey(e.Data["key"])
-			details = fmt.Sprintf("key=%s %s", key, prog)
+			// Raw mode keystroke - still skip
+			return ""
 		}
-		
-	case engine.EventProgramToTTY:
-		eventType = programTTYStyle.Render("PROGRAM→TTY  ")
-		output := fmt.Sprintf("%v", e.Data["output"])
-		prog := detailStyle.Render(fmt.Sprintf("prog=%v", e.Data["prog"]))
-		
-		// Show output with escapes visible
-		displayOutput := truncate(output, 60)
-		displayOutput = strings.ReplaceAll(displayOutput, "\n", hexStyle.Render("\\n"))
-		displayOutput = strings.ReplaceAll(displayOutput, "\r", hexStyle.Render("\\r"))
-		
-		byteCount := detailStyle.Render(fmt.Sprintf("bytes=%d", len(output)))
-		details = fmt.Sprintf("data=%q %s %s", displayOutput, byteCount, prog)
 		
 	case engine.EventTTYToClient:
-		eventType = ttyClientStyle.Render("TTY→CLIENT   ")
+		eventType = ttyClientStyle.Render("OUTPUT       ")
 		output := fmt.Sprintf("%v", e.Data["output"])
-		tty := detailStyle.Render(fmt.Sprintf("tty=%v", e.Data["tty"]))
 		
-		// Show output with escapes visible
-		displayOutput := truncate(output, 50)
-		displayOutput = strings.ReplaceAll(displayOutput, "\n", hexStyle.Render("\\n"))
-		displayOutput = strings.ReplaceAll(displayOutput, "\r", hexStyle.Render("\\r"))
+		// Truncate and show escapes
+		if len(output) > 40 {
+			output = output[:40] + "..."
+		}
+		output = strings.ReplaceAll(output, "\n", "\\n")
+		output = strings.ReplaceAll(output, "\r", "\\r")
 		
-		byteCount := detailStyle.Render(fmt.Sprintf("bytes=%d", len(output)))
-		details = fmt.Sprintf("ansi=%q %s %s", displayOutput, byteCount, tty)
+		details = fmt.Sprintf("%q", output)
 		
 	case engine.EventTTYCreated:
 		eventType = stateChangeStyle.Render("[ TTY_INIT ]   ")
-		ttyID := e.Data["tty_id"]
-		details = detailStyle.Render(fmt.Sprintf("created tty=%v canonical=true echo=true", ttyID))
+		details = detailStyle.Render(fmt.Sprintf("tty=%v", e.Data["tty_id"]))
 		
 	case engine.EventTTYModeChanged:
 		eventType = stateChangeStyle.Render("[ TTY_MODE ]   ")
-		tty := e.Data["tty_id"]
-		mode := e.Data["mode"]
-		echo := e.Data["echo"]
-		details = detailStyle.Render(fmt.Sprintf("tty=%v mode=%v echo=%v", tty, mode, echo))
+		details = detailStyle.Render(fmt.Sprintf("%v echo=%v", e.Data["mode"], e.Data["echo"]))
 		
 	case engine.EventForegroundChanged:
 		eventType = stateChangeStyle.Render("[ FOREGROUND ] ")
-		prog := e.Data["program"]
-		tty := e.Data["tty_id"]
-		details = detailStyle.Render(fmt.Sprintf("tty=%v → prog=%v (has input control)", tty, prog))
+		details = detailStyle.Render(fmt.Sprintf("%v", e.Data["program"]))
 		
 	case engine.EventProgramStarted:
 		eventType = stateChangeStyle.Render("[ PROG_START ] ")
-		progID := e.Data["program_id"]
-		progType := e.Data["type"]
-		details = detailStyle.Render(fmt.Sprintf("spawned %v id=%v", progType, progID))
+		details = detailStyle.Render(fmt.Sprintf("%v", e.Data["program_id"]))
 		
 	case engine.EventProgramExited:
 		eventType = stateChangeStyle.Render("[ PROG_EXIT ]  ")
-		progID := e.Data["program_id"]
-		status := e.Data["status"]
-		runtime := e.Data["runtime"]
-		details = detailStyle.Render(fmt.Sprintf("terminated id=%v status=%v runtime=%v", progID, status, runtime))
+		details = detailStyle.Render(fmt.Sprintf("%v", e.Data["program_id"]))
 		
 	case engine.EventSessionCreated:
 		eventType = stateChangeStyle.Render("[ SESSION ]    ")
-		sessionID := e.Data["session_id"]
-		user := e.Data["user"]
-		computer := e.Data["computer"]
-		details = detailStyle.Render(fmt.Sprintf("established session=%v user=%v@%v", sessionID, user, computer))
+		details = detailStyle.Render(fmt.Sprintf("%v@%v", e.Data["user"], e.Data["computer"]))
 		
 	default:
-		eventType = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("248")).
-			Render(fmt.Sprintf("[ %-10s ]", string(e.Type)))
-		details = detailStyle.Render(fmt.Sprintf("%v", e.Data))
+		return ""
 	}
 	
 	return fmt.Sprintf("%s │ %s │ %s", timestamp, eventType, details)
@@ -258,60 +245,105 @@ func formatEvent(e engine.Event) string {
 
 func (m Model) View() string {
 	if m.width == 0 {
-		return "Initializing..."
+		return "Loading..."
 	}
 	
-	// Top border with stats
-	stats := detailStyle.Render(fmt.Sprintf(
-		"  events:%d  |  buffer:%d/500  ",
-		len(m.logLines),
-		len(m.logLines),
-	))
+	// Calculate widths
+	stateWidth := 35
+	logWidth := m.width - stateWidth - 3
 	
-	topBorder := borderStyle.Render("┌" + strings.Repeat("─", m.width-2) + "┐")
-	statLine := borderStyle.Render("│") + stats + 
-		borderStyle.Render(strings.Repeat(" ", m.width-len(stats)-2)) + 
-		borderStyle.Render("│")
-	divider := borderStyle.Render("├" + strings.Repeat("─", m.width-2) + "┤")
+	// Build state panel (FIXED HEIGHT)
+	statePanel := m.renderStatePanel(stateWidth)
+	stateLines := strings.Split(statePanel, "\n")
 	
-	// Event log
-	maxLines := m.height - 6
-	if maxLines < 1 {
-		maxLines = 20
-	}
-
-	start := 0
-	if len(m.logLines) > maxLines {
-		start = len(m.logLines) - maxLines
-	}
-
-	var logs strings.Builder
-	for i := start; i < len(m.logLines); i++ {
-		logs.WriteString(borderStyle.Render("│") + " " + m.logLines[i])
-		// Pad to width
-		lineLen := lipgloss.Width(m.logLines[i])
-		padding := m.width - lineLen - 4
-		if padding > 0 {
-			logs.WriteString(strings.Repeat(" ", padding))
+	// Build log panel (SCROLLS)
+	logPanel := m.renderLogPanel(logWidth)
+	logLines := strings.Split(logPanel, "\n")
+	
+	// Combine with fixed state height
+	var result strings.Builder
+	
+	for i := 0; i < m.height; i++ {
+		// Left side (state) - fixed, doesn't scroll
+		if i < len(stateLines) {
+			line := stateLines[i]
+			result.WriteString(line)
+			padding := stateWidth - lipgloss.Width(line)
+			if padding > 0 {
+				result.WriteString(strings.Repeat(" ", padding))
+			}
+		} else {
+			// After state panel ends, just show empty space
+			result.WriteString(strings.Repeat(" ", stateWidth))
 		}
-		logs.WriteString(borderStyle.Render("│") + "\n")
+		
+		// Divider
+		result.WriteString(" │ ")
+		
+		// Right side (log) - scrolls
+		if i < len(logLines) {
+			result.WriteString(logLines[i])
+		}
+		
+		result.WriteString("\n")
 	}
-
-	// Bottom border
-	bottomDivider := borderStyle.Render("├" + strings.Repeat("─", m.width-2) + "┤")
 	
-	controls := detailStyle.Render("  q:quit  |  ctrl+c:exit  ")
-	controlLine := borderStyle.Render("│") + controls +
-		borderStyle.Render(strings.Repeat(" ", m.width-len(controls)-2)) +
-		borderStyle.Render("│")
-	
-	bottomBorder := borderStyle.Render("└" + strings.Repeat("─", m.width-2) + "┘")
+	return result.String()
+}
 
-	return topBorder + "\n" +
-		statLine + "\n" +
-		divider + "\n" +
-		logs.String() +
-		bottomDivider + "\n" +
-		controlLine + "\n" +
-		bottomBorder
+func (m Model) renderStatePanel(width int) string {
+	var s strings.Builder
+	
+	s.WriteString(titleStyle.Render("ENGINE STATE") + "\n")
+	s.WriteString(strings.Repeat("─", width) + "\n\n")
+	
+	s.WriteString("MODE: " + bufferStyle.Render(m.ttyState.Mode) + "\n")
+	
+	echoStr := "OFF"
+	if m.ttyState.Echo {
+		echoStr = "ON"
+	}
+	s.WriteString("ECHO: " + bufferStyle.Render(echoStr) + "\n\n")
+	
+	if m.ttyState.Buffer == "" {
+		s.WriteString("BUFFER: " + detailStyle.Render("(empty)") + "\n")
+	} else {
+		s.WriteString("BUFFER: " + bufferStyle.Render(fmt.Sprintf("%q", m.ttyState.Buffer)) + "\n")
+	}
+	s.WriteString(detailStyle.Render(fmt.Sprintf("  len=%d pos=%d", len(m.ttyState.Buffer), m.ttyState.CursorPos)) + "\n\n")
+	
+	if m.ttyState.ForegroundProg == "" {
+		s.WriteString("FOREGROUND: " + detailStyle.Render("(none)") + "\n")
+	} else {
+		s.WriteString("FOREGROUND:\n  " + bufferStyle.Render(m.ttyState.ForegroundProg) + "\n")
+	}
+	s.WriteString("\n")
+	
+	if m.ttyState.SessionUser == "" {
+		s.WriteString("SESSION: " + detailStyle.Render("(none)") + "\n")
+	} else {
+		s.WriteString("SESSION: " + bufferStyle.Render(m.ttyState.SessionUser) + "\n")
+	}
+	
+	return s.String()
+}
+
+func (m Model) renderLogPanel(width int) string {
+	var s strings.Builder
+	
+	s.WriteString(titleStyle.Render("EVENT LOG") + "\n")
+	s.WriteString(strings.Repeat("─", width) + "\n")
+	
+	// Show last N lines that fit
+	maxLogLines := m.height - 2
+	start := 0
+	if len(m.logLines) > maxLogLines {
+		start = len(m.logLines) - maxLogLines
+	}
+	
+	for i := start; i < len(m.logLines); i++ {
+		s.WriteString(m.logLines[i] + "\n")
+	}
+	
+	return s.String()
 }
