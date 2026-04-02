@@ -71,11 +71,13 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 				}
 			} else if username == "" {
 				username = value
+				p.tty.Echo = false
 				p.graphicsAPI.Write("\nPASSWORD: ") // change to mainComputer.OS.GetPasswordPrompt or sm
 
 			} else if password == "" {
 				password = value
 				// try login
+				p.tty.Echo = true
 				if mainComputer.OS.Login(username, password) == utils.Success {
 					p.graphicsAPI.Write(mainComputer.OS.GetMotd())
 
