@@ -74,6 +74,12 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 			switch value[0] {
 			case "exit":
 				returnStatus <- utils.Success
+				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
+					"program_id": "login-0",
+					"status":     0,
+					"tty_id":     s.tty.id,
+				})
+
 				return
 			case "pwd":
 				if len(value) != 1 {
@@ -125,6 +131,12 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 				<-status
 
+				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
+					"program_id": ls.ID(),
+					"status":     0,
+					"tty_id":     s.tty.id,
+				})
+
 				// set shell back to foreground
 				s.tty.SetForegroundProcess(s)
 			case "clear":
@@ -133,7 +145,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 				params := append(value[1:], flags...)
 				status := make(chan int)
-				
+
 				s.tty.engine.EventBus.Publish(EventProgramStarted, map[string]interface{}{
 					"program_id": clear.ID(),
 					"tty_id":     s.tty.id,
@@ -142,6 +154,13 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				go clear.Run(status, params)
 
 				<-status
+				
+				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
+					"program_id": clear.ID(),
+					"status":     0,
+					"tty_id":     s.tty.id,
+				})
+
 
 				// set shell back to foreground
 				s.tty.SetForegroundProcess(s)
@@ -162,6 +181,41 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 				<-status
 
+				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
+					"program_id": cat.ID(),
+					"status":     0,
+					"tty_id":     s.tty.id,
+				})
+
+
+
+				// set shell back to foreground
+				s.tty.SetForegroundProcess(s)
+
+			case "adduser":
+				adduser := &Adduser{tty: s.tty, id: "adduser-" + getUniqueID(runningPrograms)}
+				s.tty.SetForegroundProcess(adduser)
+
+				params := append(value[1:], flags...)
+				status := make(chan int)
+
+				s.tty.engine.EventBus.Publish(EventProgramStarted, map[string]interface{}{
+					"program_id": adduser.ID(),
+					"tty_id":     s.tty.id,
+				})
+
+				go adduser.Run(status, params)
+
+				<-status
+
+				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
+					"program_id": adduser.ID(),
+					"status":     0,
+					"tty_id":     s.tty.id,
+				})
+
+
+
 				// set shell back to foreground
 				s.tty.SetForegroundProcess(s)
 
@@ -174,7 +228,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 			}
 
-			prompt = fmt.Sprintf("%s%s$ ",prefix, s.tty.Session.WorkingDir)
+			prompt = fmt.Sprintf("%s%s$ ", prefix, s.tty.Session.WorkingDir)
 			s.graphicsAPI.Write(prompt)
 		case utils.Exit:
 			returnStatus <- utils.Error

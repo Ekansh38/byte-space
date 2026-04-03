@@ -7,12 +7,12 @@ type EventType string
 
 const (
 	// Flow events (journey of data)
-	EventClientToEngine   EventType = "client→engine"
-	EventEngineToTTY      EventType = "engine→tty"
-	EventTTYToProgram     EventType = "tty→program"
-	EventProgramToTTY     EventType = "program→tty"
-	EventTTYToClient      EventType = "tty→client"
-	
+	EventClientToEngine EventType = "client→engine"
+	EventEngineToTTY    EventType = "engine→tty"
+	EventTTYToProgram   EventType = "tty→program"
+	EventProgramToTTY   EventType = "program→tty"
+	EventTTYToClient    EventType = "tty→client"
+
 	// State change events
 	EventTTYCreated        EventType = "tty_created"
 	EventTTYModeChanged    EventType = "tty_mode_changed"
@@ -20,6 +20,8 @@ const (
 	EventProgramStarted    EventType = "program_started"
 	EventProgramExited     EventType = "program_exited"
 	EventSessionCreated    EventType = "session_created"
+	EventBufferChanged     EventType = "buffer_changed"
+	EventTTYClosed         EventType = "tty_closed"
 )
 
 type Event struct {
@@ -50,7 +52,7 @@ func (eb *EventBus) Publish(eventType EventType, data map[string]interface{}) {
 		Type:      eventType,
 		Data:      data,
 	}
-	
+
 	for _, ch := range eb.subscribers {
 		select {
 		case ch <- event:

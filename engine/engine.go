@@ -49,8 +49,6 @@ func (e *Engine) NewSession(node *computer.Computer, username string) (int, stri
 	sessionID := e.generateSessionID()
 	workingDir := "/"
 
-
-
 	if username == "root" {
 		workingDir = "/root"
 	} else {
@@ -67,6 +65,13 @@ func (e *Engine) NewSession(node *computer.Computer, username string) (int, stri
 	if !(e.sessions[sessionID].Computer.OS.HasDirectory(workingDir)) {
 		e.sessions[sessionID].Computer.OS.Mkdir(workingDir)
 	}
+
+	e.EventBus.Publish(EventSessionCreated, map[string]interface{}{
+		"session_id":  sessionID,
+		"user":        username,
+		"computer":    node.Name,
+		"working_dir": workingDir, 
+	})
 
 	return utils.Success, sessionID
 }

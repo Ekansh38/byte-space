@@ -138,7 +138,7 @@ type Cat struct {
 func (p *Cat) Run(returnStatus chan int, params []string) {
 	if p.graphicsAPI != nil {
 		if len(params) != 1 {
-			p.graphicsAPI.Write("Usage: cat <path>\n")
+			p.graphicsAPI.Write("\nUsage: cat <path>\n")
 			returnStatus <- utils.Error
 			return
 		}
@@ -151,7 +151,7 @@ func (p *Cat) Run(returnStatus chan int, params []string) {
 
 		file, err := p.tty.Session.Computer.Filesystem.Open(target)
 		if err != nil {
-			message := "Failed to open file\n"
+			message := "\nFailed to open file\n"
 			if strings.HasSuffix(err.Error(), "no such file or directory") {
 				message = "cat: cannot open: No such file or directory\n"
 			}
@@ -163,14 +163,14 @@ func (p *Cat) Run(returnStatus chan int, params []string) {
 
 		content, err := afero.ReadAll(file)
 		if err != nil {
-			message := "Failed to read file\n"
+			message := "\nFailed to read file\n"
 			p.graphicsAPI.Write(message)
 			returnStatus <- utils.Error
 			return
 		}
 
 		returnStatus <- utils.Success
-		p.graphicsAPI.Write(string(content)+"\n")
+		p.graphicsAPI.Write("\n"+string(content)+"\n")
 		return
 	}
 }

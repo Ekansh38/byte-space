@@ -45,6 +45,7 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 	}
 	fmt.Fprintf(&choices, "\n\n\rIP ADDRESS: ")
 
+	p.graphicsAPI.Write("\033[H\033[2J")
 	p.graphicsAPI.Write(choices.String())
 
 	var mainComputer *computer.Computer
@@ -71,13 +72,13 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 				}
 			} else if username == "" {
 				username = value
-				p.tty.Echo = false
+				p.tty.PasswdMode = true
 				p.graphicsAPI.Write("\nPASSWORD: ") // change to mainComputer.OS.GetPasswordPrompt or sm
 
 			} else if password == "" {
 				password = value
 				// try login
-				p.tty.Echo = true
+				p.tty.PasswdMode = false
 				if mainComputer.OS.Login(username, password) == utils.Success {
 					p.graphicsAPI.Write(mainComputer.OS.GetMotd())
 
@@ -102,7 +103,6 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 			return
 		}
 	}
-	returnStatus <- utils.Success
 }
 
 func (p *LoginProgram) HandleSignal(sig Signal) {
