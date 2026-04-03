@@ -71,7 +71,7 @@ func (p *Ls) Run(returnStatus chan int, params []string) {
 
 		output += "\n"
 
-		p.graphicsAPI.Write("\n"+output)
+		p.graphicsAPI.Write("\n" + output)
 		returnStatus <- utils.Success
 	}
 }
@@ -107,7 +107,9 @@ func (p *Clear) Run(returnStatus chan int, params []string) {
 			return
 		}
 		returnStatus <- utils.Success
-		p.graphicsAPI.Write("\033[H\033[2J")
+		if p.graphicsAPI != nil {
+			p.graphicsAPI.Write("\033[H\033[2J")
+		}
 		return
 	}
 }
@@ -170,7 +172,7 @@ func (p *Cat) Run(returnStatus chan int, params []string) {
 		}
 
 		returnStatus <- utils.Success
-		p.graphicsAPI.Write("\n"+string(content)+"\n")
+		p.graphicsAPI.Write("\n" + string(content) + "\n")
 		return
 	}
 }

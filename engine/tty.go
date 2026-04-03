@@ -18,6 +18,10 @@ func NewGraphicsAPI(writer io.Writer) *GraphicsAPI {
 }
 
 func (g *GraphicsAPI) Write(str string) (int, error) {
+	if g == nil {
+		return 0, fmt.Errorf("nil")
+	}
+
 	return g.writer.Write([]byte(str))
 }
 

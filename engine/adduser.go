@@ -59,9 +59,11 @@ func (p *Adduser) Run(returnStatus chan int, params []string) {
 				username = value
 				usernameRecorded = true
 				p.graphicsAPI.Write("\nPassword: ")
+				p.tty.PasswdMode = true
 			} else if !passwordRecorded { // passwd can be blank if user is dumb asf
 				password = value
 				passwordRecorded = true
+				p.tty.PasswdMode = false
 
 				status, UID := findUID(p.tty.Session.Computer)
 				if status == utils.Error {
