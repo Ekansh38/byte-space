@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/spf13/afero"
 )
 
 func (e *Engine) RunAdminCommand(command string) *EngineIPCMessage {
@@ -187,22 +186,11 @@ func (e *Engine) addUser(commandParsed []string)  *EngineIPCMessage {
 	}
 	username := commandParsed[2]
 	password := commandParsed[3]
-	msg, uid := findUID(node)
-
-	if msg != "" {
-		message := fmt.Sprintf("Error finding UID: %s", msg)
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
+	_, uid := findUID(node)
 
 	// Check uniqueness of username
-	msg, unique := isUsernameUnique(node, username)
+	unique := isUsernameUnique(node, username)
 
-	if msg != "" {
-		message := fmt.Sprintf("Error checking username uniqueness: %s", msg)
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
 
 	if !unique {
 		message := fmt.Sprintf("Username %s already exists on node %s", username, name)
@@ -219,69 +207,5 @@ func (e *Engine) addUser(commandParsed []string)  *EngineIPCMessage {
 }
 
 
-func findUID(node *computer.Computer) (string, int) {
 
-	data, err := afero.ReadFile(node.Filesystem, "/etc/passwd")
-
-	if err != nil {
-		return fmt.Sprintf("Error reading passwd: %s", err), utils.Error
-	}
-
-	lines := strings.Split(string(data), "\n")
-	userCount := 0
-	for _, line := range lines {
-		if strings.TrimSpace(line) != "" {
-			userCount++
-		}
-	}
-
-	nextUID := 1000 + userCount
-	return "", nextUID
-}
-
-func isUsernameUnique(node *computer.Computer, username string) (string, bool) {
-
-	data, err := afero.ReadFile(node.Filesystem, "/etc/passwd")
-
-	if err != nil {
-		return fmt.Sprintf("Error reading passwd: %s", err), false
-	}
-
-	lines := strings.Split(string(data), "\n")
-	for _, line := range lines {
-		if strings.TrimSpace(line) != "" {
-			fields := strings.Split(line, ":")
-			if len(fields) >= 1 && fields[0] == username {
-				return "", false
-			}
-		}
-	}
-
-	return "", true
-
-}
-
-func addUserToNode(node *computer.Computer, username string, password string, uid int) (string, int) {
-	existingData, err := afero.ReadFile(node.Filesystem, "/etc/passwd")
-	if err != nil {
-		existingData = []byte("")  // File doesn't exist, start fresh
-	}
-
-	line := ""
-	if username == "root" {
-		line = fmt.Sprintf("%s:%s:%d:/root", username, password, uid)
-	} else{
-		line = fmt.Sprintf("%s:%s:%d:/home/%s", username, password, uid, username)
-	}
-
-	newContent := string(existingData) + line + "\n"
-
-	// Write back
-	err = afero.WriteFile(node.Filesystem, "/etc/passwd", []byte(newContent), 0644)
-	if err != nil {
-		return fmt.Sprintf("Error writing to passwd: %s", err), utils.Error
-	}
-
-	return fmt.Sprintf("Successfully added %s", username), utils.Success
-}
 

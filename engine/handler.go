@@ -23,9 +23,19 @@ func writeToClient(c net.Conn, sendData *EngineIPCMessage) {
 
 func (e *Engine) monitroLoginAndShellStatusForExit(loginStatus chan int, c net.Conn, tty *TTY) {
 	loginStatusValue := <-loginStatus
+	e.EventBus.Publish(EventProgramExited, map[string]interface{}{
+		"program_id": "login-0",
+		"status":     0,
+		"tty_id":     tty.id,
+	})
 	if loginStatusValue == utils.Error {
 		data := newIPCMessage("Invalid login conditionals or exit login program.\r\n", utils.Exit)
 		writeToClient(c, data)
+
+		e.EventBus.Publish(EventTTYClosed, map[string]interface{}{
+			"tty_id": tty.id,
+		})
+
 		c.Close()
 		fmt.Println("Connection closed")
 		return
@@ -35,11 +45,24 @@ func (e *Engine) monitroLoginAndShellStatusForExit(loginStatus chan int, c net.C
 		tty.SetForegroundProcess(shell)
 		var returnStatus chan int = make(chan int)
 		go shell.Run(returnStatus, []string{})
+
+		e.EventBus.Publish(EventProgramStarted, map[string]interface{}{
+			"program_id": "shell-0",
+			"tty_id":     tty.id,
+		})
+
 		theValue := <-returnStatus
+
 		if theValue == utils.Success {
 			writeToClient(c, newIPCMessage("Exiting...", utils.Exit))
+			e.EventBus.Publish(EventTTYClosed, map[string]interface{}{
+				"tty_id": tty.id,
+			})
 		} else {
 			writeToClient(c, newIPCMessage("Exiting with an error", utils.Exit))
+			e.EventBus.Publish(EventTTYClosed, map[string]interface{}{
+				"tty_id": tty.id,
+			})
 		}
 		return
 	}
@@ -72,6 +95,10 @@ func (e *Engine) handleClient(c net.Conn) {
 
 	loginStatus := make(chan int)
 	go loginProgram.Run(loginStatus, []string{})
+	e.EventBus.Publish(EventProgramStarted, map[string]interface{}{
+		"program_id": "login-0",
+		"tty_id":     tty.id,
+	})
 	go e.monitroLoginAndShellStatusForExit(loginStatus, c, tty)
 
 	for {

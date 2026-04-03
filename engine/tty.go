@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"strings"
 
 	"byte-space/utils"
 )
@@ -31,6 +32,7 @@ type Program interface {
 type TTY struct {
 	io.Writer
 	engine            *Engine
+	PasswdMode        bool
 	id                string
 	ForegroundProgram Program
 	Canonical         bool
@@ -116,10 +118,17 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 	for {
 		select {
 		case receivedData := <-t.dataChannel:
+			if strings.HasPrefix(receivedData, "\x1b[1;5") {
+				continue
+			}
+
+			if len(receivedData) == 1 && receivedData[0] == ';' {
+				continue
+			}
 			if t.Echo {
 				ansiData := receivedData
 
-				if receivedData == "\x7f" { // delete -> backspace ANSI
+				if receivedData == "\x7f" { // delete into backspace BANAANSI
 					if t.CursorPosition > 0 {
 						ansiData = "\b \b"
 						t.CursorPosition--
@@ -136,6 +145,9 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 					if t.CursorPosition == 0 {
 						ansiData = ""
 					}
+				}
+				if t.PasswdMode && receivedData != "\r" { // not enter
+					ansiData = "*"
 				}
 
 				data := newIPCMessage(ansiData, utils.Success)
@@ -154,7 +166,7 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			}
 
 			switch receivedData {
-			case "\r":
+			case "\r": // enter
 				data := t.Buffer
 
 				if t.engine != nil && t.engine.EventBus != nil {
@@ -166,6 +178,13 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 
 				t.CursorPosition = 0
 				t.Buffer = ""
+				if t.engine != nil && t.engine.EventBus != nil {
+					t.engine.EventBus.Publish(EventBufferChanged, map[string]interface{}{
+						"buffer": t.Buffer,
+						"cursor": t.CursorPosition,
+						"tty":    t.id,
+					})
+				}
 
 				return data, utils.Success
 			case "\x7f": // delete
@@ -175,20 +194,30 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 					runes = append(runes[:t.CursorPosition], runes[t.CursorPosition+1:]...)
 					t.Buffer = string(runes)
 
-					if t.Echo {
+					if t.Echo && !t.PasswdMode {
 						right := string(runes[t.CursorPosition:])
 						output := right + " "
 						output += fmt.Sprintf("\x1b[%dD", len(right)+1)
 						writeToClient(t.Connection, newIPCMessage(output, utils.Success))
 					}
 				}
+
 			case "\x1b[A", "\x1b[B":
 				continue
 			case "\x1b[C":
+				if t.PasswdMode {
+					continue
+				}
+
 				if t.CursorPosition != len(t.Buffer) {
 					t.CursorPosition += 1
 				}
+
 			case "\x1b[D":
+				if t.PasswdMode {
+					continue
+				}
+
 				if t.CursorPosition != 0 {
 					t.CursorPosition -= 1
 				}
@@ -201,13 +230,21 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 				newStr := string(runes)
 				t.Buffer = newStr
 				t.CursorPosition += len(r)
-				if t.Echo {
+				if t.Echo && !t.PasswdMode {
 					right := string(runes[t.CursorPosition:])
 					output := right + " "
 					output += fmt.Sprintf("\x1b[%dD", len(right)+1)
 					writeToClient(t.Connection, newIPCMessage(output, utils.Success))
 				}
 
+			}
+
+			if t.engine != nil && t.engine.EventBus != nil {
+				t.engine.EventBus.Publish(EventBufferChanged, map[string]interface{}{
+					"buffer": t.Buffer,
+					"cursor": t.CursorPosition,
+					"tty":    t.id,
+				})
 			}
 
 		case <-done:
