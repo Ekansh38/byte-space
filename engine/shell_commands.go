@@ -2,78 +2,72 @@ package engine
 
 import (
 	"fmt"
-	"path"
 	"strings"
 
 	"byte-space/utils"
-
-	"github.com/spf13/afero"
 )
 
-func expandPath(target string, tty *TTY) string {
-	// expand ~ to home directory
-	target = path.Clean(target)
-	if strings.HasPrefix(target, "~") {
-		if tty.Session.CurrentUser == "root" {
-			target = path.Join("/root/", target[1:])
-		} else {
-			target = path.Join("/home/", fmt.Sprintf("%s/", tty.Session.CurrentUser), target[1:])
-		}
-	}
-
-	return target
-}
-
 type Ls struct {
-	tty         *TTY
 	id          string
 	graphicsAPI *GraphicsAPI
+	ttyAPI      *TTYAPI
+	Kernel       *Kernel
+}
+
+func (p *Ls) SetTTyAPI(api *TTYAPI) {
+	p.ttyAPI = api
+}
+
+func (p *Ls) SetKernel(api *Kernel) {
+	p.Kernel = api
+}
+
+func (p *Ls) Owner() string {
+	return "root"
+}
+
+func (p *Ls) Setuid() bool {
+	return false
 }
 
 func (p *Ls) Run(returnStatus chan int, params []string) {
-	if p.graphicsAPI != nil {
-		if len(params) > 1 {
-			p.graphicsAPI.Write("Usage: ls <path>, no path for working dir\n")
-			returnStatus <- utils.Error
-			return
-		}
-
-		dir := expandPath(p.tty.Session.WorkingDir, p.tty)
-		if len(params) == 1 {
-			dir = params[0]
-
-			if !strings.HasPrefix(dir, "/") {
-				dir = path.Join(p.tty.Session.WorkingDir, dir)
-			}
-
-			dir = path.Clean(dir)
-		}
-
-		files, err := afero.ReadDir(p.tty.Session.Computer.Filesystem, dir)
-		if err != nil {
-			message := "Invalid directory\n"
-			p.graphicsAPI.Write(message)
-		}
-
-		output := ""
-		for _, file := range files {
-			if file.IsDir() {
-				output += fmt.Sprintf("\033[34m%s\033[0m\n", file.Name())
-			} else {
-				output += fmt.Sprintf("%s\n", file.Name())
-			}
-		}
-
-		// remove extra trailing newline
-		if len(output) > 0 {
-			output = output[:len(output)-1]
-		}
-
-		output += "\n"
-
-		p.graphicsAPI.Write("\n" + output)
-		returnStatus <- utils.Success
+	if p.graphicsAPI == nil {
+		returnStatus <- utils.Error
+		return
 	}
+	if len(params) > 1 {
+		p.graphicsAPI.Write("Usage: ls <path>, no path for working dir\n")
+		returnStatus <- utils.Error
+		return
+	}
+
+	dir := p.Kernel.GetWorkingDir()
+	if len(params) == 1 {
+		dir = params[0]
+	}
+
+	files, err := p.Kernel.ReadDir(dir)
+	if err != nil {
+		p.graphicsAPI.Write("\n" + err.Error() + "\n")
+		returnStatus <- utils.Error
+		return
+	}
+
+	output := ""
+	for _, file := range files {
+		if file.IsDir() {
+			output += fmt.Sprintf("\033[34m%s\033[0m\n", file.Name())
+		} else {
+			output += fmt.Sprintf("%s\n", file.Name())
+		}
+	}
+
+	if len(output) > 0 {
+		output = output[:len(output)-1]
+	}
+
+	p.graphicsAPI.Write("\n" + output + "\n")
+	returnStatus <- utils.Success
 }
 
 func (p *Ls) ID() string {
@@ -91,27 +85,41 @@ func (p *Ls) RemoveGraphicsAPI() {
 	p.graphicsAPI = nil
 }
 
-// CLEAR COMMANDD
-
 type Clear struct {
-	tty         *TTY
 	id          string
 	graphicsAPI *GraphicsAPI
+	ttyAPI      *TTYAPI
+	Kernel       *Kernel
+}
+
+func (p *Clear) SetTTyAPI(api *TTYAPI) {
+	p.ttyAPI = api
+}
+
+func (p *Clear) SetKernel(api *Kernel) {
+	p.Kernel = api
+}
+
+func (p *Clear) Owner() string {
+	return "root"
+}
+
+func (p *Clear) Setuid() bool {
+	return false
 }
 
 func (p *Clear) Run(returnStatus chan int, params []string) {
-	if p.graphicsAPI != nil {
-		if len(params) > 0 {
-			p.graphicsAPI.Write("Usage: clear\n")
-			returnStatus <- utils.Error
-			return
-		}
-		returnStatus <- utils.Success
-		if p.graphicsAPI != nil {
-			p.graphicsAPI.Write("\033[H\033[2J")
-		}
+	if p.graphicsAPI == nil {
+		returnStatus <- utils.Error
 		return
 	}
+	if len(params) > 0 {
+		p.graphicsAPI.Write("Usage: clear\n")
+		returnStatus <- utils.Error
+		return
+	}
+	p.graphicsAPI.Write("\033[H\033[2J")
+	returnStatus <- utils.Success
 }
 
 func (p *Clear) ID() string {
@@ -129,52 +137,53 @@ func (p *Clear) RemoveGraphicsAPI() {
 	p.graphicsAPI = nil
 }
 
-// CAY COMMAND
-
 type Cat struct {
-	tty         *TTY
 	id          string
 	graphicsAPI *GraphicsAPI
+	ttyAPI      *TTYAPI
+	Kernel       *Kernel
+}
+
+func (p *Cat) SetTTyAPI(api *TTYAPI) {
+	p.ttyAPI = api
+}
+
+func (p *Cat) SetKernel(api *Kernel) {
+	p.Kernel = api
+}
+
+func (p *Cat) Owner() string {
+	return "root"
+}
+
+func (p *Cat) Setuid() bool {
+	return false
 }
 
 func (p *Cat) Run(returnStatus chan int, params []string) {
-	if p.graphicsAPI != nil {
-		if len(params) != 1 {
-			p.graphicsAPI.Write("\nUsage: cat <path>\n")
-			returnStatus <- utils.Error
-			return
-		}
-		target := expandPath(params[0], p.tty)
-		if !strings.HasPrefix(target, "/") {
-			target = path.Join(p.tty.Session.WorkingDir, target)
-		}
-
-		target = expandPath(target, p.tty)
-
-		file, err := p.tty.Session.Computer.Filesystem.Open(target)
-		if err != nil {
-			message := "\nFailed to open file\n"
-			if strings.HasSuffix(err.Error(), "no such file or directory") {
-				message = "cat: cannot open: No such file or directory\n"
-			}
-			p.graphicsAPI.Write(message)
-			returnStatus <- utils.Error
-			return
-		}
-		defer file.Close()
-
-		content, err := afero.ReadAll(file)
-		if err != nil {
-			message := "\nFailed to read file\n"
-			p.graphicsAPI.Write(message)
-			returnStatus <- utils.Error
-			return
-		}
-
-		returnStatus <- utils.Success
-		p.graphicsAPI.Write("\n" + string(content) + "\n")
+	if p.graphicsAPI == nil {
+		returnStatus <- utils.Error
 		return
 	}
+	if len(params) != 1 {
+		p.graphicsAPI.Write("\nUsage: cat <path>\n")
+		returnStatus <- utils.Error
+		return
+	}
+
+	content, err := p.Kernel.ReadFile(params[0])
+	if err != nil {
+		message := "\nFailed to open file\n"
+		if strings.HasSuffix(err.Error(), "no such file or directory") {
+			message = "\ncat: cannot open: No such file or directory\n"
+		}
+		p.graphicsAPI.Write(message)
+		returnStatus <- utils.Error
+		return
+	}
+
+	p.graphicsAPI.Write("\n" + string(content) + "\n")
+	returnStatus <- utils.Success
 }
 
 func (p *Cat) ID() string {

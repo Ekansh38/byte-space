@@ -25,11 +25,21 @@ func (e *Engine) ListMachinesOnNetwork() []computer.Computer {
 	return computers
 }
 
+func (e *Engine) GetFsMetaData(computerName string) map[string]computer.FileMetadata {
+	for _, c := range e.nodes {
+		if c.Name == computerName {
+			return c.FsMetaData
+		}
+	}
+	return nil
+}
+
 type Session struct {
 	SessionID   string
 	Computer    *computer.Computer
 	CurrentUser string
 	WorkingDir  string
+	TTY         *TTY
 }
 
 func NewEngine() *Engine {
@@ -44,7 +54,7 @@ func NewEngine() *Engine {
 	return e
 }
 
-func (e *Engine) NewSession(node *computer.Computer, username string) (int, string) {
+func (e *Engine) NewSession(node *computer.Computer, username string, ttyID string) (int, string) {
 	// generate unique session ID
 	sessionID := e.generateSessionID()
 	workingDir := "/"
@@ -70,7 +80,8 @@ func (e *Engine) NewSession(node *computer.Computer, username string) (int, stri
 		"session_id":  sessionID,
 		"user":        username,
 		"computer":    node.Name,
-		"working_dir": workingDir, 
+		"working_dir": workingDir,
+		"tty_id":      ttyID,
 	})
 
 	return utils.Success, sessionID

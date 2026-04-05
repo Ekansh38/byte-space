@@ -4,95 +4,31 @@ import (
 	"fmt"
 	"strings"
 
-	"byte-space/computer"
 	"byte-space/utils"
-
-	"github.com/spf13/afero"
 )
 
 type Adduser struct {
-	tty         *TTY
 	id          string
 	done        chan struct{}
 	graphicsAPI *GraphicsAPI
+	ttyAPI      *TTYAPI
+	Kernel       *Kernel
 }
 
-func (p *Adduser) Run(returnStatus chan int, params []string) {
-	if p.graphicsAPI != nil {
-		if len(params) != 0 {
-			p.graphicsAPI.Write("\nUsage: adduser\n")
-			returnStatus <- utils.Error
-			return
-		}
-		p.graphicsAPI.Write("\nEnter username: ")
-	}
-
-	p.done = make(chan struct{})
-
-	username := ""
-	usernameRecorded := false
-	password := ""
-	passwordRecorded := false
-
-	p.tty.Canonical = true
-	p.tty.PasswdMode = false
-
-	if p.tty.Session.CurrentUser != "root" {
-		p.graphicsAPI.Write("\nYou are not root!!!! I AM GROOT!!!\n")
-		returnStatus <- utils.Error
-		return
-	}
-
-	for {
-		value, status := p.tty.Read(p, p.done)
-		switch status {
-		case utils.Success:
-
-			if !usernameRecorded && value != "" {
-				uniqueness := isUsernameUnique(p.tty.Session.Computer, value)
-				if !uniqueness {
-					p.graphicsAPI.Write("\nUsername already exists, dont be so generic\n")
-					returnStatus <- utils.Error
-					return
-				}
-
-				username = value
-				usernameRecorded = true
-				p.graphicsAPI.Write("\nPassword: ")
-				p.tty.PasswdMode = true
-			} else if !passwordRecorded { // passwd can be blank if user is dumb asf
-				password = value
-				passwordRecorded = true
-				p.tty.PasswdMode = false
-
-				status, UID := findUID(p.tty.Session.Computer)
-				if status == utils.Error {
-					p.graphicsAPI.Write("\nErr: could not create valid UID\n")
-				}
-
-				msg, _ := addUserToNode(p.tty.Session.Computer, username, password, UID)
-				p.graphicsAPI.Write("\n" + msg + "\n")
-				returnStatus <- utils.Success
-				return
-
-			}
-
-		case utils.Exit:
-			returnStatus <- utils.Error
-			return
-		}
-	}
+func (p *Adduser) Owner() string {
+	return "root"
 }
 
-func (p *Adduser) ID() string {
-	return p.id
+func (p *Adduser) Setuid() bool {
+	return true // runs as root so it can write /etc/passwd
 }
 
-func (p *Adduser) HandleSignal(sig Signal) {
-	if sig == SIGINT {
-		p.graphicsAPI.Write("\nCLOSING PROGRAM, SIGINT\n")
-		close(p.done)
-	}
+func (p *Adduser) SetTTyAPI(api *TTYAPI) {
+	p.ttyAPI = api
+}
+
+func (p *Adduser) SetKernel(api *Kernel) {
+	p.Kernel = api
 }
 
 func (p *Adduser) AddGraphicsAPI(api *GraphicsAPI) {
@@ -103,63 +39,129 @@ func (p *Adduser) RemoveGraphicsAPI() {
 	p.graphicsAPI = nil
 }
 
-func findUID(node *computer.Computer) (int, int) {
-	data, err := afero.ReadFile(node.Filesystem, "/etc/passwd")
-	if err != nil {
-		return utils.Error, 0
+func (p *Adduser) ID() string {
+	return p.id
+}
+
+func (p *Adduser) HandleSignal(sig Signal) {
+	if sig == SIGINT {
+		select {
+		case <-p.done:
+		default:
+			p.graphicsAPI.Write("\n")
+			close(p.done)
+		}
+	}
+}
+
+func (p *Adduser) Run(returnStatus chan int, params []string) {
+	if p.graphicsAPI == nil {
+		returnStatus <- utils.Error
+		return
+	}
+	if len(params) != 0 {
+		p.graphicsAPI.Write("\nUsage: adduser\n")
+		returnStatus <- utils.Error
+		return
 	}
 
-	lines := strings.Split(string(data), "\n")
+	p.done = make(chan struct{})
+	p.graphicsAPI.Write("\nEnter username: ")
+
+	username := ""
+	usernameRecorded := false
+	password := ""
+	passwordRecorded := false
+
+	for {
+		value, status := p.ttyAPI.Read(p.done)
+		switch status {
+		case utils.Success:
+			if !usernameRecorded {
+				if value == "" {
+					p.graphicsAPI.Write("\nthats a horrible username, its empty child!\n")
+					returnStatus <- utils.Error
+					return
+				}
+				if !p.isUsernameUnique(value) {
+					p.graphicsAPI.Write("\nUsername already exists, dont be so generic\n")
+					returnStatus <- utils.Error
+					return
+				}
+				username = value
+				usernameRecorded = true
+				p.graphicsAPI.Write("\nPassword: ")
+				p.ttyAPI.SetPasswdMode(true)
+			} else if !passwordRecorded {
+				password = value
+				passwordRecorded = true
+				p.ttyAPI.SetPasswdMode(false)
+
+				uid, ok := p.findUID()
+				if !ok {
+					p.graphicsAPI.Write("\nErr: could not create valid UID\n")
+					returnStatus <- utils.Error
+					return
+				}
+
+				msg := p.addUser(username, password, uid)
+				p.graphicsAPI.Write("\n" + msg + "\n")
+				returnStatus <- utils.Success
+				return
+			}
+
+		case utils.Exit:
+			returnStatus <- utils.Error
+			return
+		}
+	}
+}
+
+func (p *Adduser) findUID() (int, bool) {
+	data, err := p.Kernel.ReadFile("/etc/passwd")
+	if err != nil {
+		return 0, false
+	}
 	userCount := 0
-	for _, line := range lines {
+	for _, line := range strings.Split(string(data), "\n") {
 		if strings.TrimSpace(line) != "" {
 			userCount++
 		}
 	}
-
-	nextUID := 1000 + userCount
-	return utils.Success, nextUID
+	return 1000 + userCount, true
 }
 
-func isUsernameUnique(node *computer.Computer, username string) bool {
-	data, err := afero.ReadFile(node.Filesystem, "/etc/passwd")
+func (p *Adduser) isUsernameUnique(username string) bool {
+	data, err := p.Kernel.ReadFile("/etc/passwd")
 	if err != nil {
 		return false
 	}
-
-	lines := strings.Split(string(data), "\n")
-	for _, line := range lines {
-		if strings.TrimSpace(line) != "" {
-			fields := strings.Split(line, ":")
-			if len(fields) >= 1 && fields[0] == username {
-				return false
-			}
+	for _, line := range strings.Split(string(data), "\n") {
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+		fields := strings.Split(line, ":")
+		if len(fields) >= 1 && fields[0] == username {
+			return false
 		}
 	}
-
 	return true
 }
 
-func addUserToNode(node *computer.Computer, username string, password string, uid int) (string, int) {
-	existingData, err := afero.ReadFile(node.Filesystem, "/etc/passwd")
+func (p *Adduser) addUser(username, password string, uid int) string {
+	existing, err := p.Kernel.ReadFile("/etc/passwd")
 	if err != nil {
-		existingData = []byte("") // File doesn't exist, start fresh
+		existing = []byte("")
 	}
 
-	line := ""
+	homedir := "/home/" + username
 	if username == "root" {
-		line = fmt.Sprintf("%s:%s:%d:/root", username, password, uid)
-	} else {
-		line = fmt.Sprintf("%s:%s:%d:/home/%s", username, password, uid, username)
+		homedir = "/root"
 	}
 
-	newContent := string(existingData) + line + "\n"
-
-	// Write back
-	err = afero.WriteFile(node.Filesystem, "/etc/passwd", []byte(newContent), 0o644)
-	if err != nil {
-		return fmt.Sprintf("Error writing to passwd: %s", err), utils.Error
+	line := fmt.Sprintf("%s:%s:%d:%s\n", username, password, uid, homedir)
+	if err := p.Kernel.WriteFile("/etc/passwd", append(existing, []byte(line)...)); err != nil {
+		return fmt.Sprintf("Error writing to passwd: %s", err)
 	}
-
-	return fmt.Sprintf("Successfully added %s", username), utils.Success
+	return fmt.Sprintf("Successfully added %s", username)
 }

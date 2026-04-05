@@ -18,9 +18,11 @@ func main() {
 	go eng.Run()
 
 	p := tea.NewProgram(
-		tui.NewModel(events),
+		tui.NewModel(events, eng),
 		tea.WithAltScreen(),
 	)
+
+	eng.RunAdminCommand("spawn computer ekanshgPC 192.188.0.0")
 
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error: %v\n", err)
