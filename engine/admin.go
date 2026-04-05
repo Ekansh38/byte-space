@@ -31,9 +31,6 @@ func (e *Engine) RunAdminCommand(command string) *EngineIPCMessage {
 		return e.deleteNode(commandP)
 	case "reset-network":
 		return e.resetNetwork()
-	case "adduser":
-		return e.addUser(commandP)
-
 	default:
 		return newIPCMessage("not implemented", utils.Warning)
 
@@ -170,41 +167,6 @@ func getNodeByName(e *Engine, name string) (*computer.Computer, bool) {
 
 }
 
-func (e *Engine) addUser(commandParsed []string)  *EngineIPCMessage {
-
-	if len(commandParsed) != 4 {
-		message := "Usage: adduser <name> <username> <password>"
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
-	name := commandParsed[1]
-	node, status := getNodeByName(e, name)
-	if !status {
-		message := fmt.Sprintf("No node with the name %s found", name)
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
-	username := commandParsed[2]
-	password := commandParsed[3]
-	_, uid := findUID(node)
-
-	// Check uniqueness of username
-	unique := isUsernameUnique(node, username)
-
-
-	if !unique {
-		message := fmt.Sprintf("Username %s already exists on node %s", username, name)
-		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
-	}
-
-	// Add user
-
-	response, stat := addUserToNode(node, username, password, uid)
-
-	fmt.Println(response)
-	return newIPCMessage(response, stat)
-}
 
 
 

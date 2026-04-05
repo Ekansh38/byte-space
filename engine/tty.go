@@ -25,12 +25,47 @@ func (g *GraphicsAPI) Write(str string) (int, error) {
 	return g.writer.Write([]byte(str))
 }
 
+type TTYAPI struct {
+	tty     *TTY
+	program Program
+}
+
+func (t *TTYAPI) Read(done chan struct{}) (string, int) {
+	return t.tty.Read(t.program, done)
+}
+
+func (t *TTYAPI) SetPasswdMode(mode bool) {
+	t.tty.PasswdMode = mode
+}
+
+func (t *TTYAPI) SetSession(session *Session) {
+	t.tty.Session = session
+}
+
+func (t *TTYAPI) GetTTYID() string {
+	return t.tty.id
+}
+
 type Program interface {
+	// API's (aces based security)
+
+	SetTTyAPI(api *TTYAPI)
+
+	SetKernel(api *Kernel)
+
+	AddGraphicsAPI(api *GraphicsAPI)
+	RemoveGraphicsAPI()
+
+	// General
+
 	ID() string
 	Run(returnStatus chan int, params []string)
 	HandleSignal(sig Signal)
-	AddGraphicsAPI(api *GraphicsAPI)
-	RemoveGraphicsAPI()
+
+	// Permissions
+
+	Owner() string
+	Setuid() bool
 }
 
 type TTY struct {
@@ -79,6 +114,7 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 		t.engine.EventBus.Publish(EventEngineToTTY, map[string]interface{}{
 			"key":       keystroke,
 			"canonical": t.Canonical,
+			"echo":      t.Echo,
 			"tty":       t.id,
 		})
 	}
@@ -162,8 +198,9 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			if !t.Canonical {
 				if t.engine != nil && t.engine.EventBus != nil {
 					t.engine.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
-						"key":  receivedData,
-						"prog": program.ID(),
+						"key":    receivedData,
+						"prog":   program.ID(),
+						"tty_id": t.id,
 					})
 				}
 				return receivedData, utils.Success
@@ -175,8 +212,9 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 
 				if t.engine != nil && t.engine.EventBus != nil {
 					t.engine.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
-						"cmd":  t.Buffer,
-						"prog": program.ID(),
+						"cmd":    t.Buffer,
+						"prog":   program.ID(),
+						"tty_id": t.id,
 					})
 				}
 

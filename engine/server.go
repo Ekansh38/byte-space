@@ -2,7 +2,6 @@
 package engine
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -16,14 +15,12 @@ func (e *Engine) Run() {
 		log.Fatal(err)
 	}
 	defer l.Close()
-	fmt.Println("Engine is running");
 	for {
 		// Wait for a connection.
 		conn, err := l.Accept()
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println("Received a connection")
 		go e.handleClient(conn)
 
 	}

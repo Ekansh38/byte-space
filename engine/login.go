@@ -12,9 +12,26 @@ import (
 type LoginProgram struct {
 	done        chan struct{}
 	id          string
-	tty         *TTY
-	graphicsAPI *GraphicsAPI // if not foreground then nil
+	graphicsAPI *GraphicsAPI
+	ttyAPI      *TTYAPI
+	Kernel      *Kernel
 	Engine      *Engine
+}
+
+func (p *LoginProgram) Owner() string {
+	return ""
+}
+
+func (p *LoginProgram) Setuid() bool {
+	return false
+}
+
+func (p *LoginProgram) SetTTyAPI(api *TTYAPI) {
+	p.ttyAPI = api
+}
+
+func (p *LoginProgram) SetKernel(api *Kernel) {
+	p.Kernel = api
 }
 
 func (p *LoginProgram) AddGraphicsAPI(api *GraphicsAPI) {
@@ -51,7 +68,7 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 	var mainComputer *computer.Computer
 
 	for {
-		value, status := p.tty.Read(p, p.done)
+		value, status := p.ttyAPI.Read(p.done)
 		switch status {
 		case utils.Success:
 			if value == "" {
@@ -72,23 +89,23 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 				}
 			} else if username == "" {
 				username = value
-				p.tty.PasswdMode = true
+				p.ttyAPI.SetPasswdMode(true)
 				p.graphicsAPI.Write("\nPASSWORD: ") // change to mainComputer.OS.GetPasswordPrompt or sm
 
 			} else if password == "" {
 				password = value
 				// try login
-				p.tty.PasswdMode = false
+				p.ttyAPI.SetPasswdMode(false)
 				if mainComputer.OS.Login(username, password) == utils.Success {
 					p.graphicsAPI.Write(mainComputer.OS.GetMotd())
 
-					sessionStatus, sessionID := p.Engine.NewSession(mainComputer, username)
+					sessionStatus, sessionID := p.Engine.NewSession(mainComputer, username, p.ttyAPI.GetTTYID())
 					if sessionStatus != utils.Success {
 						returnStatus <- utils.Error
 						return
 					}
 
-					p.tty.Session = p.Engine.sessions[sessionID]
+					p.ttyAPI.SetSession(p.Engine.sessions[sessionID])
 					returnStatus <- utils.Success
 					return
 

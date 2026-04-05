@@ -29,7 +29,7 @@ func (e *Engine) monitroLoginAndShellStatusForExit(loginStatus chan int, c net.C
 		"tty_id":     tty.id,
 	})
 	if loginStatusValue == utils.Error {
-		data := newIPCMessage("Invalid login conditionals or exit login program.\r\n", utils.Exit)
+		data := newIPCMessage("\nInvalid login conditionals or exit login program.\r\n", utils.Exit)
 		writeToClient(c, data)
 
 		e.EventBus.Publish(EventTTYClosed, map[string]interface{}{
@@ -37,7 +37,6 @@ func (e *Engine) monitroLoginAndShellStatusForExit(loginStatus chan int, c net.C
 		})
 
 		c.Close()
-		fmt.Println("Connection closed")
 		return
 	} else {
 		// create the shell, set the foreground, run the shell.
@@ -90,7 +89,10 @@ func (e *Engine) handleClient(c net.Conn) {
 
 	tty := NewTTY(c, e, ttyID)
 	e.ttys = append(e.ttys, tty)
-	loginProgram := &LoginProgram{id: "login-0", tty: tty, Engine: e}
+
+	loginProgram := &LoginProgram{id: "login-0", Engine: e}
+	loginProgram.ttyAPI = &TTYAPI{tty: tty, program: loginProgram}
+
 	tty.SetForegroundProcess(loginProgram)
 
 	loginStatus := make(chan int)

@@ -5,10 +5,10 @@ import (
 	//"fmt"
 	//"os"
 	"path"
+	"strconv"
 	"strings"
 
 	"byte-space/utils"
-	"github.com/spf13/afero"
 )
 
 type Shell struct {
@@ -16,20 +16,24 @@ type Shell struct {
 	tty         *TTY
 	id          string
 	graphicsAPI *GraphicsAPI
+	ttyAPI      *TTYAPI
+	Kernel       *Kernel
+	nextID      int
 }
 
-func getUniqueID(runningPrograms []string) string {
-	existing := make(map[string]bool)
-	for _, p := range runningPrograms {
-		existing[p] = true
-	}
+func (p *Shell) Owner() string {
+	return "root"
+}
 
-	id := "0"
-	for existing[id] {
-		id += id
-	}
+func (p *Shell) Setuid() bool {
+	return false
+}
 
-	return id
+
+func (s *Shell) getUniqueID() string {
+	id := s.nextID
+	s.nextID++
+	return strconv.Itoa(id)
 }
 
 func parse(value string) ([]string, []string) {
@@ -53,20 +57,28 @@ func parse(value string) ([]string, []string) {
 	return commands, flags
 }
 
+
+func (s *Shell) SetTTyAPI(api *TTYAPI) {
+	s.ttyAPI = api
+}
+
+func (s *Shell) SetKernel(api *Kernel) {
+	s.Kernel = api
+}
+
 func (s *Shell) Run(returnStatus chan int, params []string) {
 	s.done = make(chan struct{})
+	s.SetTTyAPI(&TTYAPI{tty: s.tty, program: s}) // shell has special permission to make its own API for itself.
 	if s.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
 	}
 	prompt := fmt.Sprintf("\n\r%s$ ", s.tty.Session.WorkingDir)
 	s.graphicsAPI.Write(prompt)
-	prompt = fmt.Sprintf("%s$ ", s.tty.Session.WorkingDir)
-	prefix := ""
 
-	var runningPrograms []string
 	for {
-		data, status := s.tty.Read(s, s.done)
+		prefix := ""
+		data, status := s.ttyAPI.Read(s.done)
 		switch status {
 		case utils.Success:
 			value, flags := parse(data)
@@ -75,7 +87,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 			case "exit":
 				returnStatus <- utils.Success
 				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
-					"program_id": "login-0",
+					"program_id": s.ID(),
 					"status":     0,
 					"tty_id":     s.tty.id,
 				})
@@ -90,11 +102,11 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				s.graphicsAPI.Write(dataToDisplay)
 			case "cd":
 				if len(flags) > 0 {
-					s.graphicsAPI.Write("No flags implemented\n")
+					s.graphicsAPI.Write("\nNo flags implemented\n")
 					break
 				}
 				if len(value) != 2 {
-					s.graphicsAPI.Write("Usage: cd <path>\n")
+					s.graphicsAPI.Write("\nUsage: cd <path>\n")
 					break
 				}
 
@@ -106,9 +118,9 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 				dir = path.Clean(dir)
 
-				_, err := afero.ReadDir(s.tty.Session.Computer.Filesystem, dir)
+				_, err := s.tty.Session.Computer.OS.ReadDir(dir)
 				if err != nil {
-					message := "Invalid directory\n"
+					message := "\nInvalid directory\n"
 					s.graphicsAPI.Write(message)
 					break
 				}
@@ -116,108 +128,18 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				s.graphicsAPI.Write("\n")
 
 			case "ls":
-				ls := &Ls{tty: s.tty, id: "ls-" + getUniqueID(runningPrograms)}
-				s.tty.SetForegroundProcess(ls)
-
-				params := append(value[1:], flags...)
-				status := make(chan int)
-
-				s.tty.engine.EventBus.Publish(EventProgramStarted, map[string]interface{}{
-					"program_id": ls.ID(),
-					"tty_id":     s.tty.id,
-				})
-
-				go ls.Run(status, params)
-
-				<-status
-
-				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
-					"program_id": ls.ID(),
-					"status":     0,
-					"tty_id":     s.tty.id,
-				})
-
-				// set shell back to foreground
-				s.tty.SetForegroundProcess(s)
+				program := &Ls{id: "ls-" + s.getUniqueID()}
+				exec(program, s, value, flags)
 			case "clear":
-				clear := &Clear{tty: s.tty, id: "clear-" + getUniqueID(runningPrograms)}
-				s.tty.SetForegroundProcess(clear)
-
-				params := append(value[1:], flags...)
-				status := make(chan int)
-
-				s.tty.engine.EventBus.Publish(EventProgramStarted, map[string]interface{}{
-					"program_id": clear.ID(),
-					"tty_id":     s.tty.id,
-				})
-
-				go clear.Run(status, params)
-
-				<-status
-				
-				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
-					"program_id": clear.ID(),
-					"status":     0,
-					"tty_id":     s.tty.id,
-				})
-
-
-				// set shell back to foreground
-				s.tty.SetForegroundProcess(s)
-
+				program := &Clear{id: "clear-" + s.getUniqueID()}
+				exec(program, s, value, flags)
 			case "cat":
-				cat := &Cat{tty: s.tty, id: "cat-" + getUniqueID(runningPrograms)}
-				s.tty.SetForegroundProcess(cat)
-
-				params := append(value[1:], flags...)
-				status := make(chan int)
-
-				s.tty.engine.EventBus.Publish(EventProgramStarted, map[string]interface{}{
-					"program_id": cat.ID(),
-					"tty_id":     s.tty.id,
-				})
-
-				go cat.Run(status, params)
-
-				<-status
-
-				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
-					"program_id": cat.ID(),
-					"status":     0,
-					"tty_id":     s.tty.id,
-				})
-
-
-
-				// set shell back to foreground
-				s.tty.SetForegroundProcess(s)
+				program := &Cat{id: "cat-" + s.getUniqueID()}
+				exec(program, s, value, flags)
 
 			case "adduser":
-				adduser := &Adduser{tty: s.tty, id: "adduser-" + getUniqueID(runningPrograms)}
-				s.tty.SetForegroundProcess(adduser)
-
-				params := append(value[1:], flags...)
-				status := make(chan int)
-
-				s.tty.engine.EventBus.Publish(EventProgramStarted, map[string]interface{}{
-					"program_id": adduser.ID(),
-					"tty_id":     s.tty.id,
-				})
-
-				go adduser.Run(status, params)
-
-				<-status
-
-				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
-					"program_id": adduser.ID(),
-					"status":     0,
-					"tty_id":     s.tty.id,
-				})
-
-
-
-				// set shell back to foreground
-				s.tty.SetForegroundProcess(s)
+				program := &Adduser{id: "adduser-" + s.getUniqueID()}
+				exec(program, s, value, flags)
 
 			case "":
 				prefix = "\n"
