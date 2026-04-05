@@ -7,7 +7,17 @@ import (
 	"os"
 
 	"github.com/spf13/afero"
+	"byte-space/utils"
+
 )
+
+type Session struct {
+	SessionID   string
+	Computer    *Computer
+	CurrentUser string
+	WorkingDir  string
+	TTY         *TTY
+}
 
 type FileMetadata struct {
 	Filepath string // the file/folder this metadata applies to
@@ -37,8 +47,12 @@ type Computer struct {
 	IP         string
 	Type       string
 	OS         *OS
+	Kernel     *Kernel
 	filesystem afero.Fs
 	FsMetaData map[string]FileMetadata
+
+	sessions map[string]*Session
+	ttys     []*TTY
 }
 
 func initFileSystem(fs afero.Fs, hostname string, ip string) {
@@ -46,6 +60,7 @@ func initFileSystem(fs afero.Fs, hostname string, ip string) {
 
 	fs.MkdirAll("/var/log/", 0o755)
 	fs.MkdirAll("/etc/", 0o755)
+	fs.MkdirAll("/bin/", 0o755)
 
 	// helper func, good go feature. rating 10/11, cool feature, very good boij
 	createIfNotExists := func(path, content string) {
@@ -61,6 +76,10 @@ func initFileSystem(fs afero.Fs, hostname string, ip string) {
 	createIfNotExists("/etc/hostname", hostname)
 	createIfNotExists("/etc/issue", fmt.Sprintf(defaultEtcIssue, hostname, ip))
 	createIfNotExists("/etc/motd", fmt.Sprintf(defaultEtcMotd))
+	createIfNotExists("/bin/ls", "")
+	createIfNotExists("/bin/cat", "")
+	createIfNotExists("/bin/clear", "")
+	createIfNotExists("/bin/adduser", "")
 }
 
 func populateFileMetadata(filesystm afero.Fs, computer *Computer) {
@@ -79,7 +98,7 @@ func populateFileMetadata(filesystm afero.Fs, computer *Computer) {
 	afero.Walk(filesystm, "/", walkFunc)
 }
 
-func NewComputer(name string, ip string, nodeType string) *Computer {
+func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Computer {
 	basePath := fmt.Sprintf("./data/networks/current/nodes/%s", name) // uniqueness of name is checked in the handler.go of the engine package.
 	os.MkdirAll(basePath, 0o755)
 
@@ -93,10 +112,71 @@ func NewComputer(name string, ip string, nodeType string) *Computer {
 		OS:         &OS{},
 		filesystem: filesystm,
 		FsMetaData: map[string]FileMetadata{},
+		sessions:   make(map[string]*Session),
 	}
 
 	populateFileMetadata(filesystm, computer)
 
 	computer.OS = &OS{Computer: computer}
+	computer.OS.Network = e
+	computer.Kernel = &Kernel{
+		computer: computer,
+		programs: map[string]func(int) Program{
+			"/bin/ls":      func(pid int) Program { return &Ls{id: fmt.Sprintf("ls-%d", pid)} },
+			"/bin/cat":     func(pid int) Program { return &Cat{id: fmt.Sprintf("cat-%d", pid)} },
+			"/bin/clear":   func(pid int) Program { return &Clear{id: fmt.Sprintf("clear-%d", pid)} },
+			"/bin/adduser": func(pid int) Program { return &Adduser{id: fmt.Sprintf("adduser-%d", pid)} }, // factories
+		},
+	}
+
+	// adduser runs as root so we gotta make setuid TRUE!
+	computer.FsMetaData["/bin/adduser"] = FileMetadata{
+		Filepath:  "/bin/adduser",
+		Owner:     "root",
+		Setuid:    true,
+		OwnerMode: 7,
+		OtherMode: 5,
+	}
 	return computer
+}
+
+func (c *Computer) GenerateSessionID() string {
+	// count number of active sessions
+	count := len(c.sessions)
+	sessionID := fmt.Sprintf("session-%d", count+1)
+	return sessionID
+}
+
+func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
+	sessionID := node.GenerateSessionID()
+	workingDir := "/"
+
+	if username == "root" {
+		workingDir = "/root"
+	} else {
+		workingDir = "/home/" + username
+	}
+
+	session := &Session{
+		SessionID:   sessionID,
+		Computer:    node,
+		CurrentUser: username,
+		WorkingDir:  workingDir,
+		TTY:         tty,
+	}
+	node.sessions[sessionID] = session
+
+	if !(node.OS.HasDirectory(workingDir)) {
+		node.OS.Mkdir(workingDir)
+	}
+
+	node.OS.Network.PublishEvent(EventSessionCreated, map[string]interface{}{
+		"session_id":  sessionID,
+		"user":        username,
+		"computer":    node.Name,
+		"working_dir": workingDir,
+		"tty_id":      tty.id,
+	})
+
+	return utils.Success, sessionID
 }

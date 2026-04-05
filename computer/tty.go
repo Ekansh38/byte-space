@@ -1,4 +1,4 @@
-package engine
+package computer
 
 import (
 	"fmt"
@@ -46,12 +46,20 @@ func (t *TTYAPI) GetTTYID() string {
 	return t.tty.id
 }
 
+func (t *TTYAPI) GetSession() *Session {
+	return t.tty.Session
+}
+
 type Program interface {
 	// API's (aces based security)
 
 	SetTTyAPI(api *TTYAPI)
 
 	SetKernel(api *Kernel)
+
+	// no acces to session, the only "state" it has acess to is from the kernel syscalls or the proc
+
+	SetProcess(proc *Process)
 
 	AddGraphicsAPI(api *GraphicsAPI)
 	RemoveGraphicsAPI()
@@ -62,15 +70,11 @@ type Program interface {
 	Run(returnStatus chan int, params []string)
 	HandleSignal(sig Signal)
 
-	// Permissions
-
-	Owner() string
-	Setuid() bool
 }
 
 type TTY struct {
 	io.Writer
-	engine            *Engine
+	networkAPI        NetworkAPI
 	PasswdMode        bool
 	id                string
 	ForegroundProgram Program
@@ -84,7 +88,7 @@ type TTY struct {
 	// Echo & Canonical false is RAW mode
 }
 
-func NewTTY(c net.Conn, engine *Engine, id string) *TTY {
+func NewTTY(c net.Conn, engine NetworkAPI, id string) *TTY {
 	handsomeNewTTY := &TTY{
 		ForegroundProgram: nil,
 		Canonical:         true,
@@ -93,7 +97,7 @@ func NewTTY(c net.Conn, engine *Engine, id string) *TTY {
 		dataChannel:       make(chan string),
 		Session:           nil,
 		Connection:        c,
-		engine:            engine,
+		networkAPI:        engine,
 		id:                id,
 	}
 
@@ -110,14 +114,17 @@ const (
 )
 
 func (t *TTY) HandleKeystroke(keystroke string) {
-	if t.engine != nil && t.engine.EventBus != nil {
-		t.engine.EventBus.Publish(EventEngineToTTY, map[string]interface{}{
-			"key":       keystroke,
-			"canonical": t.Canonical,
-			"echo":      t.Echo,
-			"tty":       t.id,
-		})
-	}
+	t.networkAPI.PublishEvent(EventClientToEngine, map[string]interface{}{
+		"key": keystroke,
+		"tty": t.id,
+	})
+
+	t.networkAPI.PublishEvent(EventEngineToTTY, map[string]interface{}{
+		"key":       keystroke,
+		"canonical": t.Canonical,
+		"echo":      t.Echo,
+		"tty":       t.id,
+	})
 
 	switch keystroke {
 	case "\x03": // ctrl-c
@@ -130,12 +137,10 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 }
 
 func (t *TTY) SetForegroundProcess(program Program) (string, int) {
-	if t.engine != nil && t.engine.EventBus != nil {
-		t.engine.EventBus.Publish(EventForegroundChanged, map[string]interface{}{
-			"program": program.ID(),
-			"tty_id":  t.id,
-		})
-	}
+	t.networkAPI.PublishEvent(EventForegroundChanged, map[string]interface{}{
+		"program": program.ID(),
+		"tty_id":  t.id,
+	})
 
 	// GraphicsAPI is only for the ForegroundProgram so that they can write to TTY
 	if program.ID() != "" {
@@ -165,6 +170,7 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			if len(receivedData) == 1 && receivedData[0] == ';' {
 				continue
 			}
+			preCursor := t.CursorPosition
 			if t.Echo {
 				ansiData := receivedData
 
@@ -186,23 +192,19 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 						ansiData = ""
 					}
 				}
-				if t.PasswdMode && receivedData != "\r" { // not enter
+				if t.PasswdMode && receivedData != "\r" && receivedData != "\x7f" {
 					ansiData = "*"
 				}
 
-				data := newIPCMessage(ansiData, utils.Success)
-
-				writeToClient(t.Connection, data)
+				t.networkAPI.WriteToClient(t.Connection, ansiData, utils.Success)
 			}
 
 			if !t.Canonical {
-				if t.engine != nil && t.engine.EventBus != nil {
-					t.engine.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
-						"key":    receivedData,
-						"prog":   program.ID(),
-						"tty_id": t.id,
-					})
-				}
+				t.networkAPI.PublishEvent(EventTTYToProgram, map[string]interface{}{
+					"key":    receivedData,
+					"prog":   program.ID(),
+					"tty_id": t.id,
+				})
 				return receivedData, utils.Success
 			}
 
@@ -210,37 +212,35 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			case "\r": // enter
 				data := t.Buffer
 
-				if t.engine != nil && t.engine.EventBus != nil {
-					t.engine.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
-						"cmd":    t.Buffer,
-						"prog":   program.ID(),
-						"tty_id": t.id,
-					})
-				}
+				t.networkAPI.PublishEvent(EventTTYToProgram, map[string]interface{}{
+					"cmd":    t.Buffer,
+					"prog":   program.ID(),
+					"tty_id": t.id,
+				})
 
 				t.CursorPosition = 0
 				t.Buffer = ""
-				if t.engine != nil && t.engine.EventBus != nil {
-					t.engine.EventBus.Publish(EventBufferChanged, map[string]interface{}{
-						"buffer": t.Buffer,
-						"cursor": t.CursorPosition,
-						"tty":    t.id,
-					})
-				}
+				t.networkAPI.PublishEvent(EventBufferChanged, map[string]interface{}{
+					"buffer": t.Buffer,
+					"cursor": t.CursorPosition,
+					"tty":    t.id,
+				})
 
 				return data, utils.Success
 			case "\x7f": // delete
 				runes := []rune(t.Buffer)
 
-				if t.CursorPosition < len(runes) {
+				if preCursor > 0 && t.CursorPosition < len(runes) {
 					runes = append(runes[:t.CursorPosition], runes[t.CursorPosition+1:]...)
 					t.Buffer = string(runes)
 
 					if t.Echo && !t.PasswdMode {
 						right := string(runes[t.CursorPosition:])
-						output := right + " "
-						output += fmt.Sprintf("\x1b[%dD", len(right)+1)
-						writeToClient(t.Connection, newIPCMessage(output, utils.Success))
+						if len(right) > 0 {
+							output := right + " "
+							output += fmt.Sprintf("\x1b[%dD", len(right)+1)
+							t.networkAPI.WriteToClient(t.Connection, output, utils.Success)
+						}
 					}
 				}
 
@@ -274,20 +274,20 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 				t.CursorPosition += len(r)
 				if t.Echo && !t.PasswdMode {
 					right := string(runes[t.CursorPosition:])
-					output := right + " "
-					output += fmt.Sprintf("\x1b[%dD", len(right)+1)
-					writeToClient(t.Connection, newIPCMessage(output, utils.Success))
+					if len(right) > 0 {
+						output := right + " "
+						output += fmt.Sprintf("\x1b[%dD", len(right)+1)
+						t.networkAPI.WriteToClient(t.Connection, output, utils.Success)
+					}
 				}
 
 			}
 
-			if t.engine != nil && t.engine.EventBus != nil {
-				t.engine.EventBus.Publish(EventBufferChanged, map[string]interface{}{
-					"buffer": t.Buffer,
-					"cursor": t.CursorPosition,
-					"tty":    t.id,
-				})
-			}
+			t.networkAPI.PublishEvent(EventBufferChanged, map[string]interface{}{
+				"buffer": t.Buffer,
+				"cursor": t.CursorPosition,
+				"tty":    t.id,
+			})
 
 		case <-done:
 			return "SIGINT", utils.Exit
@@ -298,13 +298,11 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 }
 
 func (t *TTY) Write(str []byte) (int, error) {
-	if t.engine != nil && t.engine.EventBus != nil {
-		t.engine.EventBus.Publish(EventTTYToClient, map[string]interface{}{
-			"output": string(str),
-			"tty":    t.id,
-		})
-	}
-	data := newIPCMessage(string(str), utils.Success)
-	writeToClient(t.Connection, data)
+	t.networkAPI.PublishEvent(EventTTYToClient, map[string]interface{}{
+		"output": string(str),
+		"tty":    t.id,
+	})
+
+	t.networkAPI.WriteToClient(t.Connection, string(str), utils.Success)
 	return len(str), nil
 }

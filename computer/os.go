@@ -5,10 +5,15 @@ import (
 	"strings"
 
 	"github.com/spf13/afero"
+	"net"
 )
 
 type NetworkAPI interface {
 	// Whatever programs need, like send packet and stuf
+	PublishEvent(eventType EventType, data map[string]interface{})
+	WriteToClient(c net.Conn, message string, status int)
+	ListMachinesOnNetwork() []Computer
+				GetNode(ip_address string) (node *Computer, ok bool)
 }
 
 type OS struct {

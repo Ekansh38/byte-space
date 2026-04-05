@@ -7,6 +7,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"byte-space/computer"
 	"byte-space/engine"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -88,7 +89,7 @@ const (
 )
 
 type Model struct {
-	events      chan engine.Event
+	events      chan computer.Event
 	eng         *engine.Engine
 	connections map[string]*ConnectionState
 	selectedTTY string
@@ -115,7 +116,7 @@ type ConnectionState struct {
 	Status         string
 	ConnectedAt    time.Time
 	LastActivity   time.Time
-	LogEvents      []engine.Event
+	LogEvents      []computer.Event
 	EventCount     int
 	KeystrokeCount int
 	BytesSent      int
@@ -126,7 +127,7 @@ const (
 	MaxLogLines = 1000 // Max log lines to keep per connection
 )
 
-func NewModel(events chan engine.Event, eng *engine.Engine) Model {
+func NewModel(events chan computer.Event, eng *engine.Engine) Model {
 	return Model{
 		events:      events,
 		eng:         eng,
@@ -137,9 +138,9 @@ func NewModel(events chan engine.Event, eng *engine.Engine) Model {
 	}
 }
 
-type eventMsg engine.Event
+type eventMsg computer.Event
 
-func waitForEvent(ch chan engine.Event) tea.Cmd {
+func waitForEvent(ch chan computer.Event) tea.Cmd {
 	return func() tea.Msg {
 		return eventMsg(<-ch)
 	}
@@ -158,7 +159,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case eventMsg:
-		e := engine.Event(msg)
+		e := computer.Event(msg)
 		m.updateState(e)
 		m.totalEvents++
 
@@ -218,7 +219,7 @@ func (m *Model) cycleConnection() {
 	m.selectedTTY = ttyIDs[nextIdx]
 }
 
-func getTTYIDFromEvent(e engine.Event) string {
+func getTTYIDFromEvent(e computer.Event) string {
 	if ttyID, ok := e.Data["tty_id"].(string); ok {
 		return ttyID
 	}
@@ -228,14 +229,14 @@ func getTTYIDFromEvent(e engine.Event) string {
 	return ""
 }
 
-func (m *Model) updateState(e engine.Event) {
+func (m *Model) updateState(e computer.Event) {
 	ttyID := getTTYIDFromEvent(e)
 	if ttyID == "" {
 		return
 	}
 
 	// Handle TTY close first
-	if e.Type == engine.EventTTYClosed {
+	if e.Type == computer.EventTTYClosed {
 		delete(m.connections, ttyID)
 		// Select another TTY if this was selected
 		if m.selectedTTY == ttyID {
@@ -255,7 +256,7 @@ func (m *Model) updateState(e engine.Event) {
 			Status:       "connecting",
 			ConnectedAt:  time.Now(),
 			LastActivity: time.Now(),
-			LogEvents:    make([]engine.Event, 0),
+			LogEvents:    make([]computer.Event, 0),
 			ProgramStack: make([]string, 0),
 		}
 		if m.selectedTTY == "" {
@@ -268,10 +269,10 @@ func (m *Model) updateState(e engine.Event) {
 
 	// Update state based on event
 	switch e.Type {
-	case engine.EventTTYCreated:
+	case computer.EventTTYCreated:
 		conn.Status = "connecting"
 
-	case engine.EventSessionCreated:
+	case computer.EventSessionCreated:
 		if user, ok := e.Data["user"].(string); ok {
 			conn.SessionUser = user
 		}
@@ -290,7 +291,7 @@ func (m *Model) updateState(e engine.Event) {
 			conn.WorkingDir = "/home/" + conn.SessionUser
 		}
 
-	case engine.EventEngineToTTY:
+	case computer.EventEngineToTTY:
 		if mode, ok := e.Data["canonical"].(bool); ok {
 			if mode {
 				conn.Mode = "CANONICAL"
@@ -302,18 +303,52 @@ func (m *Model) updateState(e engine.Event) {
 			conn.Echo = echo
 		}
 		conn.KeystrokeCount++
+		if key, ok := e.Data["key"].(string); ok {
+			switch key {
+			case "\r":
+				conn.Buffer = ""
+				conn.CursorPos = 0
+			case "\x7f":
+				if conn.CursorPos > 0 {
+					runes := []rune(conn.Buffer)
+					if conn.CursorPos-1 < len(runes) {
+						runes = append(runes[:conn.CursorPos-1], runes[conn.CursorPos:]...)
+						conn.Buffer = string(runes)
+						conn.CursorPos--
+					}
+				}
+			case "\x1b[C":
+				if conn.CursorPos < len([]rune(conn.Buffer)) {
+					conn.CursorPos++
+				}
+			case "\x1b[D":
+				if conn.CursorPos > 0 {
+					conn.CursorPos--
+				}
+			case "\x03", "\x1b[A", "\x1b[B":
+				// no-op
+			default:
+				if !strings.HasPrefix(key, "\x1b") {
+					runes := []rune(conn.Buffer)
+					r := []rune(key)
+					runes = append(runes[:conn.CursorPos], append(r, runes[conn.CursorPos:]...)...)
+					conn.Buffer = string(runes)
+					conn.CursorPos += len(r)
+				}
+			}
+		}
 
-	case engine.EventForegroundChanged:
+	case computer.EventForegroundChanged:
 		if prog, ok := e.Data["program"].(string); ok {
 			conn.ForegroundProg = prog
 		}
 
-	case engine.EventProgramStarted:
+	case computer.EventProgramStarted:
 		if progID, ok := e.Data["program_id"].(string); ok {
 			conn.ProgramStack = append(conn.ProgramStack, progID)
 		}
 
-	case engine.EventProgramExited:
+	case computer.EventProgramExited:
 		if progID, ok := e.Data["program_id"].(string); ok {
 			// Remove from stack
 			for i, p := range conn.ProgramStack {
@@ -324,17 +359,17 @@ func (m *Model) updateState(e engine.Event) {
 			}
 		}
 
-	case engine.EventTTYToClient:
+	case computer.EventTTYToClient:
 		if output, ok := e.Data["output"].(string); ok {
 			conn.BytesSent += len(output)
 		}
 
-	case engine.EventClientToEngine:
+	case computer.EventClientToEngine:
 		if key, ok := e.Data["key"].(string); ok {
 			conn.BytesReceived += len(key)
 		}
 
-	case engine.EventBufferChanged:
+	case computer.EventBufferChanged:
 		if buffer, ok := e.Data["buffer"].(string); ok {
 			conn.Buffer = buffer
 		}
@@ -458,7 +493,7 @@ func formatKey(key interface{}) string {
 	}
 }
 
-func formatEventWithTTY(e engine.Event, ttyID string, compact bool) string {
+func formatEventWithTTY(e computer.Event, ttyID string, compact bool) string {
 	var tsFmt string
 	if compact {
 		tsFmt = "04:05.000" // MM:SS.mmm — drops the hour, saves 3 cols
@@ -471,15 +506,15 @@ func formatEventWithTTY(e engine.Event, ttyID string, compact bool) string {
 	var eventType, details string
 
 	switch e.Type {
-	case engine.EventEngineToTTY:
+	case computer.EventEngineToTTY:
 		eventType = keystrokeStyle.Render("KEYSTROKE ")
 		key := formatKey(e.Data["key"])
 		details = key
 
-	case engine.EventClientToEngine:
+	case computer.EventClientToEngine:
 		return "" // Skip
 
-	case engine.EventTTYToProgram:
+	case computer.EventTTYToProgram:
 		if cmd, ok := e.Data["cmd"]; ok {
 			eventType = executeStyle.Render("EXECUTE   ")
 			cmdStr := fmt.Sprintf("%v", cmd)
@@ -497,7 +532,7 @@ func formatEventWithTTY(e engine.Event, ttyID string, compact bool) string {
 			details = fmt.Sprintf("%s %s", key, prog)
 		}
 
-	case engine.EventTTYToClient:
+	case computer.EventTTYToClient:
 		eventType = outputStyle.Render("OUTPUT    ")
 		output := fmt.Sprintf("%v", e.Data["output"])
 
@@ -516,35 +551,35 @@ func formatEventWithTTY(e engine.Event, ttyID string, compact bool) string {
 		byteCount := detailStyle.Render(fmt.Sprintf("(%db)", len(output)))
 		details = fmt.Sprintf("%s %s", displayOutput, byteCount)
 
-	case engine.EventTTYCreated:
+	case computer.EventTTYCreated:
 		eventType = stateChangeStyle.Render("[TTY_INIT]")
 		details = detailStyle.Render("canonical echo")
 
-	case engine.EventTTYModeChanged:
+	case computer.EventTTYModeChanged:
 		eventType = stateChangeStyle.Render("[TTY_MODE]")
 		details = detailStyle.Render(fmt.Sprintf("%v echo=%v", e.Data["mode"], e.Data["echo"]))
 
-	case engine.EventForegroundChanged:
+	case computer.EventForegroundChanged:
 		eventType = stateChangeStyle.Render("[FGRND_CH]")
 		details = detailStyle.Render(fmt.Sprintf("→ %v", e.Data["program"]))
 
-	case engine.EventProgramStarted:
+	case computer.EventProgramStarted:
 		eventType = stateChangeStyle.Render("[PRG_STRT]")
 		details = detailStyle.Render(fmt.Sprintf("%v spawned", e.Data["program_id"]))
 
-	case engine.EventProgramExited:
+	case computer.EventProgramExited:
 		eventType = stateChangeStyle.Render("[PRG_EXIT]")
 		progID := e.Data["program_id"]
 		status := e.Data["status"]
 		details = detailStyle.Render(fmt.Sprintf("%v exit=%v", progID, status))
 
-	case engine.EventSessionCreated:
+	case computer.EventSessionCreated:
 		eventType = stateChangeStyle.Render("[SESSION ]")
 		user := e.Data["user"]
 		computer := e.Data["computer"]
 		details = detailStyle.Render(fmt.Sprintf("%v@%v", user, computer))
 
-	case engine.EventBufferChanged:
+	case computer.EventBufferChanged:
 		return "" // Don't show in log, only update state
 
 	default:
@@ -776,7 +811,7 @@ func (m Model) renderSelectedState(width int) string {
 }
 
 type logEntry struct {
-	event engine.Event
+	event computer.Event
 	ttyID string
 }
 

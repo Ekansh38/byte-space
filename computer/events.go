@@ -1,5 +1,5 @@
 // engine/events.go
-package engine
+package computer
 
 import "time"
 
@@ -45,6 +45,8 @@ func (eb *EventBus) Subscribe() chan Event {
 	eb.subscribers = append(eb.subscribers, ch)
 	return ch
 }
+
+
 
 func (eb *EventBus) Publish(eventType EventType, data map[string]interface{}) {
 	event := Event{

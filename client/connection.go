@@ -9,9 +9,8 @@ import (
 	"net"
 	"os"
 
-	"byte-space/utils"
-
 	"byte-space/engine"
+	"byte-space/utils"
 )
 
 var (

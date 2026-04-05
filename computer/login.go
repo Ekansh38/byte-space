@@ -1,11 +1,10 @@
-package engine
+package computer
 
 import (
 	"fmt"
-	//"os/user"
 	"strings"
 
-	"byte-space/computer"
+	//"os/user"
 	"byte-space/utils"
 )
 
@@ -15,16 +14,10 @@ type LoginProgram struct {
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
 	Kernel      *Kernel
-	Engine      *Engine
+	NetworkAPI  NetworkAPI
 }
 
-func (p *LoginProgram) Owner() string {
-	return ""
-}
-
-func (p *LoginProgram) Setuid() bool {
-	return false
-}
+func (p *LoginProgram) SetProcess(proc *Process) {}
 
 func (p *LoginProgram) SetTTyAPI(api *TTYAPI) {
 	p.ttyAPI = api
@@ -44,7 +37,7 @@ func (p *LoginProgram) RemoveGraphicsAPI() {
 
 func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 	// data
-	ip_address := ""
+	ipAdress := ""
 	username := ""
 	password := ""
 
@@ -54,7 +47,7 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 		return
 	}
 
-	computers := p.Engine.ListMachinesOnNetwork() // used a string builder because += is not efficient
+	computers := p.NetworkAPI.ListMachinesOnNetwork() // used a string builder because += is not efficient
 	var choices strings.Builder
 
 	for i := range computers {
@@ -65,7 +58,7 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 	p.graphicsAPI.Write("\033[H\033[2J")
 	p.graphicsAPI.Write(choices.String())
 
-	var mainComputer *computer.Computer
+	var mainComputer *Computer
 
 	for {
 		value, status := p.ttyAPI.Read(p.done)
@@ -76,10 +69,10 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 				return
 			}
 
-			if ip_address == "" {
-				ip_address = value
+			if ipAdress == "" {
+				ipAdress = value
 				ok := false
-				if mainComputer, ok = p.Engine.nodes[ip_address]; ok {
+				if mainComputer, ok = p.NetworkAPI.GetNode(ipAdress); ok {
 					p.graphicsAPI.Write(mainComputer.OS.GetIssue())
 					p.graphicsAPI.Write("\nUSERNAME: ") // change to mainComputer.OS.GetUsernamePrompt or sm
 				} else {
@@ -99,13 +92,13 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 				if mainComputer.OS.Login(username, password) == utils.Success {
 					p.graphicsAPI.Write(mainComputer.OS.GetMotd())
 
-					sessionStatus, sessionID := p.Engine.NewSession(mainComputer, username, p.ttyAPI.GetTTYID())
+					sessionStatus, sessionID := mainComputer.NewSession(username, p.ttyAPI.tty)
 					if sessionStatus != utils.Success {
 						returnStatus <- utils.Error
 						return
 					}
 
-					p.ttyAPI.SetSession(p.Engine.sessions[sessionID])
+					p.ttyAPI.SetSession(mainComputer.sessions[sessionID])
 					returnStatus <- utils.Success
 					return
 

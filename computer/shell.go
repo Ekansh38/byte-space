@@ -1,11 +1,8 @@
-package engine
+package computer
 
 import (
 	"fmt"
-	//"fmt"
-	//"os"
 	"path"
-	"strconv"
 	"strings"
 
 	"byte-space/utils"
@@ -17,23 +14,12 @@ type Shell struct {
 	id          string
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
-	Kernel       *Kernel
-	nextID      int
+	Kernel      *Kernel
+	proc        *Process
 }
 
-func (p *Shell) Owner() string {
-	return "root"
-}
-
-func (p *Shell) Setuid() bool {
-	return false
-}
-
-
-func (s *Shell) getUniqueID() string {
-	id := s.nextID
-	s.nextID++
-	return strconv.Itoa(id)
+func (s *Shell) SetProcess(proc *Process) {
+	s.proc = proc
 }
 
 func parse(value string) ([]string, []string) {
@@ -56,7 +42,6 @@ func parse(value string) ([]string, []string) {
 
 	return commands, flags
 }
-
 
 func (s *Shell) SetTTyAPI(api *TTYAPI) {
 	s.ttyAPI = api
@@ -86,7 +71,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 			switch value[0] {
 			case "exit":
 				returnStatus <- utils.Success
-				s.tty.engine.EventBus.Publish(EventProgramExited, map[string]interface{}{
+				s.tty.networkAPI.PublishEvent(EventProgramExited, map[string]interface{}{
 					"program_id": s.ID(),
 					"status":     0,
 					"tty_id":     s.tty.id,
@@ -128,18 +113,25 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				s.graphicsAPI.Write("\n")
 
 			case "ls":
-				program := &Ls{id: "ls-" + s.getUniqueID()}
-				exec(program, s, value, flags)
+				if err := s.Kernel.Exec(s.tty.Session, "/bin/ls", append(value[1:], flags...)); err != nil {
+					s.graphicsAPI.Write("\n" + err.Error() + "\n")
+				}
+				s.tty.SetForegroundProcess(s)
 			case "clear":
-				program := &Clear{id: "clear-" + s.getUniqueID()}
-				exec(program, s, value, flags)
+				if err := s.Kernel.Exec(s.tty.Session, "/bin/clear", append(value[1:], flags...)); err != nil {
+					s.graphicsAPI.Write("\n" + err.Error() + "\n")
+				}
+				s.tty.SetForegroundProcess(s)
 			case "cat":
-				program := &Cat{id: "cat-" + s.getUniqueID()}
-				exec(program, s, value, flags)
-
+				if err := s.Kernel.Exec(s.tty.Session, "/bin/cat", append(value[1:], flags...)); err != nil {
+					s.graphicsAPI.Write("\n" + err.Error() + "\n")
+				}
+				s.tty.SetForegroundProcess(s)
 			case "adduser":
-				program := &Adduser{id: "adduser-" + s.getUniqueID()}
-				exec(program, s, value, flags)
+				if err := s.Kernel.Exec(s.tty.Session, "/bin/adduser", append(value[1:], flags...)); err != nil {
+					s.graphicsAPI.Write("\n" + err.Error() + "\n")
+				}
+				s.tty.SetForegroundProcess(s)
 
 			case "":
 				prefix = "\n"
@@ -150,7 +142,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 			}
 
-			prompt = fmt.Sprintf("%s%s$ ", prefix, s.tty.Session.WorkingDir)
+			prompt = fmt.Sprintf("%s\r%s$ ", prefix, s.tty.Session.WorkingDir)
 			s.graphicsAPI.Write(prompt)
 		case utils.Exit:
 			returnStatus <- utils.Error

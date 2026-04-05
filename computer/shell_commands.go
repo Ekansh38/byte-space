@@ -1,4 +1,4 @@
-package engine
+package computer
 
 import (
 	"fmt"
@@ -11,7 +11,8 @@ type Ls struct {
 	id          string
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
-	Kernel       *Kernel
+	Kernel      *Kernel
+	proc        *Process
 }
 
 func (p *Ls) SetTTyAPI(api *TTYAPI) {
@@ -22,12 +23,8 @@ func (p *Ls) SetKernel(api *Kernel) {
 	p.Kernel = api
 }
 
-func (p *Ls) Owner() string {
-	return "root"
-}
-
-func (p *Ls) Setuid() bool {
-	return false
+func (p *Ls) SetProcess(proc *Process) {
+	p.proc = proc
 }
 
 func (p *Ls) Run(returnStatus chan int, params []string) {
@@ -41,12 +38,12 @@ func (p *Ls) Run(returnStatus chan int, params []string) {
 		return
 	}
 
-	dir := p.Kernel.GetWorkingDir()
+	dir := p.proc.CWD
 	if len(params) == 1 {
 		dir = params[0]
 	}
 
-	files, err := p.Kernel.ReadDir(dir)
+	files, err := p.Kernel.ReadDir(p.proc, dir)
 	if err != nil {
 		p.graphicsAPI.Write("\n" + err.Error() + "\n")
 		returnStatus <- utils.Error
@@ -89,7 +86,8 @@ type Clear struct {
 	id          string
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
-	Kernel       *Kernel
+	Kernel      *Kernel
+	proc        *Process
 }
 
 func (p *Clear) SetTTyAPI(api *TTYAPI) {
@@ -100,12 +98,8 @@ func (p *Clear) SetKernel(api *Kernel) {
 	p.Kernel = api
 }
 
-func (p *Clear) Owner() string {
-	return "root"
-}
-
-func (p *Clear) Setuid() bool {
-	return false
+func (p *Clear) SetProcess(proc *Process) {
+	p.proc = proc
 }
 
 func (p *Clear) Run(returnStatus chan int, params []string) {
@@ -141,7 +135,8 @@ type Cat struct {
 	id          string
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
-	Kernel       *Kernel
+	Kernel      *Kernel
+	proc        *Process
 }
 
 func (p *Cat) SetTTyAPI(api *TTYAPI) {
@@ -152,12 +147,8 @@ func (p *Cat) SetKernel(api *Kernel) {
 	p.Kernel = api
 }
 
-func (p *Cat) Owner() string {
-	return "root"
-}
-
-func (p *Cat) Setuid() bool {
-	return false
+func (p *Cat) SetProcess(proc *Process) {
+	p.proc = proc
 }
 
 func (p *Cat) Run(returnStatus chan int, params []string) {
@@ -171,7 +162,7 @@ func (p *Cat) Run(returnStatus chan int, params []string) {
 		return
 	}
 
-	content, err := p.Kernel.ReadFile(params[0])
+	content, err := p.Kernel.ReadFile(p.proc, params[0])
 	if err != nil {
 		message := "\nFailed to open file\n"
 		if strings.HasSuffix(err.Error(), "no such file or directory") {

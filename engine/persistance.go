@@ -69,7 +69,7 @@ func (e *Engine) LoadNetwork() error {
 	}
 
 	for _, nodeConfig := range config.Nodes {
-		node := computer.NewComputer(nodeConfig.Name, nodeConfig.IP, nodeConfig.Type)
+		node := computer.NewComputer(nodeConfig.Name, nodeConfig.IP, nodeConfig.Type, e)
 		e.nodes[nodeConfig.IP] = node
 	}
 
@@ -77,11 +77,11 @@ func (e *Engine) LoadNetwork() error {
 	return nil
 }
 
-func (e *Engine) resetNetwork() *EngineIPCMessage {
+func (e *Engine) resetNetwork() *computer.EngineIPCMessage {
 	os.RemoveAll(networkPath)
 
 	// Clear from memory
 	e.nodes = make(map[string]*computer.Computer)
 
-	return newIPCMessage("Network reset (memory + disk cleared)", utils.Success)
+	return computer.NewIPCMessage("Network reset (memory + disk cleared)", utils.Success)
 }

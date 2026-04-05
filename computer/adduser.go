@@ -1,4 +1,4 @@
-package engine
+package computer
 
 import (
 	"fmt"
@@ -12,15 +12,12 @@ type Adduser struct {
 	done        chan struct{}
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
-	Kernel       *Kernel
+	Kernel      *Kernel
+	proc        *Process
 }
 
-func (p *Adduser) Owner() string {
-	return "root"
-}
-
-func (p *Adduser) Setuid() bool {
-	return true // runs as root so it can write /etc/passwd
+func (p *Adduser) SetProcess(proc *Process) {
+	p.proc = proc
 }
 
 func (p *Adduser) SetTTyAPI(api *TTYAPI) {
@@ -118,7 +115,7 @@ func (p *Adduser) Run(returnStatus chan int, params []string) {
 }
 
 func (p *Adduser) findUID() (int, bool) {
-	data, err := p.Kernel.ReadFile("/etc/passwd")
+	data, err := p.Kernel.ReadFile(p.proc, "/etc/passwd")
 	if err != nil {
 		return 0, false
 	}
@@ -132,7 +129,7 @@ func (p *Adduser) findUID() (int, bool) {
 }
 
 func (p *Adduser) isUsernameUnique(username string) bool {
-	data, err := p.Kernel.ReadFile("/etc/passwd")
+	data, err := p.Kernel.ReadFile(p.proc, "/etc/passwd")
 	if err != nil {
 		return false
 	}
@@ -149,7 +146,7 @@ func (p *Adduser) isUsernameUnique(username string) bool {
 }
 
 func (p *Adduser) addUser(username, password string, uid int) string {
-	existing, err := p.Kernel.ReadFile("/etc/passwd")
+	existing, err := p.Kernel.ReadFile(p.proc, "/etc/passwd")
 	if err != nil {
 		existing = []byte("")
 	}
@@ -160,7 +157,7 @@ func (p *Adduser) addUser(username, password string, uid int) string {
 	}
 
 	line := fmt.Sprintf("%s:%s:%d:%s\n", username, password, uid, homedir)
-	if err := p.Kernel.WriteFile("/etc/passwd", append(existing, []byte(line)...)); err != nil {
+	if err := p.Kernel.WriteFile(p.proc, "/etc/passwd", append(existing, []byte(line)...)); err != nil {
 		return fmt.Sprintf("Error writing to passwd: %s", err)
 	}
 	return fmt.Sprintf("Successfully added %s", username)

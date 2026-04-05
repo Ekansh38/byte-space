@@ -9,7 +9,7 @@ import (
 
 )
 
-func (e *Engine) RunAdminCommand(command string) *EngineIPCMessage {
+func (e *Engine) RunAdminCommand(command string) *computer.EngineIPCMessage {
 
 	// parse the command	
 
@@ -18,7 +18,7 @@ func (e *Engine) RunAdminCommand(command string) *EngineIPCMessage {
 	if len(commandP) == 0 {
 		message := "No command provided" // this should be filtered out by the client but if the API is used directly.
 		fmt.Println(message)
-		data := newIPCMessage(message, utils.Error)
+		data := computer.NewIPCMessage(message, utils.Error)
 		return data
 	}
 
@@ -32,19 +32,19 @@ func (e *Engine) RunAdminCommand(command string) *EngineIPCMessage {
 	case "reset-network":
 		return e.resetNetwork()
 	default:
-		return newIPCMessage("not implemented", utils.Warning)
+		return computer.NewIPCMessage("not implemented", utils.Warning)
 
 	}
 
 
 }
 
-func (e *Engine) spawnNode(commandParsed []string) *EngineIPCMessage {
+func (e *Engine) spawnNode(commandParsed []string) *computer.EngineIPCMessage {
 
 	if len(commandParsed) != 4 {
 		message := "Usage: spawn <type> <name> <ip>"
 		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
+		return computer.NewIPCMessage(message, utils.Error)
 	}
 
 	name := commandParsed[2]
@@ -54,7 +54,7 @@ func (e *Engine) spawnNode(commandParsed []string) *EngineIPCMessage {
 	if nodeType != "computer" {
 		message := fmt.Sprintf("Node type %s is not supported", nodeType)
 		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
+		return computer.NewIPCMessage(message, utils.Error)
 	}
 
 	// check uniqueness of name and ip
@@ -62,17 +62,16 @@ func (e *Engine) spawnNode(commandParsed []string) *EngineIPCMessage {
 		if node.Name == name {
 			message := fmt.Sprintf("A node with the name %s already exists", name)
 			fmt.Println(message)
-			return newIPCMessage(message, utils.Error)
+			return computer.NewIPCMessage(message, utils.Error)
 		}
 		if node.IP == ip {
 			message := fmt.Sprintf("A node with the IP %s already exists", ip)
 			fmt.Println(message)
-			return newIPCMessage(message, utils.Error)
+			return computer.NewIPCMessage(message, utils.Error)
 		}
 	}
 
-	newNode := computer.NewComputer(name, ip, nodeType)
-	newNode.OS.Network = e
+	newNode := computer.NewComputer(name, ip, nodeType, e)
 	e.nodes[ip] = newNode
 
 	e.SaveNetwork()
@@ -80,15 +79,15 @@ func (e *Engine) spawnNode(commandParsed []string) *EngineIPCMessage {
 	message := fmt.Sprintf("A %s node named: %s with IP: %s spawned successfully\nTip: adduser %s root <password>", nodeType, name, ip, name)
 	fmt.Println(message)
 
-	return newIPCMessage(message, utils.Success)
+	return computer.NewIPCMessage(message, utils.Success)
 }
 
 
-func (e *Engine) listNodes(commandParsed []string) *EngineIPCMessage {
+func (e *Engine) listNodes(commandParsed []string) *computer.EngineIPCMessage {
 	if len(commandParsed) > 2 {
 		message := "Usage: list-nodes"
 		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
+		return computer.NewIPCMessage(message, utils.Error)
 	}
 	message := "" 
 	listFormat := "%s: %s: %s\n"
@@ -116,15 +115,15 @@ func (e *Engine) listNodes(commandParsed []string) *EngineIPCMessage {
 	}
 
 	fmt.Println(message)
-	return newIPCMessage(message, utils.Success)
+	return computer.NewIPCMessage(message, utils.Success)
 
 }
 
-func (e *Engine) deleteNode(commandParsed []string) *EngineIPCMessage {
+func (e *Engine) deleteNode(commandParsed []string) *computer.EngineIPCMessage {
 	if len(commandParsed) != 2 {
 		message := "Usage: delete <name>"
 		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
+		return computer.NewIPCMessage(message, utils.Error)
 	}
 
 	nodeName := commandParsed[1]
@@ -135,7 +134,7 @@ func (e *Engine) deleteNode(commandParsed []string) *EngineIPCMessage {
 	if !found {
 		message = fmt.Sprintf("No node with the name %s found", nodeName)
 		fmt.Println(message)
-		return newIPCMessage(message, utils.Error)
+		return computer.NewIPCMessage(message, utils.Error)
 	}
 
 	delete(e.nodes, node.IP)
@@ -143,7 +142,7 @@ func (e *Engine) deleteNode(commandParsed []string) *EngineIPCMessage {
 	path := networkPath + "/nodes/" + node.Name
 	err := os.RemoveAll(path)
 	if err != nil {
-		return newIPCMessage(fmt.Sprintf("Error deleting filesystem: %s", err), utils.Error)
+		return computer.NewIPCMessage(fmt.Sprintf("Error deleting filesystem: %s", err), utils.Error)
 	}
 	message = fmt.Sprintf("Node %s deleted successfully", nodeName)
 	status =  utils.Success
@@ -152,7 +151,7 @@ func (e *Engine) deleteNode(commandParsed []string) *EngineIPCMessage {
 
 	fmt.Println(message)
 
-	return newIPCMessage(message, status)
+	return computer.NewIPCMessage(message, status)
 
 }
 
