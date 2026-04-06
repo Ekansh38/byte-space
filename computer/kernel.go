@@ -15,8 +15,23 @@ type Kernel struct {
 	// later the factory can be just 1 function, and instead of a map, it can just read that file path and do the language stuff, check for shebang and all that.
 	// rn we still need a map.
 
-	pids  int
+	pids     int   // keeps track of the highest ever PID
+	freePIDs []int // stores PIDs of exited processes to reuse
+
 	procs map[int]*Process // pid to the running process instance (all processes on this computer, GLOBALY)
+}
+
+func (k *Kernel) nextPID() int {
+	if len(k.freePIDs) > 0 {
+		// reuse
+		pid := k.freePIDs[len(k.freePIDs)-1]
+		k.freePIDs = k.freePIDs[:len(k.freePIDs)-1]
+		return pid
+	}
+
+	// just increment if no free ones
+	k.pids++
+	return k.pids
 }
 
 type ExecOpts struct {
@@ -31,8 +46,7 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string, opts *Exe
 		return fmt.Errorf("%s: command not found", binPath)
 	}
 
-	k.pids++
-	pid := k.pids
+	pid := k.nextPID()
 	program := factory(pid)
 
 	uid := session.CurrentUser
@@ -102,6 +116,7 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string, opts *Exe
 
 func (k *Kernel) cleanupProcess(pid int) {
 	delete(k.procs, pid)
+	k.pids--
 }
 
 func (k *Kernel) resolvePath(proc *Process, target string) string {
