@@ -1,3 +1,4 @@
+// VIBE CODED SLOP DEBUGGER
 package tui
 
 import (

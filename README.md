@@ -33,6 +33,8 @@ Terminal-based internet simulator from the early internet era. Build networks, b
 - Email System - Send mail between virtual machines using SMTP
 - Custom Protocols - Built-from-scratch implementations of DNS, Telnet, HTTP, and more
 - Packet Visualization - Real-time graphical view of network traffic using Ebiten
+
+> **Note:** The TUI (`tui/`) is the only vibe coded element of this project. Everything else is handcrafted.
 - Time Control - Tick-based system with adjustable network speed (instant to slow-motion)
 - some more cool stuff
 
