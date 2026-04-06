@@ -5,16 +5,27 @@ import (
 	"os"
 	"path"
 	"strings"
+
+	"byte-space/utils"
 )
 
 type Kernel struct {
 	computer *Computer
 	programs map[string]func(int) Program // path to the factory, which can later change if I implement a language
-	pids     int
+	// later the factory can be just 1 function, and instead of a map, it can just read that file path and do the language stuff, check for shebang and all that.
+	// rn we still need a map.
+
+	pids  int
+	procs map[int]*Process // pid to the running process instance (all processes on this computer, GLOBALY)
+}
+
+type ExecOpts struct {
+	Background bool
+	PGID       int
 }
 
 // Exec looks up the binary from the path then it creates a Process with correct EUID
-func (k *Kernel) Exec(session *Session, binPath string, args []string) error {
+func (k *Kernel) Exec(session *Session, binPath string, args []string, opts *ExecOpts) error {
 	factory, ok := k.programs[binPath]
 	if !ok {
 		return fmt.Errorf("%s: command not found", binPath)
@@ -30,18 +41,27 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string) error {
 		euid = meta.Owner
 	}
 
-	proc := &Process{
-		PID:  pid,
-		UID:  uid,
-		EUID: euid,
-		CWD:  session.WorkingDir,
-		TTY:  session.TTY,
+	pgid := opts.PGID
+	if opts.PGID == 0 {
+		pgid = pid
 	}
 
+	proc := &Process{
+		PID:     pid,
+		PGID:    pgid,
+		UID:     uid,
+		EUID:    euid,
+		CWD:     session.WorkingDir,
+		TTY:     session.TTY,
+		Program: program,
+	}
+
+	k.procs[pid] = proc
+
 	program.SetProcess(proc)
-	program.SetTTyAPI(&TTYAPI{tty: session.TTY, program: program})
+	program.SetTTyAPI(&TTYAPI{tty: session.TTY, proc: proc})
 	program.SetKernel(k)
-	session.TTY.SetForegroundProcess(program)
+	session.TTY.SetForegroundPGID(pgid)
 
 	status := make(chan int)
 
@@ -52,6 +72,19 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string) error {
 
 	go program.Run(status, args)
 
+	if opts.Background {
+		go func() {
+			exitCode := <-status
+			k.computer.OS.Network.PublishEvent(EventProgramExited, map[string]interface{}{
+				"program_id": program.ID(),
+				"status":     exitCode,
+				"tty_id":     session.TTY.id,
+			})
+			k.cleanupProcess(pid)
+		}()
+		return nil
+	}
+
 	exitCode := <-status
 
 	k.computer.OS.Network.PublishEvent(EventProgramExited, map[string]interface{}{
@@ -59,8 +92,16 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string) error {
 		"status":     exitCode,
 		"tty_id":     session.TTY.id,
 	})
+	k.cleanupProcess(pid)
 
+	if exitCode != utils.Success {
+		return fmt.Errorf("%s: exited with status %d", binPath, exitCode)
+	}
 	return nil
+}
+
+func (k *Kernel) cleanupProcess(pid int) {
+	delete(k.procs, pid)
 }
 
 func (k *Kernel) resolvePath(proc *Process, target string) string {
@@ -142,7 +183,7 @@ func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
 	return nil
 }
 
-func (k *Kernel) WriteFile(proc *Process, target string, data []byte) error { //syscall
+func (k *Kernel) WriteFile(proc *Process, target string, data []byte) error { // syscall
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
 	if !k.canWrite(proc.EUID, parent) {

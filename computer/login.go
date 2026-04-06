@@ -15,9 +15,12 @@ type LoginProgram struct {
 	ttyAPI      *TTYAPI
 	Kernel      *Kernel
 	NetworkAPI  NetworkAPI
+	proc        *Process
 }
 
-func (p *LoginProgram) SetProcess(proc *Process) {}
+func (p *LoginProgram) SetProcess(proc *Process) {
+	p.proc = proc
+}
 
 func (p *LoginProgram) SetTTyAPI(api *TTYAPI) {
 	p.ttyAPI = api

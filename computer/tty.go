@@ -26,12 +26,12 @@ func (g *GraphicsAPI) Write(str string) (int, error) {
 }
 
 type TTYAPI struct {
-	tty     *TTY
-	program Program
+	tty  *TTY
+	proc *Process
 }
 
 func (t *TTYAPI) Read(done chan struct{}) (string, int) {
-	return t.tty.Read(t.program, done)
+	return t.tty.Read(t.proc, done)
 }
 
 func (t *TTYAPI) SetPasswdMode(mode bool) {
@@ -69,36 +69,35 @@ type Program interface {
 	ID() string
 	Run(returnStatus chan int, params []string)
 	HandleSignal(sig Signal)
-
 }
 
 type TTY struct {
 	io.Writer
-	networkAPI        NetworkAPI
-	PasswdMode        bool
-	id                string
-	ForegroundProgram Program
-	Canonical         bool
-	Echo              bool
-	Buffer            string
-	CursorPosition    int
-	dataChannel       chan string
-	Session           *Session
-	Connection        net.Conn
+	networkAPI     NetworkAPI
+	PasswdMode     bool
+	id             string
+	ForegroundPGID int // pgid = proces group id
+	Canonical      bool
+	Echo           bool
+	Buffer         string
+	CursorPosition int
+	dataChannel    chan string
+	Session        *Session
+	Connection     net.Conn
 	// Echo & Canonical false is RAW mode
 }
 
 func NewTTY(c net.Conn, engine NetworkAPI, id string) *TTY {
 	handsomeNewTTY := &TTY{
-		ForegroundProgram: nil,
-		Canonical:         true,
-		Echo:              true,
-		Buffer:            "",
-		dataChannel:       make(chan string),
-		Session:           nil,
-		Connection:        c,
-		networkAPI:        engine,
-		id:                id,
+		ForegroundPGID: -1,
+		Canonical:      true,
+		Echo:           true,
+		Buffer:         "",
+		dataChannel:    make(chan string),
+		Session:        nil,
+		Connection:     c,
+		networkAPI:     engine,
+		id:             id,
 	}
 
 	return handsomeNewTTY
@@ -128,37 +127,64 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 
 	switch keystroke {
 	case "\x03": // ctrl-c
-		if t.ForegroundProgram != nil {
-			t.ForegroundProgram.HandleSignal(SIGINT)
+		if t.ForegroundPGID != -1 {
+			var foregroundPrograms []*Process
+
+			procs := t.Session.Computer.Kernel.procs
+			for _, proc := range procs {
+				if proc.PGID == t.ForegroundPGID {
+					foregroundPrograms = append(foregroundPrograms, proc)
+				}
+			}
+			for _, proc := range foregroundPrograms {
+				proc.Program.HandleSignal(SIGINT)
+			}
 		}
 	default:
 		t.dataChannel <- keystroke
 	}
 }
 
-func (t *TTY) SetForegroundProcess(program Program) (string, int) {
-	t.networkAPI.PublishEvent(EventForegroundChanged, map[string]interface{}{
-		"program": program.ID(),
-		"tty_id":  t.id,
-	})
+func (t *TTY) SetForegroundPGID(pgid int) (string, int) {
+	procs := t.Session.Computer.Kernel.procs
 
-	// GraphicsAPI is only for the ForegroundProgram so that they can write to TTY
-	if program.ID() != "" {
-		if t.ForegroundProgram != nil {
-			t.ForegroundProgram.RemoveGraphicsAPI()
+	// Remove graphicsAPI from old foreground programs
+	if t.ForegroundPGID != -1 {
+		for _, proc := range procs {
+			if proc.PGID == t.ForegroundPGID {
+				t.networkAPI.PublishEvent(EventForegroundChanged, map[string]interface{}{
+					"program": proc.Program.ID(),
+					"tty_id":  t.id,
+				})
+				proc.Program.RemoveGraphicsAPI()
+			}
 		}
-
-		t.ForegroundProgram = program
-		program.AddGraphicsAPI(NewGraphicsAPI(t))
-		return "Successfully set foreground program", utils.Success
-	} else {
-		return "Invalid program ID", utils.Error
 	}
+
+	t.ForegroundPGID = pgid
+
+	// Add graphicsAPI to new foreground programs
+	for _, proc := range procs {
+		if proc.PGID == pgid {
+			proc.Program.AddGraphicsAPI(NewGraphicsAPI(t))
+		}
+	}
+
+	return "Successfully set foreground program", utils.Success
 }
 
-func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
-	if program != t.ForegroundProgram {
+func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
+	if proc.PGID != t.ForegroundPGID {
 		return "Err: You are not foreground program", utils.Error
+	}
+
+	var foregroundPrograms []*Process
+
+	procs := t.Session.Computer.Kernel.procs
+	for _, proc := range procs {
+		if proc.PGID == t.ForegroundPGID {
+			foregroundPrograms = append(foregroundPrograms, proc)
+		}
 	}
 	for {
 		select {
@@ -200,11 +226,13 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			}
 
 			if !t.Canonical {
-				t.networkAPI.PublishEvent(EventTTYToProgram, map[string]interface{}{
-					"key":    receivedData,
-					"prog":   program.ID(),
-					"tty_id": t.id,
-				})
+				for _, proc := range foregroundPrograms {
+					t.networkAPI.PublishEvent(EventTTYToProgram, map[string]interface{}{
+						"key":    receivedData,
+						"prog":   proc.Program.ID(),
+						"tty_id": t.id,
+					})
+				}
 				return receivedData, utils.Success
 			}
 
@@ -212,11 +240,13 @@ func (t *TTY) Read(program Program, done chan struct{}) (string, int) {
 			case "\r": // enter
 				data := t.Buffer
 
-				t.networkAPI.PublishEvent(EventTTYToProgram, map[string]interface{}{
-					"cmd":    t.Buffer,
-					"prog":   program.ID(),
-					"tty_id": t.id,
-				})
+				for _, proc := range foregroundPrograms {
+					t.networkAPI.PublishEvent(EventTTYToProgram, map[string]interface{}{
+						"cmd":    t.Buffer,
+						"prog":   proc.Program.ID(),
+						"tty_id": t.id,
+					})
+				}
 
 				t.CursorPosition = 0
 				t.Buffer = ""

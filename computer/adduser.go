@@ -45,7 +45,7 @@ func (p *Adduser) HandleSignal(sig Signal) {
 		select {
 		case <-p.done:
 		default:
-			p.graphicsAPI.Write("\n")
+			p.graphicsAPI.Write("\n(SIGINT), force quitting!\n")
 			close(p.done)
 		}
 	}
@@ -76,12 +76,12 @@ func (p *Adduser) Run(returnStatus chan int, params []string) {
 		case utils.Success:
 			if !usernameRecorded {
 				if value == "" {
-					p.graphicsAPI.Write("\nthats a horrible username, its empty child!\n")
+					p.graphicsAPI.Write("\that a horrible username, its empty child!\n")
 					returnStatus <- utils.Error
 					return
 				}
 				if !p.isUsernameUnique(value) {
-					p.graphicsAPI.Write("\nUsername already exists, dont be so generic\n")
+					p.graphicsAPI.Write("\nUsername already exists, don't be so generic\n")
 					returnStatus <- utils.Error
 					return
 				}

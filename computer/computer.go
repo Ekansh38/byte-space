@@ -80,6 +80,8 @@ func initFileSystem(fs afero.Fs, hostname string, ip string) {
 	createIfNotExists("/bin/cat", "")
 	createIfNotExists("/bin/clear", "")
 	createIfNotExists("/bin/adduser", "")
+	createIfNotExists("/bin/login", "")
+	createIfNotExists("/bin/sh", "")
 }
 
 func populateFileMetadata(filesystm afero.Fs, computer *Computer) {
@@ -125,8 +127,16 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Compute
 			"/bin/ls":      func(pid int) Program { return &Ls{id: fmt.Sprintf("ls-%d", pid)} },
 			"/bin/cat":     func(pid int) Program { return &Cat{id: fmt.Sprintf("cat-%d", pid)} },
 			"/bin/clear":   func(pid int) Program { return &Clear{id: fmt.Sprintf("clear-%d", pid)} },
-			"/bin/adduser": func(pid int) Program { return &Adduser{id: fmt.Sprintf("adduser-%d", pid)} }, // factories
+			"/bin/adduser": func(pid int) Program { return &Adduser{id: fmt.Sprintf("adduser-%d", pid)} },
+			"/bin/login": func(pid int) Program {
+				return &LoginProgram{
+					id:         fmt.Sprintf("login-%d", pid),
+					NetworkAPI: computer.OS.Network,
+				}
+			},
+			"/bin/sh": func(pid int) Program { return &Shell{id: fmt.Sprintf("sh-%d", pid)} },
 		},
+		procs: map[int]*Process{},
 	}
 
 	// adduser runs as root so we gotta make setuid TRUE!

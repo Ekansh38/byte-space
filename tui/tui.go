@@ -631,13 +631,13 @@ func (m Model) renderThreeColumn() string {
 
 	leftPanel := m.renderConnectionList(leftWidth)
 	middlePanel := m.renderSelectedState(middleWidth)
-	rightPanel := m.renderLog(rightWidth, true)
+	rightPanel := m.renderLog(rightWidth, true, m.height-4)
 
 	return m.combinePanels(leftPanel, middlePanel, rightPanel, leftWidth, middleWidth, rightWidth)
 }
 
 func (m Model) renderFullScreenLog() string {
-	return m.renderLog(m.width-4, false)
+	return m.renderLog(m.width-4, false, m.height)
 }
 
 func (m Model) renderFullScreenState() string {
@@ -815,7 +815,7 @@ type logEntry struct {
 	ttyID string
 }
 
-func (m Model) renderLog(width int, compact bool) string {
+func (m Model) renderLog(width int, compact bool, panelHeight int) string {
 	var s strings.Builder
 
 	if m.showAllLogs {
@@ -825,7 +825,7 @@ func (m Model) renderLog(width int, compact bool) string {
 	}
 	s.WriteString(borderStyle.Render(strings.Repeat("─", width)) + "\n")
 
-	maxLines := m.height - 3
+	maxLines := panelHeight - 2 // 2 header lines (title + border)
 
 	var entries []logEntry
 

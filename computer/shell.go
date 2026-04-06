@@ -20,6 +20,7 @@ type Shell struct {
 
 func (s *Shell) SetProcess(proc *Process) {
 	s.proc = proc
+	s.tty = proc.TTY
 }
 
 func parse(value string) ([]string, []string) {
@@ -53,7 +54,7 @@ func (s *Shell) SetKernel(api *Kernel) {
 
 func (s *Shell) Run(returnStatus chan int, params []string) {
 	s.done = make(chan struct{})
-	s.SetTTyAPI(&TTYAPI{tty: s.tty, program: s}) // shell has special permission to make its own API for itself.
+	s.SetTTyAPI(&TTYAPI{tty: s.tty, proc: s.proc}) // shell has special permission to make its own API for itself.
 	if s.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
@@ -113,25 +114,25 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				s.graphicsAPI.Write("\n")
 
 			case "ls":
-				if err := s.Kernel.Exec(s.tty.Session, "/bin/ls", append(value[1:], flags...)); err != nil {
+				if err := s.Kernel.Exec(s.tty.Session, "/bin/ls", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
-				s.tty.SetForegroundProcess(s)
+				s.tty.SetForegroundPGID(s.proc.PGID)
 			case "clear":
-				if err := s.Kernel.Exec(s.tty.Session, "/bin/clear", append(value[1:], flags...)); err != nil {
+				if err := s.Kernel.Exec(s.tty.Session, "/bin/clear", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
-				s.tty.SetForegroundProcess(s)
+				s.tty.SetForegroundPGID(s.proc.PGID)
 			case "cat":
-				if err := s.Kernel.Exec(s.tty.Session, "/bin/cat", append(value[1:], flags...)); err != nil {
+				if err := s.Kernel.Exec(s.tty.Session, "/bin/cat", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
-				s.tty.SetForegroundProcess(s)
+				s.tty.SetForegroundPGID(s.proc.PGID)
 			case "adduser":
-				if err := s.Kernel.Exec(s.tty.Session, "/bin/adduser", append(value[1:], flags...)); err != nil {
+				if err := s.Kernel.Exec(s.tty.Session, "/bin/adduser", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
-				s.tty.SetForegroundProcess(s)
+				s.tty.SetForegroundPGID(s.proc.PGID)
 
 			case "":
 				prefix = "\n"
