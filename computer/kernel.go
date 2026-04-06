@@ -116,7 +116,6 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string, opts *Exe
 
 func (k *Kernel) cleanupProcess(pid int) {
 	delete(k.procs, pid)
-	k.pids--
 }
 
 func (k *Kernel) resolvePath(proc *Process, target string) string {

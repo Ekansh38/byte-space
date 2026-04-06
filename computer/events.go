@@ -22,6 +22,7 @@ const (
 	EventSessionCreated    EventType = "session_created"
 	EventBufferChanged     EventType = "buffer_changed"
 	EventTTYClosed         EventType = "tty_closed"
+	EventWorkingDirChanged EventType = "working_dir_changed"
 )
 
 type Event struct {

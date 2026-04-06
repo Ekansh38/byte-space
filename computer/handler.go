@@ -11,6 +11,8 @@ import (
 )
 
 func (c *Computer) HandleClient(conn net.Conn) {
+	// create a new tty
+
 	ttyID := fmt.Sprintf("tty-%d", len(c.ttys))
 
 	c.OS.Network.PublishEvent(EventTTYCreated, map[string]interface{}{

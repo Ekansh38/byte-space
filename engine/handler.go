@@ -18,7 +18,7 @@ func (e *Engine) WriteToClient(c net.Conn, sendData string, status int) {
 }
 
 func (e *Engine) handleClient(conn net.Conn) {
-	for _, computer := range e.nodes {
+	for _, computer := range e.nodes { // random first computer for now.
 		computer.HandleClient(conn)
 		return
 	}

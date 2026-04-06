@@ -152,10 +152,6 @@ func (t *TTY) SetForegroundPGID(pgid int) (string, int) {
 	if t.ForegroundPGID != -1 {
 		for _, proc := range procs {
 			if proc.PGID == t.ForegroundPGID {
-				t.networkAPI.PublishEvent(EventForegroundChanged, map[string]interface{}{
-					"program": proc.Program.ID(),
-					"tty_id":  t.id,
-				})
 				proc.Program.RemoveGraphicsAPI()
 			}
 		}
@@ -166,6 +162,10 @@ func (t *TTY) SetForegroundPGID(pgid int) (string, int) {
 	// Add graphicsAPI to new foreground programs
 	for _, proc := range procs {
 		if proc.PGID == pgid {
+			t.networkAPI.PublishEvent(EventForegroundChanged, map[string]interface{}{
+				"program": proc.Program.ID(),
+				"tty_id":  t.id,
+			})
 			proc.Program.AddGraphicsAPI(NewGraphicsAPI(t))
 		}
 	}
@@ -207,6 +207,8 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 					} else {
 						ansiData = ""
 					}
+				} else if receivedData == "\t" {
+					ansiData = "    " // expand tab to 4 spaces visually
 				} else if receivedData == "\x1b[A" || receivedData == "\x1b[B" {
 					ansiData = ""
 				} else if receivedData == "\x1b[C" {
@@ -296,7 +298,11 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 
 			default:
 				index := t.CursorPosition
-				r := []rune(receivedData)
+				data := receivedData
+				if data == "\t" {
+					data = "    " // expand tab to 4 spaces in buffer
+				}
+				r := []rune(data)
 				runes := []rune(t.Buffer)
 				runes = append(runes[:index], append(r, runes[index:]...)...)
 				newStr := string(runes)

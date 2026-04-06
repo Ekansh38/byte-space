@@ -110,7 +110,12 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 					s.graphicsAPI.Write(message)
 					break
 				}
+
 				s.tty.Session.WorkingDir = dir
+				s.tty.networkAPI.PublishEvent(EventWorkingDirChanged, map[string]interface{}{
+					"dir":    dir,
+					"tty_id": s.tty.id,
+				})
 				s.graphicsAPI.Write("\n")
 
 			case "ls":

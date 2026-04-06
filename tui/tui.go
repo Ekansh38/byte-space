@@ -376,6 +376,11 @@ func (m *Model) updateState(e computer.Event) {
 		if cursor, ok := e.Data["cursor"].(int); ok {
 			conn.CursorPos = cursor
 		}
+
+	case computer.EventWorkingDirChanged:
+		if dir, ok := e.Data["dir"].(string); ok {
+			conn.WorkingDir = dir
+		}
 	}
 
 	// Add to log (use non-compact format just for filtering)
@@ -581,6 +586,10 @@ func formatEventWithTTY(e computer.Event, ttyID string, compact bool) string {
 
 	case computer.EventBufferChanged:
 		return "" // Don't show in log, only update state
+
+	case computer.EventWorkingDirChanged:
+		eventType = stateChangeStyle.Render("[CWD_CHG ]")
+		details = detailStyle.Render(fmt.Sprintf("→ %v", e.Data["dir"]))
 
 	default:
 		return ""
