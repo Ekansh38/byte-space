@@ -45,6 +45,7 @@ func (p *Adduser) HandleSignal(sig Signal) {
 		select {
 		case <-p.done:
 		default:
+			p.ttyAPI.BuffClear()
 			p.graphicsAPI.Write("\n(SIGINT), force quitting!\n")
 			close(p.done)
 		}

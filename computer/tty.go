@@ -34,6 +34,10 @@ func (t *TTYAPI) Read(done chan struct{}) (string, int) {
 	return t.tty.Read(t.proc, done)
 }
 
+func (t *TTYAPI) BuffClear() {
+	t.tty.BuffClear()
+}
+
 func (t *TTYAPI) SetPasswdMode(mode bool) {
 	t.tty.PasswdMode = mode
 }
@@ -341,4 +345,14 @@ func (t *TTY) Write(str []byte) (int, error) {
 
 	t.networkAPI.WriteToClient(t.Connection, string(str), utils.Success)
 	return len(str), nil
+}
+
+func (t *TTY) BuffClear() {
+	t.Buffer = ""
+	t.CursorPosition = 0
+	t.networkAPI.PublishEvent(EventBufferChanged, map[string]interface{}{
+		"buffer": t.Buffer,
+		"cursor": t.CursorPosition,
+		"tty":    t.id,
+	})
 }
