@@ -80,7 +80,7 @@ func (p *Ls) Run(returnStatus chan int, params []string) {
 			} else {
 				name = fmt.Sprintf("\033[97m%s\033[0m", file.Name())
 			}
-			output += fmt.Sprintf("%s  %s  %s\n", perms, owner, name)
+			output += fmt.Sprintf("%s%s  %s\n", perms, owner, name)
 		}
 	}
 
@@ -368,7 +368,9 @@ func formatMode(owner, other uint8, setuid bool) string {
 	}
 	perms := r(owner) + w(owner) + x(owner) + r(other) + w(other) + x(other)
 	if setuid {
-		perms += "\033[95ms\033[0m" // bright magenta
+		perms += "\033[95ms\033[0m " // bright magenta
+	} else {
+		perms += "  "
 	}
 	return perms
 }
