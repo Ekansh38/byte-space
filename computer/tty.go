@@ -1,8 +1,10 @@
 package computer
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"strings"
 
@@ -28,6 +30,10 @@ func (g *GraphicsAPI) Write(str string) (int, error) {
 type TTYAPI struct {
 	tty  *TTY
 	proc *Process
+}
+
+func (t *TTYAPI) SetForegroundPGID(pgid int) (string, int) {
+	return t.tty.SetForegroundPGID(pgid)
 }
 
 func (t *TTYAPI) Read(done chan struct{}) (string, int) {
@@ -71,13 +77,13 @@ type Program interface {
 	// General
 
 	ID() string
+	TTYAPI() *TTYAPI
 	Run(returnStatus chan int, params []string)
 	HandleSignal(sig Signal)
 }
 
 type TTY struct {
 	io.Writer
-	networkAPI     NetworkAPI
 	PasswdMode     bool
 	id             string
 	ForegroundPGID int // pgid = proces group id
@@ -88,10 +94,11 @@ type TTY struct {
 	dataChannel    chan string
 	Session        *Session
 	Connection     net.Conn
+	EventBus       *EventBus
 	// Echo & Canonical false is RAW mode
 }
 
-func NewTTY(c net.Conn, engine NetworkAPI, id string) *TTY {
+func NewTTY(c net.Conn, eb *EventBus, id string) *TTY {
 	handsomeNewTTY := &TTY{
 		ForegroundPGID: -1,
 		Canonical:      true,
@@ -100,11 +107,20 @@ func NewTTY(c net.Conn, engine NetworkAPI, id string) *TTY {
 		dataChannel:    make(chan string),
 		Session:        nil,
 		Connection:     c,
-		networkAPI:     engine,
 		id:             id,
+		EventBus:       eb,
 	}
 
 	return handsomeNewTTY
+}
+
+func (t *TTY) writeToClient(data string, status int) {
+	jsonData, err := json.Marshal(NewIPCMessage(data, status))
+	if err != nil {
+		log.Fatalf("Error occurred during marshalling: %s", err.Error())
+	}
+	jsonData = append(jsonData, '\n')
+	t.Connection.Write(jsonData)
 }
 
 type Signal int
@@ -117,12 +133,12 @@ const (
 )
 
 func (t *TTY) HandleKeystroke(keystroke string) {
-	t.networkAPI.PublishEvent(EventClientToEngine, map[string]interface{}{
+	t.EventBus.Publish(EventClientToEngine, map[string]interface{}{
 		"key": keystroke,
 		"tty": t.id,
 	})
 
-	t.networkAPI.PublishEvent(EventEngineToTTY, map[string]interface{}{
+	t.EventBus.Publish(EventEngineToTTY, map[string]interface{}{
 		"key":       keystroke,
 		"canonical": t.Canonical,
 		"echo":      t.Echo,
@@ -166,7 +182,7 @@ func (t *TTY) SetForegroundPGID(pgid int) (string, int) {
 	// Add graphicsAPI to new foreground programs
 	for _, proc := range procs {
 		if proc.PGID == pgid {
-			t.networkAPI.PublishEvent(EventForegroundChanged, map[string]interface{}{
+			t.EventBus.Publish(EventForegroundChanged, map[string]interface{}{
 				"program": proc.Program.ID(),
 				"tty_id":  t.id,
 			})
@@ -228,12 +244,12 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 					ansiData = "*"
 				}
 
-				t.networkAPI.WriteToClient(t.Connection, ansiData, utils.Success)
+				t.writeToClient(ansiData, utils.Success)
 			}
 
 			if !t.Canonical {
 				for _, proc := range foregroundPrograms {
-					t.networkAPI.PublishEvent(EventTTYToProgram, map[string]interface{}{
+					t.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
 						"key":    receivedData,
 						"prog":   proc.Program.ID(),
 						"tty_id": t.id,
@@ -247,7 +263,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 				data := t.Buffer
 
 				for _, proc := range foregroundPrograms {
-					t.networkAPI.PublishEvent(EventTTYToProgram, map[string]interface{}{
+					t.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
 						"cmd":    t.Buffer,
 						"prog":   proc.Program.ID(),
 						"tty_id": t.id,
@@ -256,7 +272,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 
 				t.CursorPosition = 0
 				t.Buffer = ""
-				t.networkAPI.PublishEvent(EventBufferChanged, map[string]interface{}{
+				t.EventBus.Publish(EventBufferChanged, map[string]interface{}{
 					"buffer": t.Buffer,
 					"cursor": t.CursorPosition,
 					"tty":    t.id,
@@ -275,7 +291,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 						if len(right) > 0 {
 							output := right + " "
 							output += fmt.Sprintf("\x1b[%dD", len(right)+1)
-							t.networkAPI.WriteToClient(t.Connection, output, utils.Success)
+							t.writeToClient(output, utils.Success)
 						}
 					}
 				}
@@ -317,13 +333,13 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 					if len(right) > 0 {
 						output := right + " "
 						output += fmt.Sprintf("\x1b[%dD", len(right)+1)
-						t.networkAPI.WriteToClient(t.Connection, output, utils.Success)
+						t.writeToClient(output, utils.Success)
 					}
 				}
 
 			}
 
-			t.networkAPI.PublishEvent(EventBufferChanged, map[string]interface{}{
+			t.EventBus.Publish(EventBufferChanged, map[string]interface{}{
 				"buffer": t.Buffer,
 				"cursor": t.CursorPosition,
 				"tty":    t.id,
@@ -338,19 +354,19 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 }
 
 func (t *TTY) Write(str []byte) (int, error) {
-	t.networkAPI.PublishEvent(EventTTYToClient, map[string]interface{}{
+	t.EventBus.Publish(EventTTYToClient, map[string]interface{}{
 		"output": string(str),
 		"tty":    t.id,
 	})
 
-	t.networkAPI.WriteToClient(t.Connection, string(str), utils.Success)
+	t.writeToClient(string(str), utils.Success)
 	return len(str), nil
 }
 
 func (t *TTY) BuffClear() {
 	t.Buffer = ""
 	t.CursorPosition = 0
-	t.networkAPI.PublishEvent(EventBufferChanged, map[string]interface{}{
+	t.EventBus.Publish(EventBufferChanged, map[string]interface{}{
 		"buffer": t.Buffer,
 		"cursor": t.CursorPosition,
 		"tty":    t.id,

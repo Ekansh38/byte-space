@@ -14,12 +14,15 @@ type LoginProgram struct {
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
 	Kernel      *Kernel
-	NetworkAPI  NetworkAPI
 	proc        *Process
 }
 
 func (p *LoginProgram) SetProcess(proc *Process) {
 	p.proc = proc
+}
+
+func (p *LoginProgram) TTYAPI() *TTYAPI {
+	return p.ttyAPI
 }
 
 func (p *LoginProgram) SetTTyAPI(api *TTYAPI) {
@@ -50,8 +53,8 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 		return
 	}
 
-	computers := p.NetworkAPI.ListMachinesOnNetwork() // used a string builder because += is not efficient
-	var choices strings.Builder
+	computers := p.Kernel.ListMachinesOnNetwork(p.proc) 
+	var choices strings.Builder // used a string builder because += is not efficient
 
 	for i := range computers {
 		fmt.Fprintf(&choices, "%s: %s\n", computers[i].IP, computers[i].Name)
@@ -75,7 +78,7 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 			if ipAdress == "" {
 				ipAdress = value
 				ok := false
-				if mainComputer, ok = p.NetworkAPI.GetNode(ipAdress); ok {
+				if mainComputer, ok = p.Kernel.GetNodeOnNetwork(ipAdress); ok {
 					p.graphicsAPI.Write(mainComputer.OS.GetIssue())
 					p.graphicsAPI.Write("\nUSERNAME: ") // change to mainComputer.OS.GetUsernamePrompt or sm
 				} else {

@@ -10,7 +10,6 @@ import (
 
 type Shell struct {
 	done        chan struct{}
-	tty         *TTY
 	id          string
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
@@ -20,7 +19,6 @@ type Shell struct {
 
 func (s *Shell) SetProcess(proc *Process) {
 	s.proc = proc
-	s.tty = proc.TTY
 }
 
 func parse(value string) ([]string, []string) {
@@ -52,14 +50,17 @@ func (s *Shell) SetKernel(api *Kernel) {
 	s.Kernel = api
 }
 
+func (s *Shell) TTYAPI() *TTYAPI {
+	return s.ttyAPI
+}
+
 func (s *Shell) Run(returnStatus chan int, params []string) {
 	s.done = make(chan struct{})
-	s.SetTTyAPI(&TTYAPI{tty: s.tty, proc: s.proc}) // shell has special permission to make its own API for itself.
 	if s.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
 	}
-	prompt := fmt.Sprintf("\n\r%s$ ", s.tty.Session.WorkingDir)
+	prompt := fmt.Sprintf("\n\r%s$ ", s.proc.CWD)
 	s.graphicsAPI.Write(prompt)
 
 	for {
@@ -72,19 +73,13 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 			switch value[0] {
 			case "exit":
 				returnStatus <- utils.Success
-				s.tty.networkAPI.PublishEvent(EventProgramExited, map[string]interface{}{
-					"program_id": s.ID(),
-					"status":     0,
-					"tty_id":     s.tty.id,
-				})
-
 				return
 			case "pwd":
 				if len(value) != 1 {
 					s.graphicsAPI.Write("Usage: pwd\n")
 					break
 				}
-				dataToDisplay := fmt.Sprintf("\n%s\n", s.tty.Session.WorkingDir)
+				dataToDisplay := fmt.Sprintf("\n%s\n", s.proc.CWD)
 				s.graphicsAPI.Write(dataToDisplay)
 			case "cd":
 				if len(flags) > 0 {
@@ -99,45 +94,57 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				dir := value[1]
 
 				if !strings.HasPrefix(dir, "/") {
-					dir = path.Join(s.tty.Session.WorkingDir, dir)
+					dir = path.Join(s.proc.CWD, dir)
 				}
 
 				dir = path.Clean(dir)
 
-				_, err := s.tty.Session.Computer.OS.ReadDir(dir)
+				_, err := s.Kernel.ReadDir(s.proc, dir)
 				if err != nil {
 					message := "\nInvalid directory\n"
 					s.graphicsAPI.Write(message)
 					break
 				}
 
-				s.tty.Session.WorkingDir = dir
-				s.tty.networkAPI.PublishEvent(EventWorkingDirChanged, map[string]interface{}{
+				s.proc.CWD = dir // DO VIA KERNEL, cuz permission checks and stuff TODO
+
+				s.Kernel.PublishEvent(s.proc, EventWorkingDirChanged, map[string]interface{}{
 					"dir":    dir,
-					"tty_id": s.tty.id,
-				})
+					"tty_id": s.Kernel.GetTtyID(s.proc),
+				}) // move this to kernel.
+
 				s.graphicsAPI.Write("\n")
 
 			case "ls":
-				if err := s.Kernel.Exec(s.tty.Session, "/bin/ls", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(s.proc, "/bin/ls", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
-				s.tty.SetForegroundPGID(s.proc.PGID)
+				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "clear":
-				if err := s.Kernel.Exec(s.tty.Session, "/bin/clear", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(s.proc, "/bin/clear", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
-				s.tty.SetForegroundPGID(s.proc.PGID)
+				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "cat":
-				if err := s.Kernel.Exec(s.tty.Session, "/bin/cat", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(s.proc, "/bin/cat", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
-				s.tty.SetForegroundPGID(s.proc.PGID)
+				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "adduser":
-				if err := s.Kernel.Exec(s.tty.Session, "/bin/adduser", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(s.proc, "/bin/adduser", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
-				s.tty.SetForegroundPGID(s.proc.PGID)
+				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
+			case "mkdir":
+				if err := s.Kernel.Exec(s.proc, "/bin/mkdir", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+					s.graphicsAPI.Write("\n" + err.Error() + "\n")
+				}
+				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
+			case "touch":
+				if err := s.Kernel.Exec(s.proc, "/bin/touch", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+					s.graphicsAPI.Write("\n" + err.Error() + "\n")
+				}
+				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 
 			case "":
 				prefix = "\n"
@@ -148,7 +155,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 			}
 
-			prompt = fmt.Sprintf("%s\r%s$ ", prefix, s.tty.Session.WorkingDir)
+			prompt = fmt.Sprintf("%s\r%s$ ", prefix, s.proc.CWD)
 			s.graphicsAPI.Write(prompt)
 		case utils.Exit:
 			returnStatus <- utils.Error

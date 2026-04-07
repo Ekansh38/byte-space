@@ -15,40 +15,59 @@ func (c *Computer) HandleClient(conn net.Conn) {
 
 	ttyID := fmt.Sprintf("tty-%d", len(c.ttys))
 
-	c.OS.Network.PublishEvent(EventTTYCreated, map[string]interface{}{
+	c.EventBus.Publish(EventTTYCreated, map[string]interface{}{
 		"tty_id": ttyID,
 	})
 
-	tty := NewTTY(conn, c.OS.Network, ttyID)
+	tty := NewTTY(conn, c.EventBus, ttyID)
 	c.ttys = append(c.ttys, tty)
 
 	// TEMP session
 	tty.Session = &Session{
 		Computer:    c,
 		CurrentUser: "",
-		WorkingDir:  "/",
 		TTY:         tty,
 	}
 
 	go func() {
-		network := c.OS.Network
+		daddyProc := &Process{
+			PID:  0, // TODO, dont hardcode this, actually it doesnt really maatrwe
+			UID:  "root",
+			EUID: "root",
+			CWD:  "/",
+			PGID: 0,
+		}
+		daddyProgram := &Shell{
+			ttyAPI: &TTYAPI{tty: tty, proc: daddyProc},
+		}
+		daddyProc.Program = daddyProgram // BOOTSTRAPPP!!!! I learned that word yesterday from the crafting interpetters book, pull urself up from ur own bootstraps!!!
 
-		if err := c.Kernel.Exec(tty.Session, "/bin/login", []string{}, &ExecOpts{}); err != nil {
-			network.WriteToClient(conn, "\nInvalid login conditionals or exit login program.\r\n", utils.Exit)
-			network.PublishEvent(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
+		if err := c.Kernel.Exec(daddyProc, "/bin/login", []string{}, &ExecOpts{}); err != nil {
+			tty.writeToClient("\nInvalid login conditionals or exit login program.\r\n", utils.Exit)
+			c.EventBus.Publish(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
 			conn.Close()
 			return
 		}
 
-		// change to actual session
-		targetKernel := tty.Session.Computer.Kernel
-		if err := targetKernel.Exec(tty.Session, "/bin/sh", []string{}, &ExecOpts{}); err != nil {
-			network.WriteToClient(conn, "Exiting with an error", utils.Exit)
+		workingDir := "/"
+
+		if tty.Session.CurrentUser == "root" {
+			workingDir = "/root"
 		} else {
-			network.WriteToClient(conn, "Exiting...", utils.Exit)
+			workingDir = "/home/" + tty.Session.CurrentUser
 		}
 
-		network.PublishEvent(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
+		daddyProc.CWD = workingDir
+
+		// change to actual session
+		targetKernel := tty.Session.Computer.Kernel
+		if err := targetKernel.Exec(daddyProc, "/bin/sh", []string{}, &ExecOpts{}); err != nil {
+			tty.writeToClient("\nExiting with an error", utils.Exit)
+		} else {
+			tty.writeToClient("\nExiting...", utils.Exit)
+		}
+
+		c.EventBus.Publish(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
 		conn.Close()
 	}()
 

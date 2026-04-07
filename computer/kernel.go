@@ -11,6 +11,7 @@ import (
 
 type Kernel struct {
 	computer *Computer
+	EventBus *EventBus
 	programs map[string]func(int) Program // path to the factory, which can later change if I implement a language
 	// later the factory can be just 1 function, and instead of a map, it can just read that file path and do the language stuff, check for shebang and all that.
 	// rn we still need a map.
@@ -19,6 +20,18 @@ type Kernel struct {
 	freePIDs []int // stores PIDs of exited processes to reuse
 
 	procs map[int]*Process // pid to the running process instance (all processes on this computer, GLOBALY)
+}
+
+func (k *Kernel) PublishEvent(proc *Process, eventType EventType, data map[string]interface{}) {
+	k.EventBus.Publish(eventType, data)
+}
+
+func (k *Kernel) GetTtyID(proc *Process) string {
+	return proc.Program.TTYAPI().GetTTYID()
+}
+
+func (k *Kernel) GetNodeOnNetwork(ipAdress string) (*Computer, bool) {
+	return k.computer.OS.Network.GetNode(ipAdress)
 }
 
 func (k *Kernel) nextPID() int {
@@ -39,8 +52,13 @@ type ExecOpts struct {
 	PGID       int
 }
 
+func (k *Kernel) ListMachinesOnNetwork(proc *Process) []Computer {
+	return k.computer.OS.Network.ListMachinesOnNetwork()
+}
+
 // Exec looks up the binary from the path then it creates a Process with correct EUID
-func (k *Kernel) Exec(session *Session, binPath string, args []string, opts *ExecOpts) error {
+// Practically fork & exec all in one
+func (k *Kernel) Exec(parentProc *Process, binPath string, args []string, opts *ExecOpts) error {
 	factory, ok := k.programs[binPath]
 	if !ok {
 		return fmt.Errorf("%s: command not found", binPath)
@@ -49,7 +67,7 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string, opts *Exe
 	pid := k.nextPID()
 	program := factory(pid)
 
-	uid := session.CurrentUser
+	uid := parentProc.UID
 	euid := uid
 	if meta, ok := k.computer.FsMetaData[binPath]; ok && meta.Setuid {
 		euid = meta.Owner
@@ -65,23 +83,22 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string, opts *Exe
 		PGID:    pgid,
 		UID:     uid,
 		EUID:    euid,
-		CWD:     session.WorkingDir,
-		TTY:     session.TTY,
+		CWD:     parentProc.CWD,
 		Program: program,
 	}
 
 	k.procs[pid] = proc
 
 	program.SetProcess(proc)
-	program.SetTTyAPI(&TTYAPI{tty: session.TTY, proc: proc})
+	program.SetTTyAPI(&TTYAPI{tty: parentProc.Program.TTYAPI().tty, proc: proc})
 	program.SetKernel(k)
-	session.TTY.SetForegroundPGID(pgid)
+	parentProc.Program.TTYAPI().tty.SetForegroundPGID(pgid)
 
 	status := make(chan int)
 
-	k.computer.OS.Network.PublishEvent(EventProgramStarted, map[string]interface{}{
+	k.EventBus.Publish(EventProgramStarted, map[string]interface{}{
 		"program_id": program.ID(),
-		"tty_id":     session.TTY.id,
+		"tty_id":     parentProc.Program.TTYAPI().tty.id,
 	})
 
 	go program.Run(status, args)
@@ -89,10 +106,10 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string, opts *Exe
 	if opts.Background {
 		go func() {
 			exitCode := <-status
-			k.computer.OS.Network.PublishEvent(EventProgramExited, map[string]interface{}{
+			k.EventBus.Publish(EventProgramExited, map[string]interface{}{
 				"program_id": program.ID(),
 				"status":     exitCode,
-				"tty_id":     session.TTY.id,
+				"tty_id":     parentProc.Program.TTYAPI().tty.id,
 			})
 			k.cleanupProcess(pid)
 		}()
@@ -101,10 +118,10 @@ func (k *Kernel) Exec(session *Session, binPath string, args []string, opts *Exe
 
 	exitCode := <-status
 
-	k.computer.OS.Network.PublishEvent(EventProgramExited, map[string]interface{}{
+	k.EventBus.Publish(EventProgramExited, map[string]interface{}{
 		"program_id": program.ID(),
 		"status":     exitCode,
-		"tty_id":     session.TTY.id,
+		"tty_id":     parentProc.Program.TTYAPI().tty.id,
 	})
 	k.cleanupProcess(pid)
 
@@ -178,6 +195,12 @@ func (k *Kernel) ReadDir(proc *Process, target string) ([]os.FileInfo, error) { 
 	return k.computer.OS.ReadDir(target)
 }
 
+func (k *Kernel) Stat(proc *Process, target string) (FileMetadata, bool) { // syscall
+	target = k.resolvePath(proc, target)
+	meta, ok := k.computer.FsMetaData[target]
+	return meta, ok
+}
+
 func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
@@ -185,6 +208,25 @@ func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
 		return fmt.Errorf("permission denied")
 	}
 	if err := k.computer.OS.Mkdir(target); err != nil {
+		return err
+	}
+	k.computer.FsMetaData[target] = FileMetadata{
+		Filepath:  target,
+		Owner:     proc.EUID,
+		Setuid:    false,
+		OwnerMode: 7,
+		OtherMode: 5,
+	}
+	return nil
+}
+
+func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
+	target = k.resolvePath(proc, target)
+	parent := path.Dir(target)
+	if !k.canWrite(proc.EUID, parent) {
+		return fmt.Errorf("permission denied")
+	}
+	if err := k.computer.OS.CreateFile(target); err != nil {
 		return err
 	}
 	k.computer.FsMetaData[target] = FileMetadata{

@@ -24,6 +24,10 @@ func (p *Adduser) SetTTyAPI(api *TTYAPI) {
 	p.ttyAPI = api
 }
 
+func (p *Adduser) TTYAPI() *TTYAPI {
+	return p.ttyAPI
+}
+
 func (p *Adduser) SetKernel(api *Kernel) {
 	p.Kernel = api
 }

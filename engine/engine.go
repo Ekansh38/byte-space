@@ -42,10 +42,6 @@ func NewEngine() *Engine {
 	return e
 }
 
-func (e *Engine) PublishEvent(eventType computer.EventType, data map[string]interface{}) {
-	e.EventBus.Publish(eventType, data)
-}
-
 func (e *Engine) GetNode(ip_address string) (node *computer.Computer, ok bool) {
 	node, ok = e.nodes[ip_address]
 	return node, ok

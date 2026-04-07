@@ -6,16 +6,14 @@ import (
 	"io/fs"
 	"os"
 
-	"github.com/spf13/afero"
 	"byte-space/utils"
-
+	"github.com/spf13/afero"
 )
 
 type Session struct {
 	SessionID   string
 	Computer    *Computer
 	CurrentUser string
-	WorkingDir  string
 	TTY         *TTY
 }
 
@@ -48,6 +46,7 @@ type Computer struct {
 	Type       string
 	OS         *OS
 	Kernel     *Kernel
+	EventBus   *EventBus
 	filesystem afero.Fs
 	FsMetaData map[string]FileMetadata
 
@@ -82,6 +81,8 @@ func initFileSystem(fs afero.Fs, hostname string, ip string) {
 	createIfNotExists("/bin/adduser", "")
 	createIfNotExists("/bin/login", "")
 	createIfNotExists("/bin/sh", "")
+	createIfNotExists("/bin/mkdir", "")
+	createIfNotExists("/bin/touch", "")
 }
 
 func populateFileMetadata(filesystm afero.Fs, computer *Computer) {
@@ -100,7 +101,7 @@ func populateFileMetadata(filesystm afero.Fs, computer *Computer) {
 	afero.Walk(filesystm, "/", walkFunc)
 }
 
-func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Computer {
+func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *EventBus) *Computer {
 	basePath := fmt.Sprintf("./data/networks/current/nodes/%s", name) // uniqueness of name is checked in the handler.go of the engine package.
 	os.MkdirAll(basePath, 0o755)
 
@@ -112,6 +113,7 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Compute
 		IP:         ip,
 		Type:       nodeType,
 		OS:         &OS{},
+		EventBus:   eb,
 		filesystem: filesystm,
 		FsMetaData: map[string]FileMetadata{},
 		sessions:   make(map[string]*Session),
@@ -123,18 +125,16 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Compute
 	computer.OS.Network = e
 	computer.Kernel = &Kernel{
 		computer: computer,
+		EventBus: eb,
 		programs: map[string]func(int) Program{
 			"/bin/ls":      func(pid int) Program { return &Ls{id: fmt.Sprintf("ls-%d", pid)} },
 			"/bin/cat":     func(pid int) Program { return &Cat{id: fmt.Sprintf("cat-%d", pid)} },
 			"/bin/clear":   func(pid int) Program { return &Clear{id: fmt.Sprintf("clear-%d", pid)} },
 			"/bin/adduser": func(pid int) Program { return &Adduser{id: fmt.Sprintf("adduser-%d", pid)} },
-			"/bin/login": func(pid int) Program {
-				return &LoginProgram{
-					id:         fmt.Sprintf("login-%d", pid),
-					NetworkAPI: computer.OS.Network,
-				}
-			},
-			"/bin/sh": func(pid int) Program { return &Shell{id: fmt.Sprintf("sh-%d", pid)} },
+			"/bin/login":   func(pid int) Program { return &LoginProgram{id: fmt.Sprintf("login-%d", pid)} },
+			"/bin/sh":      func(pid int) Program { return &Shell{id: fmt.Sprintf("sh-%d", pid)} },
+			"/bin/mkdir":      func(pid int) Program { return &MkDir{id: fmt.Sprintf("mkdir-%d", pid)} },
+			"/bin/touch":      func(pid int) Program { return &Touch{id: fmt.Sprintf("touch-%d", pid)} },
 		},
 		procs: map[int]*Process{},
 	}
@@ -159,8 +159,8 @@ func (c *Computer) GenerateSessionID() string {
 
 func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
 	sessionID := node.GenerateSessionID()
-	workingDir := "/"
 
+	var workingDir string
 	if username == "root" {
 		workingDir = "/root"
 	} else {
@@ -171,7 +171,6 @@ func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
 		SessionID:   sessionID,
 		Computer:    node,
 		CurrentUser: username,
-		WorkingDir:  workingDir,
 		TTY:         tty,
 	}
 	node.sessions[sessionID] = session
@@ -180,7 +179,7 @@ func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
 		node.OS.Mkdir(workingDir)
 	}
 
-	node.OS.Network.PublishEvent(EventSessionCreated, map[string]interface{}{
+	node.EventBus.Publish(EventSessionCreated, map[string]interface{}{
 		"session_id":  sessionID,
 		"user":        username,
 		"computer":    node.Name,

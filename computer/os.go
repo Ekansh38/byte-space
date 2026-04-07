@@ -1,19 +1,17 @@
 package computer
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
 	"github.com/spf13/afero"
-	"net"
 )
 
 type NetworkAPI interface {
 	// Whatever programs need, like send packet and stuf
-	PublishEvent(eventType EventType, data map[string]interface{})
-	WriteToClient(c net.Conn, message string, status int)
 	ListMachinesOnNetwork() []Computer
-				GetNode(ip_address string) (node *Computer, ok bool)
+	GetNode(ip_address string) (node *Computer, ok bool)
 }
 
 type OS struct {
@@ -22,7 +20,19 @@ type OS struct {
 }
 
 func (o *OS) Mkdir(path string) error {
-	return o.Computer.filesystem.MkdirAll(path, 0o755)
+	err := o.Computer.filesystem.Mkdir(path, 0o755)
+	if err != nil {
+		return fmt.Errorf("SOMETHING WENT WRONG")
+	}
+	return nil
+}
+
+func (o *OS) CreateFile(path string) error {
+	_, err := o.Computer.filesystem.Create(path)
+	if err != nil {
+		return fmt.Errorf("SOMETHING WENT WRONG")
+	}
+	return nil
 }
 
 func (o *OS) WriteFile(path string, data []byte) error {
