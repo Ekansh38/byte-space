@@ -1,0 +1,2346 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>computer: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">byte-space/computer/adduser.go (0.0%)</option>
+				
+				<option value="file1">byte-space/computer/computer.go (5.1%)</option>
+				
+				<option value="file2">byte-space/computer/events.go (42.9%)</option>
+				
+				<option value="file3">byte-space/computer/handler.go (0.0%)</option>
+				
+				<option value="file4">byte-space/computer/ipc.go (100.0%)</option>
+				
+				<option value="file5">byte-space/computer/kernel.go (43.0%)</option>
+				
+				<option value="file6">byte-space/computer/login.go (0.0%)</option>
+				
+				<option value="file7">byte-space/computer/os.go (24.3%)</option>
+				
+				<option value="file8">byte-space/computer/shell.go (0.0%)</option>
+				
+				<option value="file9">byte-space/computer/shell_commands.go (0.0%)</option>
+				
+				<option value="file10">byte-space/computer/tty.go (64.1%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package computer
+
+import (
+        "fmt"
+        "strings"
+
+        "byte-space/utils"
+)
+
+type Adduser struct {
+        id          string
+        done        chan struct{}
+        graphicsAPI *GraphicsAPI
+        ttyAPI      *TTYAPI
+        Kernel      *Kernel
+        proc        *Process
+}
+
+func (p *Adduser) SetProcess(proc *Process) <span class="cov0" title="0">{
+        p.proc = proc
+}</span>
+
+func (p *Adduser) SetTTyAPI(api *TTYAPI) <span class="cov0" title="0">{
+        p.ttyAPI = api
+}</span>
+
+func (p *Adduser) TTYAPI() *TTYAPI <span class="cov0" title="0">{
+        return p.ttyAPI
+}</span>
+
+func (p *Adduser) SetKernel(api *Kernel) <span class="cov0" title="0">{
+        p.Kernel = api
+}</span>
+
+func (p *Adduser) AddGraphicsAPI(api *GraphicsAPI) <span class="cov0" title="0">{
+        p.graphicsAPI = api
+}</span>
+
+func (p *Adduser) RemoveGraphicsAPI() <span class="cov0" title="0">{
+        p.graphicsAPI = nil
+}</span>
+
+func (p *Adduser) ID() string <span class="cov0" title="0">{
+        return p.id
+}</span>
+
+func (p *Adduser) HandleSignal(sig Signal) <span class="cov0" title="0">{
+        if sig == SIGINT </span><span class="cov0" title="0">{
+                select </span>{
+                case &lt;-p.done:<span class="cov0" title="0"></span>
+                default:<span class="cov0" title="0">
+                        p.ttyAPI.BuffClear()
+                        p.graphicsAPI.Write("\n(SIGINT), force quitting!\n")
+                        close(p.done)</span>
+                }
+        }
+}
+
+func (p *Adduser) Run(returnStatus chan int, params []string) <span class="cov0" title="0">{
+        if p.graphicsAPI == nil </span><span class="cov0" title="0">{
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+        <span class="cov0" title="0">if len(params) != 0 </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write("\nUsage: adduser\n")
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">p.done = make(chan struct{})
+        p.graphicsAPI.Write("\nEnter username: ")
+
+        username := ""
+        usernameRecorded := false
+        password := ""
+        passwordRecorded := false
+
+        for </span><span class="cov0" title="0">{
+                value, status := p.ttyAPI.Read(p.done)
+                switch status </span>{
+                case utils.Success:<span class="cov0" title="0">
+                        if !usernameRecorded </span><span class="cov0" title="0">{
+                                if value == "" </span><span class="cov0" title="0">{
+                                        p.graphicsAPI.Write("\that a horrible username, its empty child!\n")
+                                        returnStatus &lt;- utils.Error
+                                        return
+                                }</span>
+                                <span class="cov0" title="0">if !p.isUsernameUnique(value) </span><span class="cov0" title="0">{
+                                        p.graphicsAPI.Write("\nUsername already exists, don't be so generic\n")
+                                        returnStatus &lt;- utils.Error
+                                        return
+                                }</span>
+                                <span class="cov0" title="0">username = value
+                                usernameRecorded = true
+                                p.graphicsAPI.Write("\nPassword: ")
+                                p.ttyAPI.SetPasswdMode(true)</span>
+                        } else<span class="cov0" title="0"> if !passwordRecorded </span><span class="cov0" title="0">{
+                                password = value
+                                passwordRecorded = true
+                                p.ttyAPI.SetPasswdMode(false)
+
+                                uid, ok := p.findUID()
+                                if !ok </span><span class="cov0" title="0">{
+                                        p.graphicsAPI.Write("\nErr: could not create valid UID\n")
+                                        returnStatus &lt;- utils.Error
+                                        return
+                                }</span>
+
+                                <span class="cov0" title="0">msg := p.addUser(username, password, uid)
+                                p.graphicsAPI.Write("\n" + msg + "\n")
+                                returnStatus &lt;- utils.Success
+                                return</span>
+                        }
+
+                case utils.Exit:<span class="cov0" title="0">
+                        returnStatus &lt;- utils.Error
+                        return</span>
+                }
+        }
+}
+
+func (p *Adduser) findUID() (int, bool) <span class="cov0" title="0">{
+        data, err := p.Kernel.ReadFile(p.proc, "/etc/passwd")
+        if err != nil </span><span class="cov0" title="0">{
+                return 0, false
+        }</span>
+        <span class="cov0" title="0">userCount := 0
+        for _, line := range strings.Split(string(data), "\n") </span><span class="cov0" title="0">{
+                if strings.TrimSpace(line) != "" </span><span class="cov0" title="0">{
+                        userCount++
+                }</span>
+        }
+        <span class="cov0" title="0">return 1000 + userCount, true</span>
+}
+
+func (p *Adduser) isUsernameUnique(username string) bool <span class="cov0" title="0">{
+        data, err := p.Kernel.ReadFile(p.proc, "/etc/passwd")
+        if err != nil </span><span class="cov0" title="0">{
+                return false
+        }</span>
+        <span class="cov0" title="0">for _, line := range strings.Split(string(data), "\n") </span><span class="cov0" title="0">{
+                if strings.TrimSpace(line) == "" </span><span class="cov0" title="0">{
+                        continue</span>
+                }
+                <span class="cov0" title="0">fields := strings.Split(line, ":")
+                if len(fields) &gt;= 1 &amp;&amp; fields[0] == username </span><span class="cov0" title="0">{
+                        return false
+                }</span>
+        }
+        <span class="cov0" title="0">return true</span>
+}
+
+func (p *Adduser) addUser(username, password string, uid int) string <span class="cov0" title="0">{
+        existing, err := p.Kernel.ReadFile(p.proc, "/etc/passwd")
+        if err != nil </span><span class="cov0" title="0">{
+                existing = []byte("")
+        }</span>
+
+        <span class="cov0" title="0">homedir := "/home/" + username
+        if username == "root" </span><span class="cov0" title="0">{
+                homedir = "/root"
+        }</span>
+
+        <span class="cov0" title="0">line := fmt.Sprintf("%s:%s:%d:%s\n", username, password, uid, homedir)
+        if err := p.Kernel.WriteFile(p.proc, "/etc/passwd", append(existing, []byte(line)...)); err != nil </span><span class="cov0" title="0">{
+                return fmt.Sprintf("Error writing to passwd: %s", err)
+        }</span>
+        <span class="cov0" title="0">return fmt.Sprintf("Successfully added %s", username)</span>
+}
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">// Package computer creates basic virtual computers for the network
+package computer
+
+import (
+        "encoding/json"
+        "fmt"
+        "io/fs"
+        "os"
+
+        "byte-space/utils"
+
+        "github.com/spf13/afero"
+)
+
+type Session struct {
+        SessionID   string
+        Computer    *Computer
+        CurrentUser string
+        TTY         *TTY
+}
+
+type FileMetadata struct {
+        Filepath string // the file/folder this metadata applies to
+
+        Owner string // the owner of the file/folder,
+        // string of the username of the creator,
+        // for system files it is root, for other stuff /home/user it is that user.
+
+        Setuid bool // true means the user who runs that program can run it in the permissions of the owner
+
+        OwnerMode uint8
+        OtherMode uint8
+
+        //    rwx     // read  write  execute permissions
+        // 0: 000
+        // 1: 001
+        // 2: 010
+        // 3: 011
+        // 4: 100
+        // 5: 101
+        // 6: 110
+        // 7: 111
+}
+
+type Computer struct {
+        Name       string
+        IP         string
+        Type       string
+        OS         *OS
+        Kernel     *Kernel
+        EventBus   *EventBus
+        filesystem afero.Fs
+        FsMetaData map[string]FileMetadata
+
+        sessions map[string]*Session
+        ttys     []*TTY
+}
+
+func initFileSystem(fs afero.Fs, hostname string, ip string) <span class="cov0" title="0">{
+        // root:password:uid:homedir
+
+        fs.MkdirAll("/var/log/", 0o755)
+        fs.MkdirAll("/etc/", 0o755)
+        fs.MkdirAll("/bin/", 0o755)
+
+        // helper func, good go feature. rating 10/11, cool feature, very good boij
+        createIfNotExists := func(path, content string) </span><span class="cov0" title="0">{
+                if _, err := fs.Stat(path); os.IsNotExist(err) </span><span class="cov0" title="0">{
+                        f, _ := fs.Create(path)
+                        f.WriteString(content)
+                        f.Close()
+                }</span>
+        }
+
+        <span class="cov0" title="0">createIfNotExists("/var/log/lastlogin", "")
+        createIfNotExists("/etc/passwd", "")
+        createIfNotExists("/etc/hostname", hostname)
+        createIfNotExists("/etc/issue", fmt.Sprintf(defaultEtcIssue, hostname, ip))
+        createIfNotExists("/etc/motd", fmt.Sprintf(defaultEtcMotd))
+        createIfNotExists("/bin/ls", "")
+        createIfNotExists("/bin/cat", "")
+        createIfNotExists("/bin/clear", "")
+        createIfNotExists("/bin/adduser", "")
+        createIfNotExists("/bin/login", "")
+        createIfNotExists("/bin/sh", "")
+        createIfNotExists("/bin/mkdir", "")
+        createIfNotExists("/bin/touch", "")
+        createIfNotExists("/bin/chmod", "")</span>
+}
+
+func populateFileMetadata(filesystm afero.Fs, computer *Computer) <span class="cov0" title="0">{
+        walkFunc := func(path string, info fs.FileInfo, err error) error </span><span class="cov0" title="0">{
+                owner := "root"
+
+                fileMetadata := &amp;FileMetadata{
+                        Filepath:  path,
+                        Owner:     owner,
+                        Setuid:    false,
+                        OwnerMode: 7,
+                        OtherMode: 5,
+                }
+                computer.FsMetaData[path] = *fileMetadata
+                return nil
+        }</span>
+
+        <span class="cov0" title="0">afero.Walk(filesystm, "/", walkFunc)</span>
+}
+
+func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *EventBus) *Computer <span class="cov0" title="0">{
+        basePath := fmt.Sprintf("./data/networks/current/nodes/%s", name) // uniqueness of name is checked in the handler.go of the engine package.
+        os.MkdirAll(basePath, 0o755)
+
+        filesystm := afero.NewBasePathFs(afero.NewOsFs(), basePath)
+        initFileSystem(filesystm, name, ip)
+
+        computer := &amp;Computer{
+                Name:       name,
+                IP:         ip,
+                Type:       nodeType,
+                OS:         &amp;OS{},
+                EventBus:   eb,
+                filesystem: filesystm,
+                FsMetaData: map[string]FileMetadata{},
+                sessions:   make(map[string]*Session),
+        }
+
+        populateFileMetadata(filesystm, computer)
+        computer.loadMetaData() // override defaults with any saved permissions
+
+        computer.OS = &amp;OS{Computer: computer}
+        computer.OS.Network = e
+        computer.Kernel = &amp;Kernel{
+                computer: computer,
+                EventBus: eb,
+                programs: map[string]func(int) Program{
+                        "/bin/ls":      func(pid int) Program </span><span class="cov0" title="0">{ return &amp;Ls{id: fmt.Sprintf("ls-%d", pid)} }</span>,
+                        "/bin/cat":     func(pid int) Program <span class="cov0" title="0">{ return &amp;Cat{id: fmt.Sprintf("cat-%d", pid)} }</span>,
+                        "/bin/clear":   func(pid int) Program <span class="cov0" title="0">{ return &amp;Clear{id: fmt.Sprintf("clear-%d", pid)} }</span>,
+                        "/bin/adduser": func(pid int) Program <span class="cov0" title="0">{ return &amp;Adduser{id: fmt.Sprintf("adduser-%d", pid)} }</span>,
+                        "/bin/login":   func(pid int) Program <span class="cov0" title="0">{ return &amp;LoginProgram{id: fmt.Sprintf("login-%d", pid)} }</span>,
+                        "/bin/sh":      func(pid int) Program <span class="cov0" title="0">{ return &amp;Shell{id: fmt.Sprintf("sh-%d", pid)} }</span>,
+                        "/bin/mkdir":  func(pid int) Program <span class="cov0" title="0">{ return &amp;MkDir{id: fmt.Sprintf("mkdir-%d", pid)} }</span>,
+                        "/bin/touch":  func(pid int) Program <span class="cov0" title="0">{ return &amp;Touch{id: fmt.Sprintf("touch-%d", pid)} }</span>,
+                        "/bin/chmod":  func(pid int) Program <span class="cov0" title="0">{ return &amp;Chmod{id: fmt.Sprintf("chmod-%d", pid)} }</span>,
+                },
+                procs: map[int]*Process{},
+        }
+
+        // adduser runs as root so we gotta make setuid TRUE!
+        <span class="cov0" title="0">computer.FsMetaData["/bin/adduser"] = FileMetadata{
+                Filepath:  "/bin/adduser",
+                Owner:     "root",
+                Setuid:    true,
+                OwnerMode: 7,
+                OtherMode: 5,
+        }
+        return computer</span>
+}
+
+func (c *Computer) metaDataPath() string <span class="cov8" title="1">{
+        return fmt.Sprintf("./data/networks/current/nodes/%s.fsmeta.json", c.Name)
+}</span>
+
+func (c *Computer) saveMetaData() <span class="cov8" title="1">{
+        data, err := json.Marshal(c.FsMetaData)
+        if err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov8" title="1">os.WriteFile(c.metaDataPath(), data, 0o644)</span>
+}
+
+func (c *Computer) loadMetaData() <span class="cov0" title="0">{
+        data, err := os.ReadFile(c.metaDataPath())
+        if err != nil </span><span class="cov0" title="0">{
+                return // no saved metadata, defaults from populateFileMetadata stand
+        }</span>
+        <span class="cov0" title="0">var metadata map[string]FileMetadata
+        if err := json.Unmarshal(data, &amp;metadata); err != nil </span><span class="cov0" title="0">{
+                return
+        }</span>
+        <span class="cov0" title="0">c.FsMetaData = metadata</span>
+}
+
+func (c *Computer) GenerateSessionID() string <span class="cov0" title="0">{
+        // count number of active sessions
+        count := len(c.sessions)
+        sessionID := fmt.Sprintf("session-%d", count+1)
+        return sessionID
+}</span>
+
+func (node *Computer) NewSession(username string, tty *TTY) (int, string) <span class="cov0" title="0">{
+        sessionID := node.GenerateSessionID()
+
+        var workingDir string
+        if username == "root" </span><span class="cov0" title="0">{
+                workingDir = "/root"
+        }</span> else<span class="cov0" title="0"> {
+                workingDir = "/home/" + username
+
+        }</span>
+
+        <span class="cov0" title="0">session := &amp;Session{
+                SessionID:   sessionID,
+                Computer:    node,
+                CurrentUser: username,
+                TTY:         tty,
+        }
+        node.sessions[sessionID] = session
+
+        if !(node.OS.HasDirectory(workingDir)) </span><span class="cov0" title="0">{
+                node.OS.Mkdir(workingDir)
+                var otherMode uint8 = 5
+                if username == "root" </span><span class="cov0" title="0">{
+                        otherMode = 0 // /root is not accessible to others
+                }</span>
+                <span class="cov0" title="0">node.FsMetaData[workingDir] = FileMetadata{
+                        Filepath:  workingDir,
+                        Owner:     username,
+                        Setuid:    false,
+                        OwnerMode: 7,
+                        OtherMode: otherMode,
+                }</span>
+        }
+
+        <span class="cov0" title="0">node.EventBus.Publish(EventSessionCreated, map[string]interface{}{
+                "session_id":  sessionID,
+                "user":        username,
+                "computer":    node.Name,
+                "working_dir": workingDir,
+                "tty_id":      tty.id,
+        })
+
+        return utils.Success, sessionID</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">// engine/events.go
+package computer
+
+import "time"
+
+type EventType string
+
+const (
+        // Flow events (journey of data)
+        EventClientToEngine EventType = "client→engine"
+        EventEngineToTTY    EventType = "engine→tty"
+        EventTTYToProgram   EventType = "tty→program"
+        EventProgramToTTY   EventType = "program→tty"
+        EventTTYToClient    EventType = "tty→client"
+
+        // State change events
+        EventTTYCreated        EventType = "tty_created"
+        EventTTYModeChanged    EventType = "tty_mode_changed"
+        EventForegroundChanged EventType = "foreground_changed"
+        EventProgramStarted    EventType = "program_started"
+        EventProgramExited     EventType = "program_exited"
+        EventSessionCreated    EventType = "session_created"
+        EventBufferChanged     EventType = "buffer_changed"
+        EventTTYClosed         EventType = "tty_closed"
+        EventWorkingDirChanged EventType = "working_dir_changed"
+)
+
+type Event struct {
+        Timestamp time.Time
+        Type      EventType
+        Data      map[string]interface{}
+}
+
+type EventBus struct {
+        subscribers []chan Event
+}
+
+func NewEventBus() *EventBus <span class="cov8" title="1">{
+        return &amp;EventBus{
+                subscribers: make([]chan Event, 0),
+        }
+}</span>
+
+func (eb *EventBus) Subscribe() chan Event <span class="cov0" title="0">{
+        ch := make(chan Event, 100)
+        eb.subscribers = append(eb.subscribers, ch)
+        return ch
+}</span>
+
+
+
+func (eb *EventBus) Publish(eventType EventType, data map[string]interface{}) <span class="cov8" title="1">{
+        event := Event{
+                Timestamp: time.Now(),
+                Type:      eventType,
+                Data:      data,
+        }
+
+        for _, ch := range eb.subscribers </span><span class="cov0" title="0">{
+                select </span>{
+                case ch &lt;- event:<span class="cov0" title="0"></span>
+                default:<span class="cov0" title="0"></span>
+                        // Channel full, skip
+                }
+        }
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package computer
+
+import (
+        "bufio"
+        "encoding/json"
+        "fmt"
+        "log"
+        "net"
+
+        "byte-space/utils"
+)
+
+func (c *Computer) HandleClient(conn net.Conn) <span class="cov0" title="0">{
+        // create a new tty
+
+        ttyID := fmt.Sprintf("tty-%d", len(c.ttys))
+
+        c.EventBus.Publish(EventTTYCreated, map[string]interface{}{
+                "tty_id": ttyID,
+        })
+
+        tty := NewTTY(conn, c.EventBus, ttyID)
+        c.ttys = append(c.ttys, tty)
+
+        // TEMP session
+        tty.Session = &amp;Session{
+                Computer:    c,
+                CurrentUser: "",
+                TTY:         tty,
+        }
+
+        go func() </span><span class="cov0" title="0">{
+                daddyProc := &amp;Process{
+                        PID:  0, // TODO, dont hardcode this, actually it doesnt really maatrwe
+                        UID:  "root",
+                        EUID: "root",
+                        CWD:  "/",
+                        PGID: 0,
+                }
+                daddyProgram := &amp;Shell{
+                        ttyAPI: &amp;TTYAPI{tty: tty, proc: daddyProc},
+                }
+                daddyProc.Program = daddyProgram // BOOTSTRAPPP!!!! I learned that word yesterday from the crafting interpetters book, pull urself up from ur own bootstraps!!!
+
+                if err := c.Kernel.Exec(daddyProc, "/bin/login", []string{}, &amp;ExecOpts{}); err != nil </span><span class="cov0" title="0">{
+                        tty.writeToClient("\nInvalid login conditionals or exit login program.\r\n", utils.Exit)
+                        c.EventBus.Publish(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
+                        conn.Close()
+                        return
+                }</span>
+
+                // change the uid to the actual user
+                <span class="cov0" title="0">loggedInUser := tty.Session.CurrentUser
+                daddyProc.UID = loggedInUser
+                daddyProc.EUID = loggedInUser
+
+                workingDir := "/"
+
+                if loggedInUser == "root" </span><span class="cov0" title="0">{
+                        workingDir = "/root"
+                }</span> else<span class="cov0" title="0"> {
+                        workingDir = "/home/" + loggedInUser
+                }</span>
+
+                <span class="cov0" title="0">daddyProc.CWD = workingDir
+
+                // change to actual session
+                targetKernel := tty.Session.Computer.Kernel
+                if err := targetKernel.Exec(daddyProc, "/bin/sh", []string{}, &amp;ExecOpts{}); err != nil </span><span class="cov0" title="0">{
+                        tty.writeToClient("\nExiting with an error", utils.Exit)
+                }</span> else<span class="cov0" title="0"> {
+                        tty.writeToClient("\nExiting...", utils.Exit)
+                }</span>
+
+                <span class="cov0" title="0">c.EventBus.Publish(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
+                conn.Close()</span>
+        }()
+
+        <span class="cov0" title="0">for </span><span class="cov0" title="0">{
+                scanner := bufio.NewScanner(conn)
+                for scanner.Scan() </span><span class="cov0" title="0">{
+                        line := scanner.Text()
+                        var message ClientIPCMessage
+                        if err := json.Unmarshal([]byte(line), &amp;message); err != nil </span><span class="cov0" title="0">{
+                                log.Println("Error unmarshalling JSON:", err)
+                                continue</span>
+                        }
+                        <span class="cov0" title="0">tty.HandleKeystroke(message.Keystroke)</span>
+                }
+        }
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package computer
+
+type ClientIPCMessage struct {
+        Program string `json:"program"`
+        RequestID int `json:"request_id"`
+        SessionID string `json:"session_id"`
+        Keystroke string `json:"keystroke"`
+}
+
+
+type EngineIPCMessage struct {
+        SessionID string `json:"session_id"`
+        Status int `json:"status"`
+        Result string `json:"result"`
+}
+
+
+func NewIPCMessage(s string, status int) *EngineIPCMessage <span class="cov8" title="1">{
+        return &amp;EngineIPCMessage{Result: s, Status: status}
+}</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package computer
+
+import (
+        "fmt"
+        "os"
+        "path"
+        "strings"
+
+        "byte-space/utils"
+)
+
+type Kernel struct {
+        computer *Computer
+        EventBus *EventBus
+        programs map[string]func(int) Program // path to the factory, which can later change if I implement a language
+        // later the factory can be just 1 function, and instead of a map, it can just read that file path and do the language stuff, check for shebang and all that.
+        // rn we still need a map.
+
+        pids     int   // keeps track of the highest ever PID
+        freePIDs []int // stores PIDs of exited processes to reuse
+
+        procs map[int]*Process // pid to the running process instance (all processes on this computer, GLOBALY)
+}
+
+func (k *Kernel) PublishEvent(proc *Process, eventType EventType, data map[string]interface{}) <span class="cov0" title="0">{
+        k.EventBus.Publish(eventType, data)
+}</span>
+
+func (k *Kernel) GetTtyID(proc *Process) string <span class="cov0" title="0">{
+        return proc.Program.TTYAPI().GetTTYID()
+}</span>
+
+func (k *Kernel) GetNodeOnNetwork(ipAdress string) (*Computer, bool) <span class="cov0" title="0">{
+        return k.computer.OS.Network.GetNode(ipAdress)
+}</span>
+
+func (k *Kernel) nextPID() int <span class="cov0" title="0">{
+        if len(k.freePIDs) &gt; 0 </span><span class="cov0" title="0">{
+                // reuse
+                pid := k.freePIDs[len(k.freePIDs)-1]
+                k.freePIDs = k.freePIDs[:len(k.freePIDs)-1]
+                return pid
+        }</span>
+
+        // just increment if no free ones
+        <span class="cov0" title="0">k.pids++
+        return k.pids</span>
+}
+
+type ExecOpts struct {
+        Background bool
+        PGID       int
+}
+
+func (k *Kernel) ListMachinesOnNetwork(proc *Process) []Computer <span class="cov0" title="0">{
+        return k.computer.OS.Network.ListMachinesOnNetwork()
+}</span>
+
+// Exec looks up the binary from the path then it creates a Process with correct EUID
+// Practically fork &amp; exec all in one
+func (k *Kernel) Exec(parentProc *Process, binPath string, args []string, opts *ExecOpts) error <span class="cov0" title="0">{
+        factory, ok := k.programs[binPath]
+        if !ok </span><span class="cov0" title="0">{
+                return fmt.Errorf("%s: command not found", binPath)
+        }</span>
+
+        <span class="cov0" title="0">pid := k.nextPID()
+        program := factory(pid)
+
+        uid := parentProc.UID
+        euid := uid
+        if meta, ok := k.computer.FsMetaData[binPath]; ok &amp;&amp; meta.Setuid </span><span class="cov0" title="0">{
+                euid = meta.Owner
+        }</span>
+
+        <span class="cov0" title="0">pgid := opts.PGID
+        if opts.PGID == 0 </span><span class="cov0" title="0">{
+                pgid = pid
+        }</span>
+
+        <span class="cov0" title="0">proc := &amp;Process{
+                PID:     pid,
+                PGID:    pgid,
+                UID:     uid,
+                EUID:    euid,
+                CWD:     parentProc.CWD,
+                Program: program,
+        }
+
+        k.procs[pid] = proc
+
+        program.SetProcess(proc)
+        program.SetTTyAPI(&amp;TTYAPI{tty: parentProc.Program.TTYAPI().tty, proc: proc})
+        program.SetKernel(k)
+        parentProc.Program.TTYAPI().tty.SetForegroundPGID(pgid)
+
+        status := make(chan int)
+
+        k.EventBus.Publish(EventProgramStarted, map[string]interface{}{
+                "program_id": program.ID(),
+                "tty_id":     parentProc.Program.TTYAPI().tty.id,
+        })
+
+        go program.Run(status, args)
+
+        if opts.Background </span><span class="cov0" title="0">{
+                go func() </span><span class="cov0" title="0">{
+                        exitCode := &lt;-status
+                        k.EventBus.Publish(EventProgramExited, map[string]interface{}{
+                                "program_id": program.ID(),
+                                "status":     exitCode,
+                                "tty_id":     parentProc.Program.TTYAPI().tty.id,
+                        })
+                        k.cleanupProcess(pid)
+                }</span>()
+                <span class="cov0" title="0">return nil</span>
+        }
+
+        <span class="cov0" title="0">exitCode := &lt;-status
+
+        k.EventBus.Publish(EventProgramExited, map[string]interface{}{
+                "program_id": program.ID(),
+                "status":     exitCode,
+                "tty_id":     parentProc.Program.TTYAPI().tty.id,
+        })
+        k.cleanupProcess(pid)
+
+        if exitCode != utils.Success </span><span class="cov0" title="0">{
+                return fmt.Errorf("%s: exited with status %d", binPath, exitCode)
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (k *Kernel) cleanupProcess(pid int) <span class="cov0" title="0">{
+        delete(k.procs, pid)
+}</span>
+
+func (k *Kernel) resolvePath(proc *Process, target string) string <span class="cov8" title="1">{
+        if target == "" </span><span class="cov8" title="1">{
+                target = proc.CWD
+        }</span>
+
+        <span class="cov8" title="1">home := "/home/" + proc.UID
+        if proc.UID == "root" </span><span class="cov8" title="1">{
+                home = "/root"
+        }</span>
+
+        <span class="cov8" title="1">if target == "~" </span><span class="cov8" title="1">{
+                target = home
+        }</span> else<span class="cov8" title="1"> if strings.HasPrefix(target, "~/") </span><span class="cov8" title="1">{
+                target = path.Join(home, target[2:])
+        }</span>
+
+        <span class="cov8" title="1">if !strings.HasPrefix(target, "/") </span><span class="cov8" title="1">{
+                target = path.Join(proc.CWD, target)
+        }</span>
+        <span class="cov8" title="1">target = path.Clean(target)
+
+        if !strings.HasPrefix(target, "/") </span><span class="cov0" title="0">{
+                return "/"
+        }</span>
+
+        <span class="cov8" title="1">return path.Clean(target)</span>
+}
+
+func (k *Kernel) canWrite(effectiveUser string, filePath string) bool <span class="cov8" title="1">{ // used internally by kernel for checking
+        if effectiveUser == "root" </span><span class="cov8" title="1">{
+                return true
+        }</span>
+        <span class="cov8" title="1">meta, ok := k.computer.FsMetaData[filePath]
+        if !ok </span><span class="cov0" title="0">{
+                return true
+        }</span>
+        <span class="cov8" title="1">if meta.Owner == effectiveUser </span><span class="cov8" title="1">{
+                return meta.OwnerMode&amp;2 != 0 // gets the first bit, like the 2's bit
+        }</span>
+        <span class="cov8" title="1">return meta.OtherMode&amp;2 != 0</span>
+}
+
+func (k *Kernel) canRead(effectiveUser string, filePath string) bool <span class="cov8" title="1">{ // used internally by kernel for checking
+        if effectiveUser == "root" </span><span class="cov8" title="1">{
+                return true
+        }</span>
+        <span class="cov8" title="1">meta, ok := k.computer.FsMetaData[filePath]
+        if !ok </span><span class="cov0" title="0">{
+                return true
+        }</span>
+        <span class="cov8" title="1">if meta.Owner == effectiveUser </span><span class="cov8" title="1">{
+                return meta.OwnerMode&amp;4 != 0 // gets the middle bit, divide by 4
+        }</span>
+        <span class="cov8" title="1">return meta.OtherMode&amp;4 != 0</span>
+}
+
+func (k *Kernel) canExecute(effectiveUser string, filePath string) bool <span class="cov8" title="1">{ // used internally by kernel for checking
+        if effectiveUser == "root" </span><span class="cov8" title="1">{
+                return true
+        }</span>
+        <span class="cov8" title="1">meta, ok := k.computer.FsMetaData[filePath]
+        if !ok </span><span class="cov0" title="0">{
+                return true
+        }</span>
+        <span class="cov8" title="1">if meta.Owner == effectiveUser </span><span class="cov8" title="1">{
+                return meta.OwnerMode&amp;1 != 0 // bit 0 = execute
+        }</span>
+        <span class="cov8" title="1">return meta.OtherMode&amp;1 != 0</span>
+}
+
+func (k *Kernel) ReadFile(proc *Process, target string) ([]byte, error) <span class="cov8" title="1">{ // syscal
+        target = k.resolvePath(proc, target)
+        if !k.canRead(proc.EUID, target) </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("permission denied")
+        }</span>
+        <span class="cov8" title="1">return k.computer.OS.ReadFile(target)</span>
+}
+
+func (k *Kernel) ReadDir(proc *Process, target string) ([]os.FileInfo, error) <span class="cov8" title="1">{ // syscall
+        target = k.resolvePath(proc, target)
+        if !k.canRead(proc.EUID, target) </span><span class="cov8" title="1">{
+                return nil, fmt.Errorf("permission denied")
+        }</span>
+        <span class="cov8" title="1">return k.computer.OS.ReadDir(target)</span>
+}
+
+func (k *Kernel) Stat(proc *Process, target string) (FileMetadata, bool) <span class="cov0" title="0">{ // syscall
+        target = k.resolvePath(proc, target)
+        meta, ok := k.computer.FsMetaData[target]
+        return meta, ok
+}</span>
+
+func (k *Kernel) MkDir(proc *Process, target string) error <span class="cov8" title="1">{ // syscall
+        target = k.resolvePath(proc, target)
+        parent := path.Dir(target)
+        if !k.canWrite(proc.EUID, parent) </span><span class="cov8" title="1">{
+                return fmt.Errorf("permission denied")
+        }</span>
+        <span class="cov8" title="1">if err := k.computer.OS.Mkdir(target); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov8" title="1">k.computer.FsMetaData[target] = FileMetadata{
+                Filepath:  target,
+                Owner:     proc.EUID,
+                Setuid:    false,
+                OwnerMode: 7,
+                OtherMode: 5,
+        }
+        k.computer.saveMetaData()
+        return nil</span>
+}
+
+func (k *Kernel) CreateFile(proc *Process, target string) error <span class="cov0" title="0">{ // syscall
+        target = k.resolvePath(proc, target)
+        parent := path.Dir(target)
+        if !k.canWrite(proc.EUID, parent) </span><span class="cov0" title="0">{
+                return fmt.Errorf("permission denied")
+        }</span>
+        <span class="cov0" title="0">if err := k.computer.OS.CreateFile(target); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov0" title="0">k.computer.FsMetaData[target] = FileMetadata{
+                Filepath:  target,
+                Owner:     proc.EUID,
+                Setuid:    false,
+                OwnerMode: 7,
+                OtherMode: 5,
+        }
+        k.computer.saveMetaData()
+        return nil</span>
+}
+
+func (k *Kernel) WriteFile(proc *Process, target string, data []byte) error <span class="cov0" title="0">{ // syscall
+        target = k.resolvePath(proc, target)
+        parent := path.Dir(target)
+        if !k.canWrite(proc.EUID, parent) </span><span class="cov0" title="0">{
+                return fmt.Errorf("permission denied")
+        }</span>
+        <span class="cov0" title="0">return k.computer.OS.WriteFile(target, data)</span> // little more abstraction didnt hurt anybody! the kernel never touch afero directly, YUCK
+}
+
+func (k *Kernel) ChangeDirectory(proc *Process, target string) error <span class="cov8" title="1">{ // syscall
+        target = k.resolvePath(proc, target)
+        if !k.computer.OS.HasDirectory(target) </span><span class="cov8" title="1">{
+                return fmt.Errorf("%s: no such file or directory", target)
+        }</span>
+        <span class="cov8" title="1">if !k.canExecute(proc.EUID, target) </span><span class="cov8" title="1">{
+                return fmt.Errorf("%s: permission denied", target)
+        }</span>
+        <span class="cov8" title="1">proc.CWD = target
+        return nil</span>
+}
+
+func (k *Kernel) Chmod(proc *Process, target string, newOwnerMode uint8, newOtherMode uint8) error <span class="cov0" title="0">{ // syscall
+        target = k.resolvePath(proc, target)
+        meta, ok := k.computer.FsMetaData[target]
+        if !ok </span><span class="cov0" title="0">{
+                return fmt.Errorf("no such file or directory")
+        }</span>
+        <span class="cov0" title="0">if proc.EUID != "root" &amp;&amp; meta.Owner != proc.EUID </span><span class="cov0" title="0">{
+                return fmt.Errorf("permission denied")
+        }</span>
+        <span class="cov0" title="0">meta.OwnerMode = newOwnerMode
+        meta.OtherMode = newOtherMode
+        k.computer.FsMetaData[target] = meta
+        k.computer.saveMetaData()
+        return nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package computer
+
+import (
+        "fmt"
+        "strings"
+
+        //"os/user"
+        "byte-space/utils"
+)
+
+type LoginProgram struct {
+        done        chan struct{}
+        id          string
+        graphicsAPI *GraphicsAPI
+        ttyAPI      *TTYAPI
+        Kernel      *Kernel
+        proc        *Process
+}
+
+func (p *LoginProgram) SetProcess(proc *Process) <span class="cov0" title="0">{
+        p.proc = proc
+}</span>
+
+func (p *LoginProgram) TTYAPI() *TTYAPI <span class="cov0" title="0">{
+        return p.ttyAPI
+}</span>
+
+func (p *LoginProgram) SetTTyAPI(api *TTYAPI) <span class="cov0" title="0">{
+        p.ttyAPI = api
+}</span>
+
+func (p *LoginProgram) SetKernel(api *Kernel) <span class="cov0" title="0">{
+        p.Kernel = api
+}</span>
+
+func (p *LoginProgram) AddGraphicsAPI(api *GraphicsAPI) <span class="cov0" title="0">{
+        p.graphicsAPI = api
+}</span>
+
+func (p *LoginProgram) RemoveGraphicsAPI() <span class="cov0" title="0">{
+        p.graphicsAPI = nil
+}</span>
+
+func (p *LoginProgram) Run(returnStatus chan int, params []string) <span class="cov0" title="0">{
+        // data
+        ipAdress := ""
+        username := ""
+        password := ""
+
+        p.done = make(chan struct{})
+        if p.graphicsAPI == nil </span><span class="cov0" title="0">{
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">computers := p.Kernel.ListMachinesOnNetwork(p.proc) 
+        var choices strings.Builder // used a string builder because += is not efficient
+
+        for i := range computers </span><span class="cov0" title="0">{
+                fmt.Fprintf(&amp;choices, "%s: %s\n", computers[i].IP, computers[i].Name)
+        }</span>
+        <span class="cov0" title="0">fmt.Fprintf(&amp;choices, "\n\n\rIP ADDRESS: ")
+
+        p.graphicsAPI.Write("\033[H\033[2J")
+        p.graphicsAPI.Write(choices.String())
+
+        var mainComputer *Computer
+
+        for </span><span class="cov0" title="0">{
+                value, status := p.ttyAPI.Read(p.done)
+                switch status </span>{
+                case utils.Success:<span class="cov0" title="0">
+                        if value == "" </span><span class="cov0" title="0">{
+                                returnStatus &lt;- utils.Error
+                                return
+                        }</span>
+
+                        <span class="cov0" title="0">if ipAdress == "" </span><span class="cov0" title="0">{
+                                ipAdress = value
+                                ok := false
+                                if mainComputer, ok = p.Kernel.GetNodeOnNetwork(ipAdress); ok </span><span class="cov0" title="0">{
+                                        p.graphicsAPI.Write(mainComputer.OS.GetIssue())
+                                        p.graphicsAPI.Write("\nUSERNAME: ") // change to mainComputer.OS.GetUsernamePrompt or sm
+                                }</span> else<span class="cov0" title="0"> {
+                                        // p.graphics.Write("Invalid IP address, no computer on network!")
+                                        returnStatus &lt;- utils.Error
+                                        return
+                                }</span>
+                        } else<span class="cov0" title="0"> if username == "" </span><span class="cov0" title="0">{
+                                username = value
+                                p.ttyAPI.SetPasswdMode(true)
+                                p.graphicsAPI.Write("\nPASSWORD: ") // change to mainComputer.OS.GetPasswordPrompt or sm
+
+                        }</span> else<span class="cov0" title="0"> if password == "" </span><span class="cov0" title="0">{
+                                password = value
+                                // try login
+                                p.ttyAPI.SetPasswdMode(false)
+                                if mainComputer.OS.Login(username, password) == utils.Success </span><span class="cov0" title="0">{
+                                        p.graphicsAPI.Write(mainComputer.OS.GetMotd())
+
+                                        sessionStatus, sessionID := mainComputer.NewSession(username, p.ttyAPI.tty)
+                                        if sessionStatus != utils.Success </span><span class="cov0" title="0">{
+                                                returnStatus &lt;- utils.Error
+                                                return
+                                        }</span>
+
+                                        <span class="cov0" title="0">p.ttyAPI.SetSession(mainComputer.sessions[sessionID])
+                                        returnStatus &lt;- utils.Success
+                                        return</span>
+
+                                } else<span class="cov0" title="0"> {
+                                        returnStatus &lt;- utils.Error
+                                        return
+                                }</span>
+                        }
+
+                case utils.Exit:<span class="cov0" title="0">
+                        returnStatus &lt;- utils.Error
+                        return</span>
+                }
+        }
+}
+
+func (p *LoginProgram) HandleSignal(sig Signal) <span class="cov0" title="0">{
+        if sig == SIGINT </span><span class="cov0" title="0">{
+                select </span>{
+                case &lt;-p.done:<span class="cov0" title="0"></span>
+                        // already closed, do nothing
+                default:<span class="cov0" title="0">
+                        close(p.done)</span>
+                }
+        }
+}
+
+func (p *LoginProgram) ID() string <span class="cov0" title="0">{
+        return p.id
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package computer
+
+import (
+        "fmt"
+        "os"
+        "strings"
+
+        "github.com/spf13/afero"
+)
+
+type NetworkAPI interface {
+        // Whatever programs need, like send packet and stuf
+        ListMachinesOnNetwork() []Computer
+        GetNode(ip_address string) (node *Computer, ok bool)
+}
+
+type OS struct {
+        Computer *Computer
+        Network  NetworkAPI
+}
+
+func (o *OS) Mkdir(path string) error <span class="cov8" title="1">{
+        err := o.Computer.filesystem.Mkdir(path, 0o755)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("SOMETHING WENT WRONG")
+        }</span>
+        <span class="cov8" title="1">return nil</span>
+}
+
+func (o *OS) CreateFile(path string) error <span class="cov0" title="0">{
+        _, err := o.Computer.filesystem.Create(path)
+        if err != nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("SOMETHING WENT WRONG")
+        }</span>
+        <span class="cov0" title="0">return nil</span>
+}
+
+func (o *OS) WriteFile(path string, data []byte) error <span class="cov0" title="0">{
+        return afero.WriteFile(o.Computer.filesystem, path, data, 0o644)
+}</span>
+
+func (o *OS) GetIssue() string <span class="cov0" title="0">{
+        path := "/etc/issue"
+        data, err := afero.ReadFile(o.Computer.filesystem, path)
+        if err != nil </span><span class="cov0" title="0">{
+                return "Error reading issue file"
+        }</span>
+        <span class="cov0" title="0">return string(data)</span>
+}
+
+func (o *OS) GetMotd() string <span class="cov0" title="0">{
+        path := "/etc/motd"
+        data, err := afero.ReadFile(o.Computer.filesystem, path)
+        if err != nil </span><span class="cov0" title="0">{
+                return "Error reading motd file"
+        }</span>
+        <span class="cov0" title="0">return string(data)</span>
+}
+
+func (o *OS) Login(username string, password string) int <span class="cov0" title="0">{
+        path := "/etc/passwd"
+        data, err := afero.ReadFile(o.Computer.filesystem, path)
+        if err != nil </span><span class="cov0" title="0">{
+                return 1
+        }</span>
+
+        <span class="cov0" title="0">lines := strings.Split(string(data), "\n")
+
+        for _, line := range lines </span><span class="cov0" title="0">{
+                if line == "" </span><span class="cov0" title="0">{
+                        continue</span>
+                }
+
+                <span class="cov0" title="0">fields := strings.Split(line, ":")
+
+                if len(fields) &gt;= 2 &amp;&amp; fields[0] == username &amp;&amp; fields[1] == password </span><span class="cov0" title="0">{
+                        // Login successful
+                        return 0
+                }</span>
+        }
+
+        <span class="cov0" title="0">return 1</span> // fail
+}
+
+func (o *OS) HasDirectory(path string) bool <span class="cov8" title="1">{
+        info, err := o.Computer.filesystem.Stat(path)
+        if err != nil </span><span class="cov8" title="1">{
+                return false
+        }</span>
+        <span class="cov8" title="1">return info.IsDir()</span>
+}
+
+func (o *OS) ReadFile(path string) ([]byte, error) <span class="cov8" title="1">{
+        return afero.ReadFile(o.Computer.filesystem, path)
+}</span>
+
+func (o *OS) ReadDir(path string) ([]os.FileInfo, error) <span class="cov8" title="1">{
+        return afero.ReadDir(o.Computer.filesystem, path)
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package computer
+
+import (
+        "fmt"
+        "path"
+        "strings"
+
+        "byte-space/utils"
+)
+
+type Shell struct {
+        done        chan struct{}
+        id          string
+        graphicsAPI *GraphicsAPI
+        ttyAPI      *TTYAPI
+        Kernel      *Kernel
+        proc        *Process
+}
+
+func (s *Shell) SetProcess(proc *Process) <span class="cov0" title="0">{
+        s.proc = proc
+}</span>
+
+func parse(value string) ([]string, []string) <span class="cov0" title="0">{
+        parts := strings.Fields(value)
+
+        var commands []string
+        var flags []string
+
+        for _, part := range parts </span><span class="cov0" title="0">{
+                if strings.HasPrefix(part, "-") || strings.HasPrefix(part, "--") </span><span class="cov0" title="0">{
+                        flags = append(flags, part)
+                }</span> else<span class="cov0" title="0"> {
+                        commands = append(commands, part)
+                }</span>
+        }
+
+        <span class="cov0" title="0">if len(commands) == 0 </span><span class="cov0" title="0">{
+                commands = []string{""}
+        }</span>
+
+        <span class="cov0" title="0">return commands, flags</span>
+}
+
+func (s *Shell) SetTTyAPI(api *TTYAPI) <span class="cov0" title="0">{
+        s.ttyAPI = api
+}</span>
+
+func (s *Shell) SetKernel(api *Kernel) <span class="cov0" title="0">{
+        s.Kernel = api
+}</span>
+
+func (s *Shell) TTYAPI() *TTYAPI <span class="cov0" title="0">{
+        return s.ttyAPI
+}</span>
+
+func (s *Shell) Run(returnStatus chan int, params []string) <span class="cov0" title="0">{
+        s.done = make(chan struct{})
+        if s.graphicsAPI == nil </span><span class="cov0" title="0">{
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+        <span class="cov0" title="0">prompt := fmt.Sprintf("\n\r%s$ ", s.proc.CWD)
+        s.graphicsAPI.Write(prompt)
+
+        for </span><span class="cov0" title="0">{
+                prefix := ""
+                data, status := s.ttyAPI.Read(s.done)
+                switch status </span>{
+                case utils.Success:<span class="cov0" title="0">
+                        value, flags := parse(data)
+
+                        switch value[0] </span>{
+                        case "exit":<span class="cov0" title="0">
+                                returnStatus &lt;- utils.Success
+                                return</span>
+                        case "pwd":<span class="cov0" title="0">
+                                if len(value) != 1 </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("Usage: pwd\n")
+                                        break</span>
+                                }
+                                <span class="cov0" title="0">dataToDisplay := fmt.Sprintf("\n%s\n", s.proc.CWD)
+                                s.graphicsAPI.Write(dataToDisplay)</span>
+                        case "cd":<span class="cov0" title="0">
+                                if len(flags) &gt; 0 </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\nNo flags implemented\n")
+                                        break</span>
+                                }
+                                <span class="cov0" title="0">if len(value) != 2 </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\nUsage: cd &lt;path&gt;\n")
+                                        break</span>
+                                }
+
+                                <span class="cov0" title="0">dir := value[1]
+
+                                if !strings.HasPrefix(dir, "/") </span><span class="cov0" title="0">{
+                                        dir = path.Join(s.proc.CWD, dir)
+                                }</span>
+
+                                <span class="cov0" title="0">dir = path.Clean(dir)
+
+                                if err := s.Kernel.ChangeDirectory(s.proc, dir); err != nil </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\n" + err.Error() + "\n")
+                                        break</span>
+                                }
+
+                                <span class="cov0" title="0">s.Kernel.PublishEvent(s.proc, EventWorkingDirChanged, map[string]interface{}{
+                                        "dir":    dir,
+                                        "tty_id": s.Kernel.GetTtyID(s.proc),
+                                }) // move this to kernel.
+
+                                s.graphicsAPI.Write("\n")</span>
+
+                        case "ls":<span class="cov0" title="0">
+                                if err := s.Kernel.Exec(s.proc, "/bin/ls", append(value[1:], flags...), &amp;ExecOpts{PGID: 0, Background: false}); err != nil </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\n" + err.Error() + "\n")
+                                }</span>
+                                <span class="cov0" title="0">s.ttyAPI.SetForegroundPGID(s.proc.PGID)</span>
+                        case "clear":<span class="cov0" title="0">
+                                if err := s.Kernel.Exec(s.proc, "/bin/clear", append(value[1:], flags...), &amp;ExecOpts{PGID: 0, Background: false}); err != nil </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\n" + err.Error() + "\n")
+                                }</span>
+                                <span class="cov0" title="0">s.ttyAPI.SetForegroundPGID(s.proc.PGID)</span>
+                        case "cat":<span class="cov0" title="0">
+                                if err := s.Kernel.Exec(s.proc, "/bin/cat", append(value[1:], flags...), &amp;ExecOpts{PGID: 0, Background: false}); err != nil </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\n" + err.Error() + "\n")
+                                }</span>
+                                <span class="cov0" title="0">s.ttyAPI.SetForegroundPGID(s.proc.PGID)</span>
+                        case "adduser":<span class="cov0" title="0">
+                                if err := s.Kernel.Exec(s.proc, "/bin/adduser", append(value[1:], flags...), &amp;ExecOpts{PGID: 0, Background: false}); err != nil </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\n" + err.Error() + "\n")
+                                }</span>
+                                <span class="cov0" title="0">s.ttyAPI.SetForegroundPGID(s.proc.PGID)</span>
+                        case "mkdir":<span class="cov0" title="0">
+                                if err := s.Kernel.Exec(s.proc, "/bin/mkdir", append(value[1:], flags...), &amp;ExecOpts{PGID: 0, Background: false}); err != nil </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\n" + err.Error() + "\n")
+                                }</span>
+                                <span class="cov0" title="0">s.ttyAPI.SetForegroundPGID(s.proc.PGID)</span>
+                        case "touch":<span class="cov0" title="0">
+                                if err := s.Kernel.Exec(s.proc, "/bin/touch", append(value[1:], flags...), &amp;ExecOpts{PGID: 0, Background: false}); err != nil </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\n" + err.Error() + "\n")
+                                }</span>
+                                <span class="cov0" title="0">s.ttyAPI.SetForegroundPGID(s.proc.PGID)</span>
+                        case "chmod":<span class="cov0" title="0">
+                                if err := s.Kernel.Exec(s.proc, "/bin/chmod", append(value[1:], flags...), &amp;ExecOpts{PGID: 0, Background: false}); err != nil </span><span class="cov0" title="0">{
+                                        s.graphicsAPI.Write("\n" + err.Error() + "\n")
+                                }</span>
+                                <span class="cov0" title="0">s.ttyAPI.SetForegroundPGID(s.proc.PGID)</span>
+
+                        case "":<span class="cov0" title="0">
+                                prefix = "\n"
+                                break</span>
+
+                        default:<span class="cov0" title="0">
+                                s.graphicsAPI.Write("\nno such command!\n")</span>
+
+                        }
+
+                        <span class="cov0" title="0">prompt = fmt.Sprintf("%s\r%s$ ", prefix, s.proc.CWD)
+                        s.graphicsAPI.Write(prompt)</span>
+                case utils.Exit:<span class="cov0" title="0">
+                        returnStatus &lt;- utils.Error
+                        return</span>
+                }
+        }
+}
+
+func (s *Shell) ID() string <span class="cov0" title="0">{
+        return s.id
+}</span>
+
+func (s *Shell) HandleSignal(sig Signal) {<span class="cov0" title="0">
+}</span>
+
+func (s *Shell) AddGraphicsAPI(api *GraphicsAPI) <span class="cov0" title="0">{
+        s.graphicsAPI = api
+}</span>
+
+func (s *Shell) RemoveGraphicsAPI() <span class="cov0" title="0">{
+        s.graphicsAPI = nil
+}</span>
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package computer
+
+import (
+        "fmt"
+        "path"
+        "strings"
+
+        "byte-space/utils"
+)
+
+type Ls struct {
+        id          string
+        graphicsAPI *GraphicsAPI
+        ttyAPI      *TTYAPI
+        Kernel      *Kernel
+        proc        *Process
+}
+
+func (p *Ls) SetTTyAPI(api *TTYAPI) <span class="cov0" title="0">{
+        p.ttyAPI = api
+}</span>
+
+func (p *Ls) TTYAPI() *TTYAPI <span class="cov0" title="0">{
+        return p.ttyAPI
+}</span>
+
+func (p *Ls) SetKernel(api *Kernel) <span class="cov0" title="0">{
+        p.Kernel = api
+}</span>
+
+func (p *Ls) SetProcess(proc *Process) <span class="cov0" title="0">{
+        p.proc = proc
+}</span>
+
+func (p *Ls) Run(returnStatus chan int, params []string) <span class="cov0" title="0">{
+        if p.graphicsAPI == nil </span><span class="cov0" title="0">{
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+        <span class="cov0" title="0">if len(params) &gt; 2 </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write("Usage: ls &lt;flag&gt; &lt;path&gt;, no path for working dir\n")
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">dir := p.proc.CWD
+        flag := ""
+
+        for i := range params </span><span class="cov0" title="0">{
+                if strings.HasPrefix(params[i], "-") </span><span class="cov0" title="0">{
+                        flag = params[i]
+                }</span> else<span class="cov0" title="0"> {
+                        dir = params[i]
+                }</span>
+        }
+
+        <span class="cov0" title="0">files, err := p.Kernel.ReadDir(p.proc, dir)
+        if err != nil </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write("\n" + err.Error() + "\n")
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">output := ""
+        for _, file := range files </span><span class="cov0" title="0">{
+                if flag == "" </span><span class="cov0" title="0">{
+                        if file.IsDir() </span><span class="cov0" title="0">{
+                                output += fmt.Sprintf("\033[34m%s\033[0m\n", file.Name())
+                        }</span> else<span class="cov0" title="0"> {
+                                output += fmt.Sprintf("%s\n", file.Name())
+                        }</span>
+                } else<span class="cov0" title="0"> if flag == "-l" </span><span class="cov0" title="0">{
+                        filePath := path.Join(dir, file.Name())
+                        meta, _ := p.Kernel.Stat(p.proc, filePath)
+                        perms := formatMode(meta.OwnerMode, meta.OtherMode, meta.Setuid)
+                        owner := fmt.Sprintf("\033[96m%s\033[0m", meta.Owner)
+                        var name string
+                        if file.IsDir() </span><span class="cov0" title="0">{
+                                name = fmt.Sprintf("\033[94;1m%s\033[0m", file.Name())
+                        }</span> else<span class="cov0" title="0"> {
+                                name = fmt.Sprintf("\033[97m%s\033[0m", file.Name())
+                        }</span>
+                        <span class="cov0" title="0">output += fmt.Sprintf("%s%s  %s\n", perms, owner, name)</span>
+                }
+        }
+
+        <span class="cov0" title="0">if len(output) &gt; 0 </span><span class="cov0" title="0">{
+                output = output[:len(output)-1]
+        }</span>
+
+        <span class="cov0" title="0">p.graphicsAPI.Write("\n" + output + "\n")
+        returnStatus &lt;- utils.Success</span>
+}
+
+func (p *Ls) ID() string <span class="cov0" title="0">{
+        return p.id
+}</span>
+
+func (p *Ls) HandleSignal(sig Signal) {<span class="cov0" title="0">
+}</span>
+
+func (p *Ls) AddGraphicsAPI(api *GraphicsAPI) <span class="cov0" title="0">{
+        p.graphicsAPI = api
+}</span>
+
+func (p *Ls) RemoveGraphicsAPI() <span class="cov0" title="0">{
+        p.graphicsAPI = nil
+}</span>
+
+type Clear struct {
+        id          string
+        graphicsAPI *GraphicsAPI
+        ttyAPI      *TTYAPI
+        Kernel      *Kernel
+        proc        *Process
+}
+
+func (p *Clear) SetTTyAPI(api *TTYAPI) <span class="cov0" title="0">{
+        p.ttyAPI = api
+}</span>
+
+func (p *Clear) TTYAPI() *TTYAPI <span class="cov0" title="0">{
+        return p.ttyAPI
+}</span>
+
+func (p *Clear) SetKernel(api *Kernel) <span class="cov0" title="0">{
+        p.Kernel = api
+}</span>
+
+func (p *Clear) SetProcess(proc *Process) <span class="cov0" title="0">{
+        p.proc = proc
+}</span>
+
+func (p *Clear) Run(returnStatus chan int, params []string) <span class="cov0" title="0">{
+        if p.graphicsAPI == nil </span><span class="cov0" title="0">{
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+        <span class="cov0" title="0">if len(params) &gt; 0 </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write("Usage: clear\n")
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+        <span class="cov0" title="0">p.graphicsAPI.Write("\033[H\033[2J")
+        returnStatus &lt;- utils.Success</span>
+}
+
+func (p *Clear) ID() string <span class="cov0" title="0">{
+        return p.id
+}</span>
+
+func (p *Clear) HandleSignal(sig Signal) {<span class="cov0" title="0">
+}</span>
+
+func (p *Clear) AddGraphicsAPI(api *GraphicsAPI) <span class="cov0" title="0">{
+        p.graphicsAPI = api
+}</span>
+
+func (p *Clear) RemoveGraphicsAPI() <span class="cov0" title="0">{
+        p.graphicsAPI = nil
+}</span>
+
+type Cat struct {
+        id          string
+        graphicsAPI *GraphicsAPI
+        ttyAPI      *TTYAPI
+        Kernel      *Kernel
+        proc        *Process
+}
+
+func (p *Cat) SetTTyAPI(api *TTYAPI) <span class="cov0" title="0">{
+        p.ttyAPI = api
+}</span>
+
+func (p *Cat) TTYAPI() *TTYAPI <span class="cov0" title="0">{
+        return p.ttyAPI
+}</span>
+
+func (p *Cat) SetKernel(api *Kernel) <span class="cov0" title="0">{
+        p.Kernel = api
+}</span>
+
+func (p *Cat) SetProcess(proc *Process) <span class="cov0" title="0">{
+        p.proc = proc
+}</span>
+
+func (p *Cat) Run(returnStatus chan int, params []string) <span class="cov0" title="0">{
+        if p.graphicsAPI == nil </span><span class="cov0" title="0">{
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+        <span class="cov0" title="0">if len(params) != 1 </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write("\nUsage: cat &lt;path&gt;\n")
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">content, err := p.Kernel.ReadFile(p.proc, params[0])
+        if err != nil </span><span class="cov0" title="0">{
+                message := "\nFailed to open file\n"
+                if strings.HasSuffix(err.Error(), "no such file or directory") </span><span class="cov0" title="0">{
+                        message = "\ncat: cannot open: No such file or directory\n"
+                }</span>
+                <span class="cov0" title="0">p.graphicsAPI.Write(message)
+                returnStatus &lt;- utils.Error
+                return</span>
+        }
+
+        <span class="cov0" title="0">p.graphicsAPI.Write("\n" + string(content) + "\n")
+        returnStatus &lt;- utils.Success</span>
+}
+
+func (p *Cat) ID() string <span class="cov0" title="0">{
+        return p.id
+}</span>
+
+func (p *Cat) HandleSignal(sig Signal) {<span class="cov0" title="0">
+}</span>
+
+func (p *Cat) AddGraphicsAPI(api *GraphicsAPI) <span class="cov0" title="0">{
+        p.graphicsAPI = api
+}</span>
+
+func (p *Cat) RemoveGraphicsAPI() <span class="cov0" title="0">{
+        p.graphicsAPI = nil
+}</span>
+
+type MkDir struct {
+        id          string
+        graphicsAPI *GraphicsAPI
+        ttyAPI      *TTYAPI
+        Kernel      *Kernel
+        proc        *Process
+}
+
+func (p *MkDir) SetTTyAPI(api *TTYAPI) <span class="cov0" title="0">{
+        p.ttyAPI = api
+}</span>
+
+func (p *MkDir) TTYAPI() *TTYAPI <span class="cov0" title="0">{
+        return p.ttyAPI
+}</span>
+
+func (p *MkDir) SetKernel(api *Kernel) <span class="cov0" title="0">{
+        p.Kernel = api
+}</span>
+
+func (p *MkDir) SetProcess(proc *Process) <span class="cov0" title="0">{
+        p.proc = proc
+}</span>
+
+func (p *MkDir) Run(returnStatus chan int, params []string) <span class="cov0" title="0">{
+        if len(params) != 1 </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write("\nUsage: mkdir &lt;path&gt;\n")
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">target := params[0]
+        err := p.Kernel.MkDir(p.proc, target)
+        if err != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("\nFailed to create directory %s\n", err)
+                if p.graphicsAPI != nil </span><span class="cov0" title="0">{
+                        p.graphicsAPI.Write(message)
+                }</span>
+                <span class="cov0" title="0">returnStatus &lt;- utils.Error
+                return</span>
+        }
+
+        <span class="cov0" title="0">p.graphicsAPI.Write("\n")
+        returnStatus &lt;- utils.Success</span>
+}
+
+func (p *MkDir) ID() string <span class="cov0" title="0">{
+        return p.id
+}</span>
+
+func (p *MkDir) HandleSignal(sig Signal) {<span class="cov0" title="0">
+}</span>
+
+func (p *MkDir) AddGraphicsAPI(api *GraphicsAPI) <span class="cov0" title="0">{
+        p.graphicsAPI = api
+}</span>
+
+func (p *MkDir) RemoveGraphicsAPI() <span class="cov0" title="0">{
+        p.graphicsAPI = nil
+}</span>
+
+type Touch struct {
+        id          string
+        graphicsAPI *GraphicsAPI
+        ttyAPI      *TTYAPI
+        Kernel      *Kernel
+        proc        *Process
+}
+
+func (p *Touch) SetTTyAPI(api *TTYAPI) <span class="cov0" title="0">{
+        p.ttyAPI = api
+}</span>
+
+func (p *Touch) TTYAPI() *TTYAPI <span class="cov0" title="0">{
+        return p.ttyAPI
+}</span>
+
+func (p *Touch) SetKernel(api *Kernel) <span class="cov0" title="0">{
+        p.Kernel = api
+}</span>
+
+func (p *Touch) SetProcess(proc *Process) <span class="cov0" title="0">{
+        p.proc = proc
+}</span>
+
+func (p *Touch) Run(returnStatus chan int, params []string) <span class="cov0" title="0">{
+        if len(params) != 1 </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write("\nUsage: touch &lt;path&gt;\n")
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">target := params[0]
+        err := p.Kernel.CreateFile(p.proc, target)
+        if err != nil </span><span class="cov0" title="0">{
+                message := fmt.Sprintf("\nFailed to create directory %s\n", err)
+                if p.graphicsAPI != nil </span><span class="cov0" title="0">{
+                        p.graphicsAPI.Write(message)
+                }</span>
+                <span class="cov0" title="0">returnStatus &lt;- utils.Error
+                return</span>
+        }
+
+        <span class="cov0" title="0">p.graphicsAPI.Write("\n")
+        returnStatus &lt;- utils.Success</span>
+}
+
+func (p *Touch) ID() string <span class="cov0" title="0">{
+        return p.id
+}</span>
+
+func (p *Touch) HandleSignal(sig Signal) {<span class="cov0" title="0">
+}</span>
+
+func (p *Touch) AddGraphicsAPI(api *GraphicsAPI) <span class="cov0" title="0">{
+        p.graphicsAPI = api
+}</span>
+
+func (p *Touch) RemoveGraphicsAPI() <span class="cov0" title="0">{
+        p.graphicsAPI = nil
+}</span>
+
+type Chmod struct {
+        id          string
+        graphicsAPI *GraphicsAPI
+        ttyAPI      *TTYAPI
+        Kernel      *Kernel
+        proc        *Process
+}
+
+func (p *Chmod) SetTTyAPI(api *TTYAPI) <span class="cov0" title="0">{
+        p.ttyAPI = api
+}</span>
+
+func (p *Chmod) TTYAPI() *TTYAPI <span class="cov0" title="0">{
+        return p.ttyAPI
+}</span>
+
+func (p *Chmod) SetKernel(api *Kernel) <span class="cov0" title="0">{
+        p.Kernel = api
+}</span>
+
+func (p *Chmod) SetProcess(proc *Process) <span class="cov0" title="0">{
+        p.proc = proc
+}</span>
+
+func (p *Chmod) Run(returnStatus chan int, params []string) <span class="cov0" title="0">{
+        if len(params) != 2 </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write("\nUsage: chmod &lt;mode&gt; &lt;path&gt;\n")
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">modeStr := params[0]
+        target := params[1]
+
+        newOwner, newOther, err := parseChmodMode(modeStr, p.Kernel, p.proc, target)
+        if err != nil </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write(fmt.Sprintf("\nchmod: invalid mode: %s\n", modeStr))
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">if err := p.Kernel.Chmod(p.proc, target, newOwner, newOther); err != nil </span><span class="cov0" title="0">{
+                p.graphicsAPI.Write(fmt.Sprintf("\nchmod: %s\n", err.Error()))
+                returnStatus &lt;- utils.Error
+                return
+        }</span>
+
+        <span class="cov0" title="0">p.graphicsAPI.Write("\n")
+        returnStatus &lt;- utils.Success</span>
+}
+
+func (p *Chmod) ID() string <span class="cov0" title="0">{
+        return p.id
+}</span>
+
+func (p *Chmod) HandleSignal(sig Signal) {<span class="cov0" title="0">
+}</span>
+
+func (p *Chmod) AddGraphicsAPI(api *GraphicsAPI) <span class="cov0" title="0">{
+        p.graphicsAPI = api
+}</span>
+
+func (p *Chmod) RemoveGraphicsAPI() <span class="cov0" title="0">{
+        p.graphicsAPI = nil
+}</span>
+
+func parseChmodMode(mode string, k *Kernel, proc *Process, target string) (uint8, uint8, error) <span class="cov0" title="0">{
+        opIdx := strings.IndexAny(mode, "+-=")
+        if opIdx &lt; 0 </span><span class="cov0" title="0">{
+                return 0, 0, fmt.Errorf("missing operator")
+        }</span>
+
+        <span class="cov0" title="0">who := mode[:opIdx]
+        op := mode[opIdx]
+        permsStr := mode[opIdx+1:]
+
+        if who == "" || who == "a" </span><span class="cov0" title="0">{
+                who = "uo"
+        }</span>
+
+        <span class="cov0" title="0">for _, w := range who </span><span class="cov0" title="0">{
+                if w != 'u' &amp;&amp; w != 'o' </span><span class="cov0" title="0">{
+                        return 0, 0, fmt.Errorf("invalid who: %c", w)
+                }</span>
+        }
+
+        <span class="cov0" title="0">var bits uint8
+        for _, c := range permsStr </span><span class="cov0" title="0">{
+                switch c </span>{
+                case 'r':<span class="cov0" title="0">
+                        bits |= 4</span>
+                case 'w':<span class="cov0" title="0">
+                        bits |= 2</span>
+                case 'x':<span class="cov0" title="0">
+                        bits |= 1</span>
+                default:<span class="cov0" title="0">
+                        return 0, 0, fmt.Errorf("invalid permission: %c", c)</span>
+                }
+        }
+
+        <span class="cov0" title="0">meta, ok := k.Stat(proc, target)
+        if !ok </span><span class="cov0" title="0">{
+                return 0, 0, fmt.Errorf("no such file or directory")
+        }</span>
+
+        <span class="cov0" title="0">apply := func(current uint8) uint8 </span><span class="cov0" title="0">{
+                switch op </span>{
+                case '+':<span class="cov0" title="0">
+                        return current | bits</span>
+                case '-':<span class="cov0" title="0">
+                        return current &amp;^ bits</span>
+                case '=':<span class="cov0" title="0">
+                        return bits</span>
+                }
+                <span class="cov0" title="0">return current</span>
+        }
+
+        <span class="cov0" title="0">newOwner := meta.OwnerMode
+        newOther := meta.OtherMode
+
+        for _, w := range who </span><span class="cov0" title="0">{
+                switch w </span>{
+                case 'u':<span class="cov0" title="0">
+                        newOwner = apply(meta.OwnerMode)</span>
+                case 'o':<span class="cov0" title="0">
+                        newOther = apply(meta.OtherMode)</span>
+                }
+        }
+
+        <span class="cov0" title="0">return newOwner, newOther, nil</span>
+}
+
+func formatMode(owner, other uint8, setuid bool) string <span class="cov0" title="0">{
+        r := func(mode uint8) string </span><span class="cov0" title="0">{
+                if mode&amp;4 != 0 </span><span class="cov0" title="0">{
+                        return "\033[93mr\033[0m" // bright yellow
+                }</span>
+                <span class="cov0" title="0">return "\033[90m-\033[0m"</span> // dark gray
+        }
+        <span class="cov0" title="0">w := func(mode uint8) string </span><span class="cov0" title="0">{
+                if mode&amp;2 != 0 </span><span class="cov0" title="0">{
+                        return "\033[91mw\033[0m" // bright red
+                }</span>
+                <span class="cov0" title="0">return "\033[90m-\033[0m"</span>
+        }
+        <span class="cov0" title="0">x := func(mode uint8) string </span><span class="cov0" title="0">{
+                if mode&amp;1 != 0 </span><span class="cov0" title="0">{
+                        return "\033[92mx\033[0m" // bright green
+                }</span>
+                <span class="cov0" title="0">return "\033[90m-\033[0m"</span>
+        }
+        <span class="cov0" title="0">perms := r(owner) + w(owner) + x(owner) + r(other) + w(other) + x(other)
+        if setuid </span><span class="cov0" title="0">{
+                perms += "\033[95ms\033[0m " // bright magenta
+        }</span> else<span class="cov0" title="0"> {
+                perms += "  "
+        }</span>
+        <span class="cov0" title="0">return perms</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package computer
+
+import (
+        "encoding/json"
+        "fmt"
+        "io"
+        "log"
+        "net"
+        "strings"
+
+        "byte-space/utils"
+)
+
+type GraphicsAPI struct {
+        writer io.Writer
+}
+
+func NewGraphicsAPI(writer io.Writer) *GraphicsAPI <span class="cov0" title="0">{
+        return &amp;GraphicsAPI{writer: writer}
+}</span>
+
+func (g *GraphicsAPI) Write(str string) (int, error) <span class="cov0" title="0">{
+        if g == nil </span><span class="cov0" title="0">{
+                return 0, fmt.Errorf("nil")
+        }</span>
+
+        <span class="cov0" title="0">return g.writer.Write([]byte(str))</span>
+}
+
+type TTYAPI struct {
+        tty  *TTY
+        proc *Process
+}
+
+func (t *TTYAPI) SetForegroundPGID(pgid int) (string, int) <span class="cov0" title="0">{
+        return t.tty.SetForegroundPGID(pgid)
+}</span>
+
+func (t *TTYAPI) Read(done chan struct{}) (string, int) <span class="cov0" title="0">{
+        return t.tty.Read(t.proc, done)
+}</span>
+
+func (t *TTYAPI) BuffClear() <span class="cov0" title="0">{
+        t.tty.BuffClear()
+}</span>
+
+func (t *TTYAPI) SetPasswdMode(mode bool) <span class="cov0" title="0">{
+        t.tty.PasswdMode = mode
+}</span>
+
+func (t *TTYAPI) SetSession(session *Session) <span class="cov0" title="0">{
+        t.tty.Session = session
+}</span>
+
+func (t *TTYAPI) GetTTYID() string <span class="cov0" title="0">{
+        return t.tty.id
+}</span>
+
+func (t *TTYAPI) GetSession() *Session <span class="cov0" title="0">{
+        return t.tty.Session
+}</span>
+
+type Program interface {
+        // API's (aces based security)
+
+        SetTTyAPI(api *TTYAPI)
+
+        SetKernel(api *Kernel)
+
+        // no acces to session, the only "state" it has acess to is from the kernel syscalls or the proc
+
+        SetProcess(proc *Process)
+
+        AddGraphicsAPI(api *GraphicsAPI)
+        RemoveGraphicsAPI()
+
+        // General
+
+        ID() string
+        TTYAPI() *TTYAPI
+        Run(returnStatus chan int, params []string)
+        HandleSignal(sig Signal)
+}
+
+type TTY struct {
+        io.Writer
+        PasswdMode     bool
+        id             string
+        ForegroundPGID int // pgid = proces group id
+        Canonical      bool
+        Echo           bool
+        Buffer         string
+        CursorPosition int
+        dataChannel    chan string
+        Session        *Session
+        Connection     net.Conn
+        EventBus       *EventBus
+        // Echo &amp; Canonical false is RAW mode
+}
+
+func NewTTY(c net.Conn, eb *EventBus, id string) *TTY <span class="cov8" title="1">{
+        handsomeNewTTY := &amp;TTY{
+                ForegroundPGID: -1,
+                Canonical:      true,
+                Echo:           true,
+                Buffer:         "",
+                dataChannel:    make(chan string),
+                Session:        nil,
+                Connection:     c,
+                id:             id,
+                EventBus:       eb,
+        }
+
+        return handsomeNewTTY
+}</span>
+
+func (t *TTY) writeToClient(data string, status int) <span class="cov8" title="1">{
+        jsonData, err := json.Marshal(NewIPCMessage(data, status))
+        if err != nil </span><span class="cov0" title="0">{
+                log.Fatalf("Error occurred during marshalling: %s", err.Error())
+        }</span>
+        <span class="cov8" title="1">jsonData = append(jsonData, '\n')
+        t.Connection.Write(jsonData)</span>
+}
+
+type Signal int
+
+const (
+        SIGINT Signal = iota
+        SIGTSTP
+        SIGQUIT
+        SIGINFO
+)
+
+func (t *TTY) HandleKeystroke(keystroke string) <span class="cov0" title="0">{
+        t.EventBus.Publish(EventClientToEngine, map[string]interface{}{
+                "key": keystroke,
+                "tty": t.id,
+        })
+
+        t.EventBus.Publish(EventEngineToTTY, map[string]interface{}{
+                "key":       keystroke,
+                "canonical": t.Canonical,
+                "echo":      t.Echo,
+                "tty":       t.id,
+        })
+
+        switch keystroke </span>{
+        case "\x03":<span class="cov0" title="0"> // ctrl-c
+                if t.ForegroundPGID != -1 </span><span class="cov0" title="0">{
+                        var foregroundPrograms []*Process
+
+                        procs := t.Session.Computer.Kernel.procs
+                        for _, proc := range procs </span><span class="cov0" title="0">{
+                                if proc.PGID == t.ForegroundPGID </span><span class="cov0" title="0">{
+                                        foregroundPrograms = append(foregroundPrograms, proc)
+                                }</span>
+                        }
+                        <span class="cov0" title="0">for _, proc := range foregroundPrograms </span><span class="cov0" title="0">{
+                                proc.Program.HandleSignal(SIGINT)
+                        }</span>
+                }
+        default:<span class="cov0" title="0">
+                t.dataChannel &lt;- keystroke</span>
+        }
+}
+
+func (t *TTY) SetForegroundPGID(pgid int) (string, int) <span class="cov0" title="0">{
+        procs := t.Session.Computer.Kernel.procs
+
+        // Remove graphicsAPI from old foreground programs
+        if t.ForegroundPGID != -1 </span><span class="cov0" title="0">{
+                for _, proc := range procs </span><span class="cov0" title="0">{
+                        if proc.PGID == t.ForegroundPGID </span><span class="cov0" title="0">{
+                                proc.Program.RemoveGraphicsAPI()
+                        }</span>
+                }
+        }
+
+        <span class="cov0" title="0">t.ForegroundPGID = pgid
+
+        // Add graphicsAPI to new foreground programs
+        for _, proc := range procs </span><span class="cov0" title="0">{
+                if proc.PGID == pgid </span><span class="cov0" title="0">{
+                        t.EventBus.Publish(EventForegroundChanged, map[string]interface{}{
+                                "program": proc.Program.ID(),
+                                "tty_id":  t.id,
+                        })
+                        proc.Program.AddGraphicsAPI(NewGraphicsAPI(t))
+                }</span>
+        }
+
+        <span class="cov0" title="0">return "Successfully set foreground program", utils.Success</span>
+}
+
+func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) <span class="cov8" title="1">{
+        if proc.PGID != t.ForegroundPGID </span><span class="cov8" title="1">{
+                return "Err: You are not foreground program", utils.Error
+        }</span>
+
+        <span class="cov8" title="1">var foregroundPrograms []*Process
+
+        procs := t.Session.Computer.Kernel.procs
+        for _, proc := range procs </span><span class="cov8" title="1">{
+                if proc.PGID == t.ForegroundPGID </span><span class="cov8" title="1">{
+                        foregroundPrograms = append(foregroundPrograms, proc)
+                }</span>
+        }
+        <span class="cov8" title="1">for </span><span class="cov8" title="1">{
+                select </span>{
+                case receivedData := &lt;-t.dataChannel:<span class="cov8" title="1">
+                        if strings.HasPrefix(receivedData, "\x1b[1;5") </span><span class="cov0" title="0">{
+                                continue</span>
+                        }
+
+                        <span class="cov8" title="1">if len(receivedData) == 1 &amp;&amp; receivedData[0] == ';' </span><span class="cov0" title="0">{
+                                continue</span>
+                        }
+                        <span class="cov8" title="1">preCursor := t.CursorPosition
+                        if t.Echo </span><span class="cov8" title="1">{
+                                ansiData := receivedData
+
+                                if receivedData == "\x7f" </span><span class="cov8" title="1">{ // delete into backspace BANAANSI
+                                        if t.CursorPosition &gt; 0 </span><span class="cov8" title="1">{
+                                                ansiData = "\b \b"
+                                                t.CursorPosition--
+                                        }</span> else<span class="cov8" title="1"> {
+                                                ansiData = ""
+                                        }</span>
+                                } else<span class="cov8" title="1"> if receivedData == "\t" </span><span class="cov8" title="1">{
+                                        ansiData = "    " // expand tab to 4 spaces visually
+                                }</span> else<span class="cov8" title="1"> if receivedData == "\x1b[A" || receivedData == "\x1b[B" </span><span class="cov8" title="1">{
+                                        ansiData = ""
+                                }</span> else<span class="cov8" title="1"> if receivedData == "\x1b[C" </span><span class="cov8" title="1">{
+                                        if t.CursorPosition == len(t.Buffer) </span><span class="cov8" title="1">{
+                                                ansiData = ""
+                                        }</span>
+                                } else<span class="cov8" title="1"> if receivedData == "\x1b[D" </span><span class="cov8" title="1">{
+                                        if t.CursorPosition == 0 </span><span class="cov8" title="1">{
+                                                ansiData = ""
+                                        }</span>
+                                }
+                                <span class="cov8" title="1">if t.PasswdMode &amp;&amp; receivedData != "\r" &amp;&amp; receivedData != "\x7f" </span><span class="cov0" title="0">{
+                                        ansiData = "*"
+                                }</span>
+
+                                <span class="cov8" title="1">t.writeToClient(ansiData, utils.Success)</span>
+                        }
+
+                        <span class="cov8" title="1">if !t.Canonical </span><span class="cov8" title="1">{
+                                for _, proc := range foregroundPrograms </span><span class="cov8" title="1">{
+                                        t.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
+                                                "key":    receivedData,
+                                                "prog":   proc.Program.ID(),
+                                                "tty_id": t.id,
+                                        })
+                                }</span>
+                                <span class="cov8" title="1">return receivedData, utils.Success</span>
+                        }
+
+                        <span class="cov8" title="1">switch receivedData </span>{
+                        case "\r":<span class="cov8" title="1"> // enter
+                                data := t.Buffer
+
+                                for _, proc := range foregroundPrograms </span><span class="cov8" title="1">{
+                                        t.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
+                                                "cmd":    t.Buffer,
+                                                "prog":   proc.Program.ID(),
+                                                "tty_id": t.id,
+                                        })
+                                }</span>
+
+                                <span class="cov8" title="1">t.CursorPosition = 0
+                                t.Buffer = ""
+                                t.EventBus.Publish(EventBufferChanged, map[string]interface{}{
+                                        "buffer": t.Buffer,
+                                        "cursor": t.CursorPosition,
+                                        "tty":    t.id,
+                                })
+
+                                return data, utils.Success</span>
+                        case "\x7f":<span class="cov8" title="1"> // delete
+                                runes := []rune(t.Buffer)
+
+                                if preCursor &gt; 0 &amp;&amp; t.CursorPosition &lt; len(runes) </span><span class="cov8" title="1">{
+                                        runes = append(runes[:t.CursorPosition], runes[t.CursorPosition+1:]...)
+                                        t.Buffer = string(runes)
+
+                                        if t.Echo &amp;&amp; !t.PasswdMode </span><span class="cov8" title="1">{
+                                                right := string(runes[t.CursorPosition:])
+                                                if len(right) &gt; 0 </span><span class="cov8" title="1">{
+                                                        output := right + " "
+                                                        output += fmt.Sprintf("\x1b[%dD", len(right)+1)
+                                                        t.writeToClient(output, utils.Success)
+                                                }</span>
+                                        }
+                                }
+
+                        case "\x1b[A", "\x1b[B":<span class="cov8" title="1">
+                                continue</span>
+                        case "\x1b[C":<span class="cov8" title="1">
+                                if t.PasswdMode </span><span class="cov0" title="0">{
+                                        continue</span>
+                                }
+
+                                <span class="cov8" title="1">if t.CursorPosition != len(t.Buffer) </span><span class="cov8" title="1">{
+                                        t.CursorPosition += 1
+                                }</span>
+
+                        case "\x1b[D":<span class="cov8" title="1">
+                                if t.PasswdMode </span><span class="cov0" title="0">{
+                                        continue</span>
+                                }
+
+                                <span class="cov8" title="1">if t.CursorPosition != 0 </span><span class="cov8" title="1">{
+                                        t.CursorPosition -= 1
+                                }</span>
+
+                        default:<span class="cov8" title="1">
+                                index := t.CursorPosition
+                                data := receivedData
+                                if data == "\t" </span><span class="cov8" title="1">{
+                                        data = "    " // expand tab to 4 spaces in buffer
+                                }</span>
+                                <span class="cov8" title="1">r := []rune(data)
+                                runes := []rune(t.Buffer)
+                                runes = append(runes[:index], append(r, runes[index:]...)...)
+                                newStr := string(runes)
+                                t.Buffer = newStr
+                                t.CursorPosition += len(r)
+                                if t.Echo &amp;&amp; !t.PasswdMode </span><span class="cov8" title="1">{
+                                        right := string(runes[t.CursorPosition:])
+                                        if len(right) &gt; 0 </span><span class="cov8" title="1">{
+                                                output := right + " "
+                                                output += fmt.Sprintf("\x1b[%dD", len(right)+1)
+                                                t.writeToClient(output, utils.Success)
+                                        }</span>
+                                }
+
+                        }
+
+                        <span class="cov8" title="1">t.EventBus.Publish(EventBufferChanged, map[string]interface{}{
+                                "buffer": t.Buffer,
+                                "cursor": t.CursorPosition,
+                                "tty":    t.id,
+                        })</span>
+
+                case &lt;-done:<span class="cov8" title="1">
+                        return "SIGINT", utils.Exit</span>
+                }
+        }
+
+        <span class="cov0" title="0">return "ERROR READING", utils.Error</span>
+}
+
+func (t *TTY) Write(str []byte) (int, error) <span class="cov0" title="0">{
+        t.EventBus.Publish(EventTTYToClient, map[string]interface{}{
+                "output": string(str),
+                "tty":    t.id,
+        })
+
+        t.writeToClient(string(str), utils.Success)
+        return len(str), nil
+}</span>
+
+func (t *TTY) BuffClear() <span class="cov0" title="0">{
+        t.Buffer = ""
+        t.CursorPosition = 0
+        t.EventBus.Publish(EventBufferChanged, map[string]interface{}{
+                "buffer": t.Buffer,
+                "cursor": t.CursorPosition,
+                "tty":    t.id,
+        })
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>

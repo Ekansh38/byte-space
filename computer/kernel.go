@@ -136,18 +136,30 @@ func (k *Kernel) cleanupProcess(pid int) {
 }
 
 func (k *Kernel) resolvePath(proc *Process, target string) string {
-	target = path.Clean(target)
-
-	if strings.HasPrefix(target, "~") {
-		if proc.UID == "root" {
-			target = path.Join("/root", target[1:])
-		} else {
-			target = path.Join("/home", proc.UID, target[1:])
-		}
+	if target == "" {
+		target = proc.CWD
 	}
+
+	home := "/home/" + proc.UID
+	if proc.UID == "root" {
+		home = "/root"
+	}
+
+	if target == "~" {
+		target = home
+	} else if strings.HasPrefix(target, "~/") {
+		target = path.Join(home, target[2:])
+	}
+
 	if !strings.HasPrefix(target, "/") {
 		target = path.Join(proc.CWD, target)
 	}
+	target = path.Clean(target)
+
+	if !strings.HasPrefix(target, "/") {
+		return "/"
+	}
+
 	return path.Clean(target)
 }
 
