@@ -347,6 +347,138 @@ func (p *Touch) RemoveGraphicsAPI() {
 	p.graphicsAPI = nil
 }
 
+type Chmod struct {
+	id          string
+	graphicsAPI *GraphicsAPI
+	ttyAPI      *TTYAPI
+	Kernel      *Kernel
+	proc        *Process
+}
+
+func (p *Chmod) SetTTyAPI(api *TTYAPI) {
+	p.ttyAPI = api
+}
+
+func (p *Chmod) TTYAPI() *TTYAPI {
+	return p.ttyAPI
+}
+
+func (p *Chmod) SetKernel(api *Kernel) {
+	p.Kernel = api
+}
+
+func (p *Chmod) SetProcess(proc *Process) {
+	p.proc = proc
+}
+
+func (p *Chmod) Run(returnStatus chan int, params []string) {
+	if len(params) != 2 {
+		p.graphicsAPI.Write("\nUsage: chmod <mode> <path>\n")
+		returnStatus <- utils.Error
+		return
+	}
+
+	modeStr := params[0]
+	target := params[1]
+
+	newOwner, newOther, err := parseChmodMode(modeStr, p.Kernel, p.proc, target)
+	if err != nil {
+		p.graphicsAPI.Write(fmt.Sprintf("\nchmod: invalid mode: %s\n", modeStr))
+		returnStatus <- utils.Error
+		return
+	}
+
+	if err := p.Kernel.Chmod(p.proc, target, newOwner, newOther); err != nil {
+		p.graphicsAPI.Write(fmt.Sprintf("\nchmod: %s\n", err.Error()))
+		returnStatus <- utils.Error
+		return
+	}
+
+	p.graphicsAPI.Write("\n")
+	returnStatus <- utils.Success
+}
+
+func (p *Chmod) ID() string {
+	return p.id
+}
+
+func (p *Chmod) HandleSignal(sig Signal) {
+}
+
+func (p *Chmod) AddGraphicsAPI(api *GraphicsAPI) {
+	p.graphicsAPI = api
+}
+
+func (p *Chmod) RemoveGraphicsAPI() {
+	p.graphicsAPI = nil
+}
+
+func parseChmodMode(mode string, k *Kernel, proc *Process, target string) (uint8, uint8, error) {
+	opIdx := strings.IndexAny(mode, "+-=")
+	if opIdx < 0 {
+		return 0, 0, fmt.Errorf("missing operator")
+	}
+
+	who := mode[:opIdx]
+	op := mode[opIdx]
+	permsStr := mode[opIdx+1:]
+
+	if who == "" || who == "a" {
+		who = "uo"
+	}
+
+	for _, w := range who {
+		if w != 'u' && w != 'o' {
+			return 0, 0, fmt.Errorf("invalid who: %c", w)
+		}
+	}
+
+	var bits uint8
+	for _, c := range permsStr {
+		switch c {
+		case 'r':
+			bits |= 4
+		case 'w':
+			bits |= 2
+		case 'x':
+			bits |= 1
+		default:
+			return 0, 0, fmt.Errorf("invalid permission: %c", c)
+		}
+	}
+
+	meta, ok := k.Stat(proc, target)
+	if !ok {
+		return 0, 0, fmt.Errorf("no such file or directory")
+	}
+
+	apply := func(current uint8) uint8 {
+		switch op {
+		case '+':
+			return current | bits
+		case '-':
+			return current &^ bits
+		case '=':
+			return bits
+		}
+		return current
+	}
+
+	newOwner := meta.OwnerMode
+	newOther := meta.OtherMode
+
+	for _, w := range who {
+		switch w {
+		case 'u':
+			newOwner = apply(meta.OwnerMode)
+		case 'o':
+			newOther = apply(meta.OtherMode)
+		}
+	}
+
+	return newOwner, newOther, nil
+}
+
 func formatMode(owner, other uint8, setuid bool) string {
 	r := func(mode uint8) string {
 		if mode&4 != 0 {

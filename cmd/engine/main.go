@@ -22,8 +22,6 @@ func main() {
 		tea.WithAltScreen(),
 	)
 
-	eng.RunAdminCommand("spawn computer ekanshgPC 192.188.0.0")
-
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)

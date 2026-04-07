@@ -49,12 +49,17 @@ func (c *Computer) HandleClient(conn net.Conn) {
 			return
 		}
 
+		// change the uid to the actual user
+		loggedInUser := tty.Session.CurrentUser
+		daddyProc.UID = loggedInUser
+		daddyProc.EUID = loggedInUser
+
 		workingDir := "/"
 
-		if tty.Session.CurrentUser == "root" {
+		if loggedInUser == "root" {
 			workingDir = "/root"
 		} else {
-			workingDir = "/home/" + tty.Session.CurrentUser
+			workingDir = "/home/" + loggedInUser
 		}
 
 		daddyProc.CWD = workingDir

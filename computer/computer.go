@@ -2,11 +2,13 @@
 package computer
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/fs"
 	"os"
 
 	"byte-space/utils"
+
 	"github.com/spf13/afero"
 )
 
@@ -83,13 +85,16 @@ func initFileSystem(fs afero.Fs, hostname string, ip string) {
 	createIfNotExists("/bin/sh", "")
 	createIfNotExists("/bin/mkdir", "")
 	createIfNotExists("/bin/touch", "")
+	createIfNotExists("/bin/chmod", "")
 }
 
 func populateFileMetadata(filesystm afero.Fs, computer *Computer) {
 	walkFunc := func(path string, info fs.FileInfo, err error) error {
+		owner := "root"
+
 		fileMetadata := &FileMetadata{
 			Filepath:  path,
-			Owner:     "root",
+			Owner:     owner,
 			Setuid:    false,
 			OwnerMode: 7,
 			OtherMode: 5,
@@ -120,6 +125,7 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *Even
 	}
 
 	populateFileMetadata(filesystm, computer)
+	computer.loadMetaData() // override defaults with any saved permissions
 
 	computer.OS = &OS{Computer: computer}
 	computer.OS.Network = e
@@ -133,8 +139,9 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *Even
 			"/bin/adduser": func(pid int) Program { return &Adduser{id: fmt.Sprintf("adduser-%d", pid)} },
 			"/bin/login":   func(pid int) Program { return &LoginProgram{id: fmt.Sprintf("login-%d", pid)} },
 			"/bin/sh":      func(pid int) Program { return &Shell{id: fmt.Sprintf("sh-%d", pid)} },
-			"/bin/mkdir":      func(pid int) Program { return &MkDir{id: fmt.Sprintf("mkdir-%d", pid)} },
-			"/bin/touch":      func(pid int) Program { return &Touch{id: fmt.Sprintf("touch-%d", pid)} },
+			"/bin/mkdir":  func(pid int) Program { return &MkDir{id: fmt.Sprintf("mkdir-%d", pid)} },
+			"/bin/touch":  func(pid int) Program { return &Touch{id: fmt.Sprintf("touch-%d", pid)} },
+			"/bin/chmod":  func(pid int) Program { return &Chmod{id: fmt.Sprintf("chmod-%d", pid)} },
 		},
 		procs: map[int]*Process{},
 	}
@@ -148,6 +155,30 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *Even
 		OtherMode: 5,
 	}
 	return computer
+}
+
+func (c *Computer) metaDataPath() string {
+	return fmt.Sprintf("./data/networks/current/nodes/%s.fsmeta.json", c.Name)
+}
+
+func (c *Computer) saveMetaData() {
+	data, err := json.Marshal(c.FsMetaData)
+	if err != nil {
+		return
+	}
+	os.WriteFile(c.metaDataPath(), data, 0o644)
+}
+
+func (c *Computer) loadMetaData() {
+	data, err := os.ReadFile(c.metaDataPath())
+	if err != nil {
+		return // no saved metadata, defaults from populateFileMetadata stand
+	}
+	var metadata map[string]FileMetadata
+	if err := json.Unmarshal(data, &metadata); err != nil {
+		return
+	}
+	c.FsMetaData = metadata
 }
 
 func (c *Computer) GenerateSessionID() string {
@@ -165,6 +196,7 @@ func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
 		workingDir = "/root"
 	} else {
 		workingDir = "/home/" + username
+
 	}
 
 	session := &Session{
@@ -177,6 +209,17 @@ func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
 
 	if !(node.OS.HasDirectory(workingDir)) {
 		node.OS.Mkdir(workingDir)
+		var otherMode uint8 = 5
+		if username == "root" {
+			otherMode = 0 // /root is not accessible to others
+		}
+		node.FsMetaData[workingDir] = FileMetadata{
+			Filepath:  workingDir,
+			Owner:     username,
+			Setuid:    false,
+			OwnerMode: 7,
+			OtherMode: otherMode,
+		}
 	}
 
 	node.EventBus.Publish(EventSessionCreated, map[string]interface{}{

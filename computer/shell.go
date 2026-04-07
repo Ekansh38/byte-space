@@ -99,14 +99,10 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 				dir = path.Clean(dir)
 
-				_, err := s.Kernel.ReadDir(s.proc, dir)
-				if err != nil {
-					message := "\nInvalid directory\n"
-					s.graphicsAPI.Write(message)
+				if err := s.Kernel.ChangeDirectory(s.proc, dir); err != nil {
+					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 					break
 				}
-
-				s.proc.CWD = dir // DO VIA KERNEL, cuz permission checks and stuff TODO
 
 				s.Kernel.PublishEvent(s.proc, EventWorkingDirChanged, map[string]interface{}{
 					"dir":    dir,
@@ -142,6 +138,11 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "touch":
 				if err := s.Kernel.Exec(s.proc, "/bin/touch", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+					s.graphicsAPI.Write("\n" + err.Error() + "\n")
+				}
+				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
+			case "chmod":
+				if err := s.Kernel.Exec(s.proc, "/bin/chmod", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
 				s.ttyAPI.SetForegroundPGID(s.proc.PGID)

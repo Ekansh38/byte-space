@@ -179,6 +179,20 @@ func (k *Kernel) canRead(effectiveUser string, filePath string) bool { // used i
 	return meta.OtherMode&4 != 0
 }
 
+func (k *Kernel) canExecute(effectiveUser string, filePath string) bool { // used internally by kernel for checking
+	if effectiveUser == "root" {
+		return true
+	}
+	meta, ok := k.computer.FsMetaData[filePath]
+	if !ok {
+		return true
+	}
+	if meta.Owner == effectiveUser {
+		return meta.OwnerMode&1 != 0 // bit 0 = execute
+	}
+	return meta.OtherMode&1 != 0
+}
+
 func (k *Kernel) ReadFile(proc *Process, target string) ([]byte, error) { // syscal
 	target = k.resolvePath(proc, target)
 	if !k.canRead(proc.EUID, target) {
@@ -217,6 +231,7 @@ func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
 		OwnerMode: 7,
 		OtherMode: 5,
 	}
+	k.computer.saveMetaData()
 	return nil
 }
 
@@ -236,6 +251,7 @@ func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
 		OwnerMode: 7,
 		OtherMode: 5,
 	}
+	k.computer.saveMetaData()
 	return nil
 }
 
@@ -246,4 +262,32 @@ func (k *Kernel) WriteFile(proc *Process, target string, data []byte) error { //
 		return fmt.Errorf("permission denied")
 	}
 	return k.computer.OS.WriteFile(target, data) // little more abstraction didnt hurt anybody! the kernel never touch afero directly, YUCK
+}
+
+func (k *Kernel) ChangeDirectory(proc *Process, target string) error { // syscall
+	target = k.resolvePath(proc, target)
+	if !k.computer.OS.HasDirectory(target) {
+		return fmt.Errorf("%s: no such file or directory", target)
+	}
+	if !k.canExecute(proc.EUID, target) {
+		return fmt.Errorf("%s: permission denied", target)
+	}
+	proc.CWD = target
+	return nil
+}
+
+func (k *Kernel) Chmod(proc *Process, target string, newOwnerMode uint8, newOtherMode uint8) error { // syscall
+	target = k.resolvePath(proc, target)
+	meta, ok := k.computer.FsMetaData[target]
+	if !ok {
+		return fmt.Errorf("no such file or directory")
+	}
+	if proc.EUID != "root" && meta.Owner != proc.EUID {
+		return fmt.Errorf("permission denied")
+	}
+	meta.OwnerMode = newOwnerMode
+	meta.OtherMode = newOtherMode
+	k.computer.FsMetaData[target] = meta
+	k.computer.saveMetaData()
+	return nil
 }
