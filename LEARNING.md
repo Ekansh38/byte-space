@@ -1,11 +1,5 @@
 # Go Learning Curriculum
 
-## Tier 1 — Fix active issues in this codebase
-
-**sync (race conditions in Engine.nodes and Kernel.procs)**
-- [Go Tour: Mutual Exclusion](https://go.dev/tour/concurrency/9)
-- [Go by Example: Mutexes](https://gobyexample.com/mutexes)
-- [Data Race Detector](https://go.dev/doc/articles/race_detector) — run `go test -race ./...`
 
 **context.Context (no cancellation propagation)**
 - [Go Blog: The context package](https://go.dev/blog/context)
@@ -15,24 +9,19 @@
 **Error wrapping (using fmt.Errorf but not %w)**
 - [Go Blog: Working with Errors in Go 1.13](https://go.dev/blog/go1.13-errors)
 
----
-
-## Tier 2 — Core idioms
-
-**Functional options pattern**
-- [Dave Cheney: Functional options for friendly APIs](https://dave.cheney.net/2014/10/17/functional-options-for-friendly-apis)
-
-**Structured logging (log/slog)**
-- [Go Blog: Structured logging with slog](https://go.dev/blog/slog)
-
-**Graceful shutdown**
-- [Go by Example: Signals](https://gobyexample.com/signals)
-- [Go by Example: WaitGroups](https://gobyexample.com/waitgroups)
-
----
-
 ## Tier 3 — Concurrency (go deep, it's the core of this project)
 
+- [Go by Example: Mutexes](https://gobyexample.com/mutexes) — practical, shows exactly how to use sync.Mutex
+- [Go Tour: Mutual Exclusion](https://go.dev/tour/concurrency/9) — short reinforcement, 5 mins
+- [Data Race Detector](https://go.dev/doc/articles/race_detector) — read then run `go test -race ./...` on byte-space immediately
+
+- [GopherCon 2017 — Understanding Channels](https://www.youtube.com/watch?v=KBZlN0izeiY) — channels vs mutexes, when to 
+
+- [sync package docs](https://pkg.go.dev/sync) — keep open while adding locks
+
+- [Go Tour: Mutual Exclusion](https://go.dev/tour/concurrency/9)
+- [Go by Example: Mutexes](https://gobyexample.com/mutexes)
+- [Data Race Detector](https://go.dev/doc/articles/race_detector) — run `go test -race ./...`
 - [GopherCon 2018 — Rethinking Classical Concurrency Patterns](https://www.youtube.com/watch?v=5zXAHh5tJqQ)
 - [GopherCon 2017 — Understanding Channels](https://www.youtube.com/watch?v=KBZlN0izeiY)
 - [Go Memory Model](https://go.dev/ref/mem)

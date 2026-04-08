@@ -1,6 +1,7 @@
 package computer
 
 import (
+	"unicode"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -150,7 +151,7 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 		if t.ForegroundPGID != -1 {
 			var foregroundPrograms []*Process
 
-			procs := t.Session.Computer.Kernel.procs
+			procs := t.Session.Computer.Kernel.GetProcs()
 			for _, proc := range procs {
 				if proc.PGID == t.ForegroundPGID {
 					foregroundPrograms = append(foregroundPrograms, proc)
@@ -166,7 +167,7 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 }
 
 func (t *TTY) SetForegroundPGID(pgid int) (string, int) {
-	procs := t.Session.Computer.Kernel.procs
+	procs := t.Session.Computer.Kernel.GetProcs()
 
 	// Remove graphicsAPI from old foreground programs
 	if t.ForegroundPGID != -1 {
@@ -200,7 +201,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 
 	var foregroundPrograms []*Process
 
-	procs := t.Session.Computer.Kernel.procs
+	procs := t.Session.Computer.Kernel.GetProcs()
 	for _, proc := range procs {
 		if proc.PGID == t.ForegroundPGID {
 			foregroundPrograms = append(foregroundPrograms, proc)
@@ -240,7 +241,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 						ansiData = ""
 					}
 				}
-				if t.PasswdMode && receivedData != "\r" && receivedData != "\x7f" {
+				if t.PasswdMode && receivedData != "\r" && receivedData != "\x7f" && receivedData != "\x15" {
 					ansiData = "*"
 				}
 
@@ -297,7 +298,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 				}
 
 			case "\x1b[A", "\x1b[B":
-				continue
+			case "\x15":
 			case "\x1b[C":
 				if t.PasswdMode {
 					continue
@@ -317,13 +318,25 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 				}
 
 			default:
+				runes := []rune(receivedData)
+				filtered := []rune{}
+				for _, r := range runes {
+					if unicode.IsPrint(r) { // only letters, digits, punctuation, symbols, space
+						filtered = append(filtered, r)
+					}
+				}
+
+				if len(filtered) == 0 {
+					continue
+				}
 				index := t.CursorPosition
 				data := receivedData
 				if data == "\t" {
 					data = "    " // expand tab to 4 spaces in buffer
 				}
 				r := []rune(data)
-				runes := []rune(t.Buffer)
+
+				runes = []rune(t.Buffer)
 				runes = append(runes[:index], append(r, runes[index:]...)...)
 				newStr := string(runes)
 				t.Buffer = newStr

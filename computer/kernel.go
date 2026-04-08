@@ -5,6 +5,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"sync"
 
 	"byte-space/utils"
 )
@@ -16,12 +17,14 @@ type Kernel struct {
 	// later the factory can be just 1 function, and instead of a map, it can just read that file path and do the language stuff, check for shebang and all that.
 	// rn we still need a map.
 
-	pids     int   // keeps track of the highest ever PID
-	freePIDs []int // stores PIDs of exited processes to reuse
-	// MORE RACE CONDITIONS!!!!!! PIDS AND FREEPIDS CAN BE WRITE AND READ CONCURRNETLY. causing Byte-space to get COOKED ASF.
+	pids     int        // keeps track of the highest ever PID
+	freePIDs []int      // stores PIDs of exited processes to reuse
+	pidsMu   sync.Mutex // fix racing
 
-	procs map[int]*Process // pid to the running process instance (all processes on this computer, GLOBALY) 
-	// procs is being read and write by many fucntions that could cause concurrent race conditions. CLAUDE please identify if this is correct.
+	procs   map[int]*Process // pid to the running process instance (all processes on this computer, GLOBALY)
+	procsMu sync.Mutex
+
+	fsMu sync.RWMutex
 }
 
 func (k *Kernel) PublishEvent(proc *Process, eventType EventType, data map[string]interface{}) {
@@ -37,6 +40,9 @@ func (k *Kernel) GetNodeOnNetwork(ipAdress string) (*Computer, bool) {
 }
 
 func (k *Kernel) nextPID() int {
+	k.pidsMu.Lock()
+	defer k.pidsMu.Unlock() // catch the exit
+
 	if len(k.freePIDs) > 0 {
 		// reuse
 		pid := k.freePIDs[len(k.freePIDs)-1]
@@ -89,7 +95,10 @@ func (k *Kernel) Exec(parentProc *Process, binPath string, args []string, opts *
 		Program: program,
 	}
 
+	k.procsMu.Lock()
+	// critical code
 	k.procs[pid] = proc
+	k.procsMu.Unlock()
 
 	program.SetProcess(proc)
 	program.SetTTyAPI(&TTYAPI{tty: parentProc.Program.TTYAPI().tty, proc: proc})
@@ -134,7 +143,9 @@ func (k *Kernel) Exec(parentProc *Process, binPath string, args []string, opts *
 }
 
 func (k *Kernel) cleanupProcess(pid int) {
+	k.procsMu.Lock()
 	delete(k.procs, pid)
+	k.procsMu.Unlock()
 }
 
 func (k *Kernel) resolvePath(proc *Process, target string) string {
@@ -165,14 +176,21 @@ func (k *Kernel) resolvePath(proc *Process, target string) string {
 	return path.Clean(target)
 }
 
+func (k *Kernel) getMetaData(filePath string) (FileMetadata, bool) {
+	k.fsMu.RLock()
+	meta, ok := k.computer.FsMetaData[filePath]
+	k.fsMu.RUnlock()
 
-// RACEING STARTS HERE
+	return meta, ok
+}
 
 func (k *Kernel) canWrite(effectiveUser string, filePath string) bool { // used internally by kernel for checking
 	if effectiveUser == "root" {
 		return true
 	}
-	meta, ok := k.computer.FsMetaData[filePath]
+
+	meta, ok := k.getMetaData(filePath)
+
 	if !ok {
 		return true
 	}
@@ -186,7 +204,8 @@ func (k *Kernel) canRead(effectiveUser string, filePath string) bool { // used i
 	if effectiveUser == "root" {
 		return true
 	}
-	meta, ok := k.computer.FsMetaData[filePath]
+
+	meta, ok := k.getMetaData(filePath)
 	if !ok {
 		return true
 	}
@@ -200,7 +219,7 @@ func (k *Kernel) canExecute(effectiveUser string, filePath string) bool { // use
 	if effectiveUser == "root" {
 		return true
 	}
-	meta, ok := k.computer.FsMetaData[filePath]
+	meta, ok := k.getMetaData(filePath)
 	if !ok {
 		return true
 	}
@@ -208,35 +227,43 @@ func (k *Kernel) canExecute(effectiveUser string, filePath string) bool { // use
 		return meta.OwnerMode&1 != 0 // bit 0 = execute
 	}
 	return meta.OtherMode&1 != 0
-} 
-
-// RACE-CONDITION: reading from FsMetaData (a global map for the whole computer) 
-// without proper locks and stuff can cause an issue if a separate client is doing a write at the same time.
+}
 
 func (k *Kernel) ReadFile(proc *Process, target string) ([]byte, error) { // syscal
+	k.fsMu.Lock()
+	defer k.fsMu.Unlock()
+
 	target = k.resolvePath(proc, target)
 	if !k.canRead(proc.EUID, target) {
 		return nil, fmt.Errorf("permission denied")
 	}
 	return k.computer.OS.ReadFile(target)
-} // race
+}
 
 func (k *Kernel) ReadDir(proc *Process, target string) ([]os.FileInfo, error) { // syscall
+	k.fsMu.Lock()
+	defer k.fsMu.Unlock()
+
 	target = k.resolvePath(proc, target)
 	if !k.canRead(proc.EUID, target) {
 		return nil, fmt.Errorf("permission denied")
 	}
 	return k.computer.OS.ReadDir(target)
-} // race
+}
 
 func (k *Kernel) Stat(proc *Process, target string) (FileMetadata, bool) { // syscall
+	k.fsMu.Lock()
+	defer k.fsMu.Unlock()
+
 	target = k.resolvePath(proc, target)
 	meta, ok := k.computer.FsMetaData[target]
 	return meta, ok
-} // race,
+}
 
 func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
-	// TOCTOU racing
+	k.fsMu.Lock()
+	defer k.fsMu.Unlock()
+
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
 	if !k.canWrite(proc.EUID, parent) {
@@ -254,9 +281,12 @@ func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
 	}
 	k.computer.saveMetaData()
 	return nil
-} // RACE concurrent filesystem mutation
+}
 
 func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
+	k.fsMu.Lock()
+	defer k.fsMu.Unlock()
+
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
 	// TOCTOU racing
@@ -275,9 +305,13 @@ func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
 	}
 	k.computer.saveMetaData()
 	return nil
-} // RACE! mutltiple clients can try to write the same file at the same time! we need a way to stop that somehow.
+}
 
 func (k *Kernel) WriteFile(proc *Process, target string, data []byte) error { // syscall
+
+	k.fsMu.Lock()
+	defer k.fsMu.Unlock()
+
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
 	// TOCTOU racing
@@ -285,7 +319,7 @@ func (k *Kernel) WriteFile(proc *Process, target string, data []byte) error { //
 		return fmt.Errorf("permission denied")
 	}
 	return k.computer.OS.WriteFile(target, data) // little more abstraction didnt hurt anybody! the kernel never touch afero directly, YUCK
-} // RACE! mutltiple clients can try to write the same file at the same time! we need a way to stop that somehow.
+}
 
 func (k *Kernel) ChangeDirectory(proc *Process, target string) error { // syscall
 	target = k.resolvePath(proc, target)
@@ -299,11 +333,12 @@ func (k *Kernel) ChangeDirectory(proc *Process, target string) error { // syscal
 	return nil
 }
 
-// Race condition. writing to global map without locking.
-
 func (k *Kernel) Chmod(proc *Process, target string, newOwnerMode uint8, newOtherMode uint8) error { // syscall
+	k.fsMu.Lock()
 	target = k.resolvePath(proc, target)
-	meta, ok := k.computer.FsMetaData[target]
+
+	meta, ok := k.getMetaData(target)
+
 	if !ok {
 		return fmt.Errorf("no such file or directory")
 	}
@@ -314,5 +349,18 @@ func (k *Kernel) Chmod(proc *Process, target string, newOwnerMode uint8, newOthe
 	meta.OtherMode = newOtherMode
 	k.computer.FsMetaData[target] = meta
 	k.computer.saveMetaData()
+	k.fsMu.Unlock()
 	return nil
+}
+
+func (k *Kernel) GetProcs() map[int]*Process {
+	k.procsMu.Lock()
+	defer k.procsMu.Unlock()
+	copy := make(map[int]*Process, len(k.procs))
+	for pid, proc := range k.procs {
+		copy[pid] = proc
+	}
+
+	return copy
+	// copy so no more racing!!
 }
