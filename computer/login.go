@@ -1,10 +1,6 @@
 package computer
 
 import (
-	"fmt"
-	"strings"
-
-	//"os/user"
 	"byte-space/utils"
 )
 
@@ -42,29 +38,20 @@ func (p *LoginProgram) RemoveGraphicsAPI() {
 }
 
 func (p *LoginProgram) Run(returnStatus chan int, params []string) {
-	// data
-	ipAdress := ""
-	username := ""
-	password := ""
-
 	p.done = make(chan struct{})
 	if p.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
 	}
 
-	computers := p.Kernel.ListMachinesOnNetwork(p.proc) 
-	var choices strings.Builder // used a string builder because += is not efficient
-
-	for i := range computers {
-		fmt.Fprintf(&choices, "%s: %s\n", computers[i].IP, computers[i].Name)
-	}
-	fmt.Fprintf(&choices, "\n\n\rIP ADDRESS: ")
+	thisComputer := p.Kernel.computer
 
 	p.graphicsAPI.Write("\033[H\033[2J")
-	p.graphicsAPI.Write(choices.String())
+	p.graphicsAPI.Write(thisComputer.OS.GetIssue())
+	p.graphicsAPI.Write("\r\nUSERNAME: ")
 
-	var mainComputer *Computer
+	username := ""
+	password := ""
 
 	for {
 		value, status := p.ttyAPI.Read(p.done)
@@ -75,43 +62,31 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 				return
 			}
 
-			if ipAdress == "" {
-				ipAdress = value
-				ok := false
-				if mainComputer, ok = p.Kernel.GetNodeOnNetwork(ipAdress); ok {
-					p.graphicsAPI.Write(mainComputer.OS.GetIssue())
-					p.graphicsAPI.Write("\nUSERNAME: ") // change to mainComputer.OS.GetUsernamePrompt or sm
-				} else {
-					// p.graphics.Write("Invalid IP address, no computer on network!")
-					returnStatus <- utils.Error
-					return
-				}
-			} else if username == "" {
+			if username == "" {
 				username = value
 				p.ttyAPI.SetPasswdMode(true)
-				p.graphicsAPI.Write("\nPASSWORD: ") // change to mainComputer.OS.GetPasswordPrompt or sm
+				p.graphicsAPI.Write("\r\nPASSWORD: ")
 
 			} else if password == "" {
 				password = value
-				// try login
 				p.ttyAPI.SetPasswdMode(false)
-				if mainComputer.OS.Login(username, password) == utils.Success {
-					p.graphicsAPI.Write(mainComputer.OS.GetMotd())
 
-					sessionStatus, sessionID := mainComputer.NewSession(username, p.ttyAPI.tty)
+				if thisComputer.OS.Login(username, password) == utils.Success {
+					p.graphicsAPI.Write(thisComputer.OS.GetMotd())
+
+					sessionStatus, sessionID := thisComputer.NewSession(username, p.ttyAPI.tty)
 					if sessionStatus != utils.Success {
 						returnStatus <- utils.Error
 						return
 					}
 
-					p.ttyAPI.SetSession(mainComputer.sessions[sessionID])
+					p.ttyAPI.SetSession(thisComputer.sessions[sessionID])
 					returnStatus <- utils.Success
 					return
-
-				} else {
-					returnStatus <- utils.Error
-					return
 				}
+
+				returnStatus <- utils.Error
+				return
 			}
 
 		case utils.Exit:
@@ -125,7 +100,7 @@ func (p *LoginProgram) HandleSignal(sig Signal) {
 	if sig == SIGINT {
 		select {
 		case <-p.done:
-			// already closed, do nothing
+			// already closed. so nothing to worry about.
 		default:
 			close(p.done)
 		}
