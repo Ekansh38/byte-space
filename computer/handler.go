@@ -20,7 +20,6 @@ func (c *Computer) HandleClient(conn net.Conn) {
 	})
 
 	tty := NewTTY(conn, c.EventBus, ttyID)
-	c.ttys = append(c.ttys, tty)
 
 	// TEMP session
 	tty.Session = &Session{
@@ -49,6 +48,8 @@ func (c *Computer) HandleClient(conn net.Conn) {
 			return
 		}
 
+		tty.Session.Computer.ttys = append(tty.Session.Computer.ttys, tty)
+
 		// change the uid to the actual user
 		loggedInUser := tty.Session.CurrentUser
 		daddyProc.UID = loggedInUser
@@ -66,6 +67,7 @@ func (c *Computer) HandleClient(conn net.Conn) {
 
 		// change to actual session
 		targetKernel := tty.Session.Computer.Kernel
+
 		if err := targetKernel.Exec(daddyProc, "/bin/sh", []string{}, &ExecOpts{}); err != nil {
 			tty.writeToClient("\nExiting with an error", utils.Exit)
 		} else {

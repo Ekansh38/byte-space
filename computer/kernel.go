@@ -18,8 +18,10 @@ type Kernel struct {
 
 	pids     int   // keeps track of the highest ever PID
 	freePIDs []int // stores PIDs of exited processes to reuse
+	// MORE RACE CONDITIONS!!!!!! PIDS AND FREEPIDS CAN BE WRITE AND READ CONCURRNETLY. causing Byte-space to get COOKED ASF.
 
-	procs map[int]*Process // pid to the running process instance (all processes on this computer, GLOBALY)
+	procs map[int]*Process // pid to the running process instance (all processes on this computer, GLOBALY) 
+	// procs is being read and write by many fucntions that could cause concurrent race conditions. CLAUDE please identify if this is correct.
 }
 
 func (k *Kernel) PublishEvent(proc *Process, eventType EventType, data map[string]interface{}) {
@@ -163,6 +165,9 @@ func (k *Kernel) resolvePath(proc *Process, target string) string {
 	return path.Clean(target)
 }
 
+
+// RACEING STARTS HERE
+
 func (k *Kernel) canWrite(effectiveUser string, filePath string) bool { // used internally by kernel for checking
 	if effectiveUser == "root" {
 		return true
@@ -203,7 +208,10 @@ func (k *Kernel) canExecute(effectiveUser string, filePath string) bool { // use
 		return meta.OwnerMode&1 != 0 // bit 0 = execute
 	}
 	return meta.OtherMode&1 != 0
-}
+} 
+
+// RACE-CONDITION: reading from FsMetaData (a global map for the whole computer) 
+// without proper locks and stuff can cause an issue if a separate client is doing a write at the same time.
 
 func (k *Kernel) ReadFile(proc *Process, target string) ([]byte, error) { // syscal
 	target = k.resolvePath(proc, target)
@@ -211,7 +219,7 @@ func (k *Kernel) ReadFile(proc *Process, target string) ([]byte, error) { // sys
 		return nil, fmt.Errorf("permission denied")
 	}
 	return k.computer.OS.ReadFile(target)
-}
+} // race
 
 func (k *Kernel) ReadDir(proc *Process, target string) ([]os.FileInfo, error) { // syscall
 	target = k.resolvePath(proc, target)
@@ -219,15 +227,16 @@ func (k *Kernel) ReadDir(proc *Process, target string) ([]os.FileInfo, error) { 
 		return nil, fmt.Errorf("permission denied")
 	}
 	return k.computer.OS.ReadDir(target)
-}
+} // race
 
 func (k *Kernel) Stat(proc *Process, target string) (FileMetadata, bool) { // syscall
 	target = k.resolvePath(proc, target)
 	meta, ok := k.computer.FsMetaData[target]
 	return meta, ok
-}
+} // race,
 
 func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
+	// TOCTOU racing
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
 	if !k.canWrite(proc.EUID, parent) {
@@ -245,11 +254,12 @@ func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
 	}
 	k.computer.saveMetaData()
 	return nil
-}
+} // RACE concurrent filesystem mutation
 
 func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
+	// TOCTOU racing
 	if !k.canWrite(proc.EUID, parent) {
 		return fmt.Errorf("permission denied")
 	}
@@ -265,16 +275,17 @@ func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
 	}
 	k.computer.saveMetaData()
 	return nil
-}
+} // RACE! mutltiple clients can try to write the same file at the same time! we need a way to stop that somehow.
 
 func (k *Kernel) WriteFile(proc *Process, target string, data []byte) error { // syscall
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
+	// TOCTOU racing
 	if !k.canWrite(proc.EUID, parent) {
 		return fmt.Errorf("permission denied")
 	}
 	return k.computer.OS.WriteFile(target, data) // little more abstraction didnt hurt anybody! the kernel never touch afero directly, YUCK
-}
+} // RACE! mutltiple clients can try to write the same file at the same time! we need a way to stop that somehow.
 
 func (k *Kernel) ChangeDirectory(proc *Process, target string) error { // syscall
 	target = k.resolvePath(proc, target)
@@ -287,6 +298,8 @@ func (k *Kernel) ChangeDirectory(proc *Process, target string) error { // syscal
 	proc.CWD = target
 	return nil
 }
+
+// Race condition. writing to global map without locking.
 
 func (k *Kernel) Chmod(proc *Process, target string, newOwnerMode uint8, newOtherMode uint8) error { // syscall
 	target = k.resolvePath(proc, target)
