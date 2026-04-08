@@ -1,13 +1,13 @@
 package computer
 
 import (
-	"unicode"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net"
 	"strings"
+	"unicode"
 
 	"byte-space/utils"
 )
@@ -201,7 +201,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 
 	var foregroundPrograms []*Process
 
-	procs := t.Session.Computer.Kernel.GetProcs()
+	procs := t.Session.Computer.Kernel.procs
 	for _, proc := range procs {
 		if proc.PGID == t.ForegroundPGID {
 			foregroundPrograms = append(foregroundPrograms, proc)
@@ -241,7 +241,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 						ansiData = ""
 					}
 				}
-				if t.PasswdMode && receivedData != "\r" && receivedData != "\x7f" && receivedData != "\x15" {
+				if t.PasswdMode && receivedData != "\r" && receivedData != "\x7f" {
 					ansiData = "*"
 				}
 
@@ -318,25 +318,13 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 				}
 
 			default:
-				runes := []rune(receivedData)
-				filtered := []rune{}
-				for _, r := range runes {
-					if unicode.IsPrint(r) { // only letters, digits, punctuation, symbols, space
-						filtered = append(filtered, r)
-					}
-				}
-
-				if len(filtered) == 0 {
-					continue
-				}
 				index := t.CursorPosition
 				data := receivedData
 				if data == "\t" {
 					data = "    " // expand tab to 4 spaces in buffer
 				}
 				r := []rune(data)
-
-				runes = []rune(t.Buffer)
+				runes := []rune(t.Buffer)
 				runes = append(runes[:index], append(r, runes[index:]...)...)
 				newStr := string(runes)
 				t.Buffer = newStr

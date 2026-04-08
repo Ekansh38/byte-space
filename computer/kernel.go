@@ -184,12 +184,19 @@ func (k *Kernel) getMetaData(filePath string) (FileMetadata, bool) {
 	return meta, ok
 }
 
+// getMetaDataLocked reads metadata without acquiring the lock.
+// Must only be called when fsMu is already held (read or write).
+func (k *Kernel) getMetaDataLocked(filePath string) (FileMetadata, bool) {
+	meta, ok := k.computer.FsMetaData[filePath]
+	return meta, ok
+}
+
 func (k *Kernel) canWrite(effectiveUser string, filePath string) bool { // used internally by kernel for checking
 	if effectiveUser == "root" {
 		return true
 	}
 
-	meta, ok := k.getMetaData(filePath)
+	meta, ok := k.getMetaDataLocked(filePath)
 
 	if !ok {
 		return true
@@ -205,7 +212,7 @@ func (k *Kernel) canRead(effectiveUser string, filePath string) bool { // used i
 		return true
 	}
 
-	meta, ok := k.getMetaData(filePath)
+	meta, ok := k.getMetaDataLocked(filePath)
 	if !ok {
 		return true
 	}
@@ -219,7 +226,7 @@ func (k *Kernel) canExecute(effectiveUser string, filePath string) bool { // use
 	if effectiveUser == "root" {
 		return true
 	}
-	meta, ok := k.getMetaData(filePath)
+	meta, ok := k.getMetaDataLocked(filePath)
 	if !ok {
 		return true
 	}
@@ -337,7 +344,7 @@ func (k *Kernel) Chmod(proc *Process, target string, newOwnerMode uint8, newOthe
 	k.fsMu.Lock()
 	target = k.resolvePath(proc, target)
 
-	meta, ok := k.getMetaData(target)
+	meta, ok := k.getMetaDataLocked(target)
 
 	if !ok {
 		return fmt.Errorf("no such file or directory")
