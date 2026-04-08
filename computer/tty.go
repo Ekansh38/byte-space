@@ -229,7 +229,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 					}
 				} else if receivedData == "\t" {
 					ansiData = "    " // expand tab to 4 spaces visually
-				} else if receivedData == "\x1b[A" || receivedData == "\x1b[B" {
+				} else if receivedData == "\x1b[A" || receivedData == "\x1b[B" || receivedData == "\x15" {
 					ansiData = ""
 				} else if receivedData == "\x1b[C" {
 					if t.CursorPosition == len(t.Buffer) {
@@ -259,6 +259,7 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 			}
 
 			switch receivedData {
+
 			case "\r": // enter
 				data := t.Buffer
 
@@ -296,8 +297,6 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 					}
 				}
 
-			case "\x1b[A", "\x1b[B":
-			case "\x15":
 			case "\x1b[C":
 				if t.PasswdMode {
 					continue
@@ -315,14 +314,18 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 				if t.CursorPosition != 0 {
 					t.CursorPosition -= 1
 				}
-
+			case "\x1b[A", "\x1b[B","\x1b\x7f", "\x1bw", "\x15":
+				continue
 			default:
+
 				index := t.CursorPosition
 				data := receivedData
 				if data == "\t" {
 					data = "    " // expand tab to 4 spaces in buffer
 				}
+
 				r := []rune(data)
+
 				runes := []rune(t.Buffer)
 				runes = append(runes[:index], append(r, runes[index:]...)...)
 				newStr := string(runes)

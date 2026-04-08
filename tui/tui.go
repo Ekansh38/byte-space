@@ -326,7 +326,7 @@ func (m *Model) updateState(e computer.Event) {
 				if conn.CursorPos > 0 {
 					conn.CursorPos--
 				}
-			case "\x03", "\x1b[A", "\x1b[B":
+			case "\x03", "\x1b[A", "\x1b[B", "\x15":
 				// no-op
 			default:
 				if !strings.HasPrefix(key, "\x1b") {
