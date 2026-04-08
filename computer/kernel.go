@@ -77,7 +77,7 @@ func (k *Kernel) Exec(parentProc *Process, binPath string, args []string, opts *
 
 	uid := parentProc.UID
 	euid := uid
-	if meta, ok := k.computer.FsMetaData[binPath]; ok && meta.Setuid {
+	if meta, ok := k.getMetaData(binPath); ok && meta.Setuid {
 		euid = meta.Owner
 	}
 
@@ -184,8 +184,6 @@ func (k *Kernel) getMetaData(filePath string) (FileMetadata, bool) {
 	return meta, ok
 }
 
-// getMetaDataLocked reads metadata without acquiring the lock.
-// Must only be called when fsMu is already held (read or write).
 func (k *Kernel) getMetaDataLocked(filePath string) (FileMetadata, bool) {
 	meta, ok := k.computer.FsMetaData[filePath]
 	return meta, ok
@@ -333,7 +331,10 @@ func (k *Kernel) ChangeDirectory(proc *Process, target string) error { // syscal
 	if !k.computer.OS.HasDirectory(target) {
 		return fmt.Errorf("%s: no such file or directory", target)
 	}
-	if !k.canExecute(proc.EUID, target) {
+	k.fsMu.RLock()
+	canExec := k.canExecute(proc.EUID, target)
+	k.fsMu.RUnlock()
+	if !canExec {
 		return fmt.Errorf("%s: permission denied", target)
 	}
 	proc.CWD = target
