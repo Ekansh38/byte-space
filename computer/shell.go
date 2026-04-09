@@ -1,6 +1,7 @@
 package computer
 
 import (
+	"context"
 	"fmt"
 	"path"
 	"strings"
@@ -9,7 +10,6 @@ import (
 )
 
 type Shell struct {
-	done        chan struct{}
 	id          string
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
@@ -54,8 +54,7 @@ func (s *Shell) TTYAPI() *TTYAPI {
 	return s.ttyAPI
 }
 
-func (s *Shell) Run(returnStatus chan int, params []string) {
-	s.done = make(chan struct{})
+func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if s.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
@@ -65,7 +64,7 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 
 	for {
 		prefix := ""
-		data, status := s.ttyAPI.Read(s.done)
+		data, status := s.ttyAPI.Read(ctx)
 		switch status {
 		case utils.Success:
 			value, flags := parse(data)
@@ -112,37 +111,37 @@ func (s *Shell) Run(returnStatus chan int, params []string) {
 				s.graphicsAPI.Write("\n")
 
 			case "ls":
-				if err := s.Kernel.Exec(s.proc, "/bin/ls", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/ls", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
 				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "clear":
-				if err := s.Kernel.Exec(s.proc, "/bin/clear", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/clear", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
 				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "cat":
-				if err := s.Kernel.Exec(s.proc, "/bin/cat", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/cat", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
 				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "adduser":
-				if err := s.Kernel.Exec(s.proc, "/bin/adduser", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/adduser", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
 				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "mkdir":
-				if err := s.Kernel.Exec(s.proc, "/bin/mkdir", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/mkdir", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
 				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "touch":
-				if err := s.Kernel.Exec(s.proc, "/bin/touch", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/touch", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
 				s.ttyAPI.SetForegroundPGID(s.proc.PGID)
 			case "chmod":
-				if err := s.Kernel.Exec(s.proc, "/bin/chmod", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/chmod", append(value[1:], flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.graphicsAPI.Write("\n" + err.Error() + "\n")
 				}
 				s.ttyAPI.SetForegroundPGID(s.proc.PGID)

@@ -1,6 +1,7 @@
 package computer
 
 import (
+	"context"
 	"fmt"
 	"path"
 	"strings"
@@ -32,7 +33,7 @@ func (p *Ls) SetProcess(proc *Process) {
 	p.proc = proc
 }
 
-func (p *Ls) Run(returnStatus chan int, params []string) {
+func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if p.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
@@ -131,7 +132,7 @@ func (p *Clear) SetProcess(proc *Process) {
 	p.proc = proc
 }
 
-func (p *Clear) Run(returnStatus chan int, params []string) {
+func (p *Clear) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if p.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
@@ -184,7 +185,7 @@ func (p *Cat) SetProcess(proc *Process) {
 	p.proc = proc
 }
 
-func (p *Cat) Run(returnStatus chan int, params []string) {
+func (p *Cat) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if p.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
@@ -249,7 +250,7 @@ func (p *MkDir) SetProcess(proc *Process) {
 	p.proc = proc
 }
 
-func (p *MkDir) Run(returnStatus chan int, params []string) {
+func (p *MkDir) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) != 1 {
 		p.graphicsAPI.Write("\nUsage: mkdir <path>\n")
 		returnStatus <- utils.Error
@@ -310,7 +311,7 @@ func (p *Touch) SetProcess(proc *Process) {
 	p.proc = proc
 }
 
-func (p *Touch) Run(returnStatus chan int, params []string) {
+func (p *Touch) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) != 1 {
 		p.graphicsAPI.Write("\nUsage: touch <path>\n")
 		returnStatus <- utils.Error
@@ -371,7 +372,7 @@ func (p *Chmod) SetProcess(proc *Process) {
 	p.proc = proc
 }
 
-func (p *Chmod) Run(returnStatus chan int, params []string) {
+func (p *Chmod) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) != 2 {
 		p.graphicsAPI.Write("\nUsage: chmod <mode> <path>\n")
 		returnStatus <- utils.Error

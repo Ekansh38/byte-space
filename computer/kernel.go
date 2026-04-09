@@ -1,6 +1,7 @@
 package computer
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path"
@@ -66,7 +67,10 @@ func (k *Kernel) ListMachinesOnNetwork(proc *Process) []Computer {
 
 // Exec looks up the binary from the path then it creates a Process with correct EUID
 // Practically fork & exec all in one
-func (k *Kernel) Exec(parentProc *Process, binPath string, args []string, opts *ExecOpts) error {
+// fork actually duplicates the process, then checks if the pid = 0, if it does that line executes on the child which calls exec.
+// I have simplifed this a lot to where exec makes a child, copys the data and runs the program
+
+func (k *Kernel) Exec(parentCtx context.Context, parentProc *Process, binPath string, args []string, opts *ExecOpts) error {
 	factory, ok := k.programs[binPath]
 	if !ok {
 		return fmt.Errorf("%s: command not found", binPath)
@@ -74,6 +78,10 @@ func (k *Kernel) Exec(parentProc *Process, binPath string, args []string, opts *
 
 	pid := k.nextPID()
 	program := factory(pid)
+
+	// make child context for exit propagation
+
+	ctx, ctxCancel := context.WithCancel(parentCtx)
 
 	uid := parentProc.UID
 	euid := uid
@@ -87,12 +95,13 @@ func (k *Kernel) Exec(parentProc *Process, binPath string, args []string, opts *
 	}
 
 	proc := &Process{
-		PID:     pid,
-		PGID:    pgid,
-		UID:     uid,
-		EUID:    euid,
-		CWD:     parentProc.CWD,
-		Program: program,
+		PID:       pid,
+		PGID:      pgid,
+		UID:       uid,
+		EUID:      euid,
+		CWD:       parentProc.CWD,
+		Program:   program,
+		ctxCancel: ctxCancel,
 	}
 
 	k.procsMu.Lock()
@@ -112,7 +121,7 @@ func (k *Kernel) Exec(parentProc *Process, binPath string, args []string, opts *
 		"tty_id":     parentProc.Program.TTYAPI().tty.id,
 	})
 
-	go program.Run(status, args)
+	go program.Run(ctx, status, args)
 
 	if opts.Background {
 		go func() {

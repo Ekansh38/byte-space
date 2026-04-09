@@ -3,8 +3,8 @@ package engine
 import (
 	"log"
 
-	"sync"
 	"byte-space/computer"
+	"sync"
 )
 
 type Engine struct {

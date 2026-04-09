@@ -1,6 +1,7 @@
 package computer
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -36,8 +37,8 @@ func (t *TTYAPI) SetForegroundPGID(pgid int) (string, int) {
 	return t.tty.SetForegroundPGID(pgid)
 }
 
-func (t *TTYAPI) Read(done chan struct{}) (string, int) {
-	return t.tty.Read(t.proc, done)
+func (t *TTYAPI) Read(ctx context.Context) (string, int) {
+	return t.tty.Read(t.proc, ctx)
 }
 
 func (t *TTYAPI) BuffClear() {
@@ -78,7 +79,7 @@ type Program interface {
 
 	ID() string
 	TTYAPI() *TTYAPI
-	Run(returnStatus chan int, params []string)
+	Run(ctx context.Context, returnStatus chan int, params []string)
 	HandleSignal(sig Signal)
 }
 
@@ -193,7 +194,7 @@ func (t *TTY) SetForegroundPGID(pgid int) (string, int) {
 	return "Successfully set foreground program", utils.Success
 }
 
-func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
+func (t *TTY) Read(proc *Process, ctx context.Context)(string, int) {
 	if proc.PGID != t.ForegroundPGID {
 		return "Err: You are not foreground program", utils.Error
 	}
@@ -348,12 +349,10 @@ func (t *TTY) Read(proc *Process, done chan struct{}) (string, int) {
 				"tty":    t.id,
 			})
 
-		case <-done:
+		case <-ctx.Done():
 			return "SIGINT", utils.Exit
 		}
 	}
-
-	return "ERROR READING", utils.Error
 }
 
 func (t *TTY) Write(str []byte) (int, error) {

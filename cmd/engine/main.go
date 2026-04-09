@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"byte-space/engine"
@@ -10,6 +11,9 @@ import (
 )
 
 func main() {
+	f, _ := os.OpenFile("debug.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
+	log.SetOutput(f)
+
 	// Create engine
 	eng := engine.NewEngine()
 

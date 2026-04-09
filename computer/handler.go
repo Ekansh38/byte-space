@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"context"
 
 	"byte-space/utils"
 )
@@ -25,6 +26,8 @@ func (c *Computer) HandleClient(conn net.Conn) {
 		TTY:      tty,
 	}
 
+	connCtx, connCancel := context.WithCancel(context.Background())
+
 	go func() {
 		daddyProc := &Process{
 			PID:  0,
@@ -38,7 +41,7 @@ func (c *Computer) HandleClient(conn net.Conn) {
 		}
 		daddyProc.Program = daddyProgram // BOOTSTRAPPP!!!! I learned that word yesterday from the crafting interpetters book, pull urself up from ur own bootstraps!!!
 
-		if err := c.Kernel.Exec(daddyProc, "/bin/login", []string{}, &ExecOpts{}); err != nil {
+		if err := c.Kernel.Exec(connCtx, daddyProc, "/bin/login", []string{}, &ExecOpts{}); err != nil {
 			tty.writeToClient("\nInvalid login or exit.\r\n", utils.Exit)
 			c.EventBus.Publish(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
 			conn.Close()
@@ -57,7 +60,7 @@ func (c *Computer) HandleClient(conn net.Conn) {
 			daddyProc.CWD = "/home/" + loggedInUser
 		}
 
-		if err := c.Kernel.Exec(daddyProc, "/bin/sh", []string{}, &ExecOpts{}); err != nil {
+		if err := c.Kernel.Exec(connCtx, daddyProc, "/bin/sh", []string{}, &ExecOpts{}); err != nil {
 			tty.writeToClient("\nExiting with an error", utils.Exit)
 		} else {
 			tty.writeToClient("\nExiting...", utils.Exit)
@@ -76,4 +79,5 @@ func (c *Computer) HandleClient(conn net.Conn) {
 		}
 		tty.HandleKeystroke(message.Keystroke)
 	}
+	defer connCancel()
 }

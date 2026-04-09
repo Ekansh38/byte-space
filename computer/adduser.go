@@ -1,6 +1,7 @@
 package computer
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -9,7 +10,6 @@ import (
 
 type Adduser struct {
 	id          string
-	done        chan struct{}
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
 	Kernel      *Kernel
@@ -46,17 +46,13 @@ func (p *Adduser) ID() string {
 
 func (p *Adduser) HandleSignal(sig Signal) {
 	if sig == SIGINT {
-		select {
-		case <-p.done:
-		default:
-			p.ttyAPI.BuffClear()
-			p.graphicsAPI.Write("\n(SIGINT), force quitting!\n")
-			close(p.done)
-		}
+		p.ttyAPI.BuffClear()
+		p.graphicsAPI.Write("\n(SIGINT), force quitting!\n")
+		p.proc.ctxCancel()
 	}
 }
 
-func (p *Adduser) Run(returnStatus chan int, params []string) {
+func (p *Adduser) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if p.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
@@ -67,7 +63,6 @@ func (p *Adduser) Run(returnStatus chan int, params []string) {
 		return
 	}
 
-	p.done = make(chan struct{})
 	p.graphicsAPI.Write("\nEnter username: ")
 
 	username := ""
@@ -76,7 +71,7 @@ func (p *Adduser) Run(returnStatus chan int, params []string) {
 	passwordRecorded := false
 
 	for {
-		value, status := p.ttyAPI.Read(p.done)
+		value, status := p.ttyAPI.Read(ctx)
 		switch status {
 		case utils.Success:
 			if !usernameRecorded {

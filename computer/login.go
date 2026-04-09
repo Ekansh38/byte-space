@@ -2,10 +2,10 @@ package computer
 
 import (
 	"byte-space/utils"
+	"context"
 )
 
 type LoginProgram struct {
-	done        chan struct{}
 	id          string
 	graphicsAPI *GraphicsAPI
 	ttyAPI      *TTYAPI
@@ -37,8 +37,7 @@ func (p *LoginProgram) RemoveGraphicsAPI() {
 	p.graphicsAPI = nil
 }
 
-func (p *LoginProgram) Run(returnStatus chan int, params []string) {
-	p.done = make(chan struct{})
+func (p *LoginProgram) Run(ctx context.Context,returnStatus chan int, params []string) {
 	if p.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
@@ -54,7 +53,7 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 	password := ""
 
 	for {
-		value, status := p.ttyAPI.Read(p.done)
+		value, status := p.ttyAPI.Read(ctx)
 		switch status {
 		case utils.Success:
 			if value == "" {
@@ -98,12 +97,10 @@ func (p *LoginProgram) Run(returnStatus chan int, params []string) {
 
 func (p *LoginProgram) HandleSignal(sig Signal) {
 	if sig == SIGINT {
-		select {
-		case <-p.done:
-			// already closed. so nothing to worry about.
-		default:
-			close(p.done)
-		}
+			// close this program, this will close any child processes which is neat, cuz they will be children.
+			// propagation
+			// i think u can call ctxCancel even if its already canceled so it should be okay.
+			p.proc.ctxCancel()
 	}
 }
 

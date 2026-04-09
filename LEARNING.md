@@ -6,9 +6,6 @@
 - [Go Blog: Contexts and structs](https://go.dev/blog/context-and-structs)
 - [context package docs](https://pkg.go.dev/context)
 
-**Error wrapping (using fmt.Errorf but not %w)**
-- [Go Blog: Working with Errors in Go 1.13](https://go.dev/blog/go1.13-errors)
-
 ## Tier 3 — Concurrency (go deep, it's the core of this project)
 
 - [Go by Example: Mutexes](https://gobyexample.com/mutexes) — practical, shows exactly how to use sync.Mutex
