@@ -6,7 +6,8 @@ const (
 	Please login to continue.
 	`
 	defaultEtcMotd = `
-	Last login: [[LAST-LOGIN-TIME]]
-	Welcome back, [[USERNAME]]!
+
+
+	Welcome back, 
 	`
 )

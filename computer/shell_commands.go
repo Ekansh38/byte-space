@@ -1,13 +1,13 @@
 package computer
 
 import (
+	"byte-space/utils"
 	"context"
 	"fmt"
 	"path"
 	"strings"
-
-	"byte-space/utils"
 )
+
 
 type Ls struct {
 	id          string
@@ -63,12 +63,22 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 	}
 
 	output := ""
+	longestOwnerName := -1
+	for _, file := range files {
+		filePath := path.Join(dir, file.Name())
+		meta, _ := p.Kernel.Stat(p.proc, filePath)
+		ownerLen := len(meta.Owner)
+		if ownerLen > longestOwnerName {
+			longestOwnerName = ownerLen
+		}
+	}
+
 	for _, file := range files {
 		if flag == "" {
 			if file.IsDir() {
-				output += fmt.Sprintf("\033[34m%s\033[0m\n", file.Name())
+				output += fmt.Sprintf("\033[94;1m%s\033[0m\n", file.Name())
 			} else {
-				output += fmt.Sprintf("%s\n", file.Name())
+				output += fmt.Sprintf("\033[97m%s\033[0m\n", file.Name())
 			}
 		} else if flag == "-l" {
 			filePath := path.Join(dir, file.Name())
@@ -81,6 +91,11 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 			} else {
 				name = fmt.Sprintf("\033[97m%s\033[0m", file.Name())
 			}
+			spacesToAdd := longestOwnerName - len(meta.Owner) // meta.Owner doesnt include the ANSI color values
+			for _ = range spacesToAdd {
+				owner += " "
+			}
+
 			output += fmt.Sprintf("%s%s  %s\n", perms, owner, name)
 		}
 	}

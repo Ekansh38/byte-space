@@ -29,7 +29,9 @@ func (e *Engine) handleClient(conn net.Conn) {
 	for _, c := range nodes {
 		fmt.Fprintf(&sb, "%s: %s\r\n", c.IP, c.Name)
 	}
-	sb.WriteString("\r\nIP ADDRESS: ")
+	sb.WriteString("\r\nSelect home workstation (you can telnet onto different machines later)\n\n")
+
+	sb.WriteString("IP ADDRESS: ")
 	write(sb.String(), utils.Success)
 
 	// ik i am redoing some tty logic but worse, JUST LET ME BE!!

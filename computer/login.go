@@ -45,7 +45,6 @@ func (p *LoginProgram) Run(ctx context.Context,returnStatus chan int, params []s
 
 	thisComputer := p.Kernel.computer
 
-	p.graphicsAPI.Write("\033[H\033[2J")
 	p.graphicsAPI.Write(thisComputer.OS.GetIssue())
 	p.graphicsAPI.Write("\r\nUSERNAME: ")
 
@@ -71,7 +70,7 @@ func (p *LoginProgram) Run(ctx context.Context,returnStatus chan int, params []s
 				p.ttyAPI.SetPasswdMode(false)
 
 				if thisComputer.OS.Login(username, password) == utils.Success {
-					p.graphicsAPI.Write(thisComputer.OS.GetMotd())
+					p.graphicsAPI.Write(thisComputer.OS.GetMotd() + username)
 
 					sessionStatus, sessionID := thisComputer.NewSession(username, p.ttyAPI.tty)
 					if sessionStatus != utils.Success {
