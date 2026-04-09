@@ -1,8 +1,10 @@
 package computer
 
 import (
-	"byte-space/utils"
 	"context"
+	"strings"
+
+	"byte-space/utils"
 )
 
 type LoginProgram struct {
@@ -37,7 +39,7 @@ func (p *LoginProgram) RemoveGraphicsAPI() {
 	p.graphicsAPI = nil
 }
 
-func (p *LoginProgram) Run(ctx context.Context,returnStatus chan int, params []string) {
+func (p *LoginProgram) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if p.graphicsAPI == nil {
 		returnStatus <- utils.Error
 		return
@@ -70,7 +72,7 @@ func (p *LoginProgram) Run(ctx context.Context,returnStatus chan int, params []s
 				p.ttyAPI.SetPasswdMode(false)
 
 				if thisComputer.OS.Login(username, password) == utils.Success {
-					p.graphicsAPI.Write(thisComputer.OS.GetMotd() + username)
+					p.graphicsAPI.Write(strings.ReplaceAll(thisComputer.OS.GetMotd(), "[[USERNAME]]", username))
 
 					sessionStatus, sessionID := thisComputer.NewSession(username, p.ttyAPI.tty)
 					if sessionStatus != utils.Success {
@@ -96,10 +98,10 @@ func (p *LoginProgram) Run(ctx context.Context,returnStatus chan int, params []s
 
 func (p *LoginProgram) HandleSignal(sig Signal) {
 	if sig == SIGINT {
-			// close this program, this will close any child processes which is neat, cuz they will be children.
-			// propagation
-			// i think u can call ctxCancel even if its already canceled so it should be okay.
-			p.proc.ctxCancel()
+		// close this program, this will close any child processes which is neat, cuz they will be children.
+		// propagation
+		// i think u can call ctxCancel even if its already canceled so it should be okay.
+		p.proc.ctxCancel()
 	}
 }
 

@@ -8,6 +8,7 @@ const (
 	defaultEtcMotd = `
 
 
-	Welcome back, 
+	Welcome back, [[USERNAME]]
+
 	`
 )
