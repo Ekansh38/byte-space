@@ -28,6 +28,7 @@ func (p *VEdit) HandleSignal(sig Signal) {
 		p.Kernel.Write(p.proc, 1, []byte("\033[H\033[2J"))
 		p.Kernel.Write(p.proc, 1, []byte("\n(SIGINT), force quitting!\n"))
 		p.proc.ctxCancel()
+
 	} else if sig == SIGWINCH {
 		var ws Winsize
 		p.Kernel.Ioctl(p.proc, 0, TIOCGWINSZ, &ws)

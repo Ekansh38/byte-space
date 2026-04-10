@@ -287,7 +287,7 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 				if t.CursorPosition != 0 {
 					t.CursorPosition -= 1
 				}
-			case "\x1b[A", "\x1b[B", "\x1b\x7f", "\x1bw", "\x15":
+			case "\x1b[A", "\x1b[B", "\x1b\x7f", "\x1bw", "\x15", "\x02":
 				continue
 			default:
 

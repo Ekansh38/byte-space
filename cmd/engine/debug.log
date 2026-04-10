@@ -1910,3 +1910,41 @@
 2026/04/10 20:14:59 v: read keystroke="j" status=0
 2026/04/10 20:14:59 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
 2026/04/10 20:15:10 v: read keystroke="SIGINT" status=10
+2026/04/10 20:16:58 HIEHGT: 34
+2026/04/10 20:16:58 WIDTH: 53
+2026/04/10 20:16:59 v: read keystroke="SIGINT" status=10
+2026/04/10 21:18:32 HIEHGT: 34
+2026/04/10 21:18:32 WIDTH: 22
+2026/04/10 21:18:35 v: read keystroke="j" status=0
+2026/04/10 21:18:35 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:36 v: read keystroke="j" status=0
+2026/04/10 21:18:36 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:37 v: read keystroke="k" status=0
+2026/04/10 21:18:37 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:39 v: read keystroke="j" status=0
+2026/04/10 21:18:39 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:39 v: read keystroke="j" status=0
+2026/04/10 21:18:39 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:39 v: read keystroke="k" status=0
+2026/04/10 21:18:39 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:39 v: read keystroke="j" status=0
+2026/04/10 21:18:39 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:39 v: read keystroke="k" status=0
+2026/04/10 21:18:39 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:39 v: read keystroke="j" status=0
+2026/04/10 21:18:39 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:39 v: read keystroke="a" status=0
+2026/04/10 21:18:39 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:39 v: read keystroke="s" status=0
+2026/04/10 21:18:39 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:39 v: read keystroke="k" status=0
+2026/04/10 21:18:39 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:40 v: read keystroke="d" status=0
+2026/04/10 21:18:40 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:40 v: read keystroke="k" status=0
+2026/04/10 21:18:40 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:40 v: read keystroke="a" status=0
+2026/04/10 21:18:40 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:40 v: read keystroke="s" status=0
+2026/04/10 21:18:40 DRAWBUf: "root:1234:1000viaan:goat:1001:/home/viaanbob:builder:1002:/home/bobtest:test:1003:/home/testdad:vibecoder:1004:/home/dadtest1:test1:1005:/home/test1"
+2026/04/10 21:18:40 v: read keystroke="SIGINT" status=10

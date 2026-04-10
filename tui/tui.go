@@ -15,7 +15,6 @@ import (
 )
 
 var (
-	// Connection status colors
 	activeStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#00ff00")).
 			Bold(true)
@@ -31,7 +30,6 @@ var (
 			Bold(true).
 			Background(lipgloss.Color("#1a1a1a"))
 
-	// Event type colors
 	keystrokeStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color("#4275ff"))
 
@@ -124,9 +122,7 @@ type ConnectionState struct {
 	BytesReceived  int
 }
 
-const (
-	MaxLogLines = 1000 // Max log lines to keep per connection
-)
+const MaxLogLines = 1000
 
 func NewModel(events chan computer.Event, eng *engine.Engine) Model {
 	return Model{
@@ -206,7 +202,6 @@ func (m *Model) cycleConnection() {
 
 	ttyIDs := m.getSortedTTYIDs()
 
-	// Find current index
 	currentIdx := -1
 	for i, id := range ttyIDs {
 		if id == m.selectedTTY {
@@ -215,9 +210,7 @@ func (m *Model) cycleConnection() {
 		}
 	}
 
-	// Cycle to next
-	nextIdx := (currentIdx + 1) % len(ttyIDs)
-	m.selectedTTY = ttyIDs[nextIdx]
+	m.selectedTTY = ttyIDs[(currentIdx+1)%len(ttyIDs)]
 }
 
 func getTTYIDFromEvent(e computer.Event) string {
@@ -304,40 +297,6 @@ func (m *Model) updateState(e computer.Event) {
 			conn.Echo = echo
 		}
 		conn.KeystrokeCount++
-		if key, ok := e.Data["key"].(string); ok {
-			switch key {
-			case "\r":
-				conn.Buffer = ""
-				conn.CursorPos = 0
-			case "\x7f":
-				if conn.CursorPos > 0 {
-					runes := []rune(conn.Buffer)
-					if conn.CursorPos-1 < len(runes) {
-						runes = append(runes[:conn.CursorPos-1], runes[conn.CursorPos:]...)
-						conn.Buffer = string(runes)
-						conn.CursorPos--
-					}
-				}
-			case "\x1b[C":
-				if conn.CursorPos < len([]rune(conn.Buffer)) {
-					conn.CursorPos++
-				}
-			case "\x1b[D":
-				if conn.CursorPos > 0 {
-					conn.CursorPos--
-				}
-			case "\x03", "\x1b[A", "\x1b[B", "\x15":
-				// no-op
-			default:
-				if !strings.HasPrefix(key, "\x1b") {
-					runes := []rune(conn.Buffer)
-					r := []rune(key)
-					runes = append(runes[:conn.CursorPos], append(r, runes[conn.CursorPos:]...)...)
-					conn.Buffer = string(runes)
-					conn.CursorPos += len(r)
-				}
-			}
-		}
 
 	case computer.EventForegroundChanged:
 		if prog, ok := e.Data["program"].(string); ok {
@@ -431,7 +390,7 @@ func truncateLogLine(s string, maxWidth int) string {
 	i := 0
 	for i < len(s) {
 		if s[i] == '\x1b' && i+1 < len(s) && s[i+1] == '[' {
-			// CSI escape sequence — skip to terminating letter
+			// CSI escape sequence - skip to terminating letter
 			j := i + 2
 			for j < len(s) && !((s[j] >= 'A' && s[j] <= 'Z') || (s[j] >= 'a' && s[j] <= 'z')) {
 				j++
@@ -502,7 +461,7 @@ func formatKey(key interface{}) string {
 func formatEventWithTTY(e computer.Event, ttyID string, compact bool) string {
 	var tsFmt string
 	if compact {
-		tsFmt = "04:05.000" // MM:SS.mmm — drops the hour, saves 3 cols
+		tsFmt = "04:05.000" // MM:SS.mmm - drops the hour, saves 3 cols
 	} else {
 		tsFmt = "15:04:05.000"
 	}
@@ -872,7 +831,7 @@ func (m Model) renderLog(width int, compact bool, panelHeight int) string {
 }
 
 // formatMode converts OwnerMode and OtherMode uint8 into a 6-char permission string.
-// Layout: [owner rwx][other rwx] — no group (simplified 2-party system).
+// Layout: [owner rwx][other rwx] - no group (simplified 2-party system).
 // Each triplet: bit 4 = r, bit 2 = w, bit 1 = x.
 func formatMode(owner, other uint8) string {
 	bit := func(m, mask uint8, c string) string {
@@ -954,49 +913,25 @@ func (m Model) combinePanels(left, middle, right string, leftW, middleW, rightW 
 	result.WriteString(borderStyle.Render("┌"+strings.Repeat("─", leftW)+"┬"+
 		strings.Repeat("─", middleW)+"┬"+strings.Repeat("─", rightW)+"┐") + "\n")
 
+	writeCell := func(i int, lines []string, w int) {
+		if i < len(lines) {
+			line := lines[i]
+			result.WriteString(line)
+			if pad := w - lipgloss.Width(line); pad > 0 {
+				result.WriteString(strings.Repeat(" ", pad))
+			}
+		} else {
+			result.WriteString(strings.Repeat(" ", w))
+		}
+	}
+
 	for i := 0; i < maxLines; i++ {
 		result.WriteString(borderStyle.Render("│"))
-
-		// Left panel
-		if i < len(leftLines) {
-			line := leftLines[i]
-			result.WriteString(line)
-			padding := leftW - lipgloss.Width(line)
-			if padding > 0 {
-				result.WriteString(strings.Repeat(" ", padding))
-			}
-		} else {
-			result.WriteString(strings.Repeat(" ", leftW))
-		}
-
+		writeCell(i, leftLines, leftW)
 		result.WriteString(borderStyle.Render("│"))
-
-		// Middle panel
-		if i < len(middleLines) {
-			line := middleLines[i]
-			result.WriteString(line)
-			padding := middleW - lipgloss.Width(line)
-			if padding > 0 {
-				result.WriteString(strings.Repeat(" ", padding))
-			}
-		} else {
-			result.WriteString(strings.Repeat(" ", middleW))
-		}
-
+		writeCell(i, middleLines, middleW)
 		result.WriteString(borderStyle.Render("│"))
-
-		// Right panel
-		if i < len(rightLines) {
-			line := rightLines[i]
-			result.WriteString(line)
-			padding := rightW - lipgloss.Width(line)
-			if padding > 0 {
-				result.WriteString(strings.Repeat(" ", padding))
-			}
-		} else {
-			result.WriteString(strings.Repeat(" ", rightW))
-		}
-
+		writeCell(i, rightLines, rightW)
 		result.WriteString(borderStyle.Render("│") + "\n")
 	}
 
@@ -1017,18 +952,13 @@ func (m Model) combinePanels(left, middle, right string, leftW, middleW, rightW 
 		viewModeStr = "perms"
 	}
 
-	controls := fmt.Sprintf(
-		" tab │ 1-9 │ v:%s │ a:%s │ q │ ev:%d │ %s ",
-		viewModeStr,
-		func() string {
-			if m.showAllLogs {
-				return "all"
-			}
-			return "one"
-		}(),
-		m.totalEvents,
-		formatDuration(time.Since(m.startTime)),
-	)
+	logScope := "one"
+	if m.showAllLogs {
+		logScope = "all"
+	}
+
+	controls := fmt.Sprintf(" tab │ 1-9 │ v:%s │ a:%s │ q │ ev:%d │ %s ",
+		viewModeStr, logScope, m.totalEvents, formatDuration(time.Since(m.startTime)))
 
 	controlLine := borderStyle.Render("│") + detailStyle.Render(controls)
 	padding := totalWidth - lipgloss.Width(controls)
