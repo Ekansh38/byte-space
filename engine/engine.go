@@ -28,12 +28,12 @@ func (e *Engine) ListMachinesOnNetwork() []computer.Computer {
 
 func (e *Engine) GetFsMetaData(computerName string) map[string]computer.FileMetadata {
 	e.nodesMu.RLock()
+	defer e.nodesMu.RUnlock()
 	for _, c := range e.nodes {
 		if c.Name == computerName {
 			return c.FsMetaData
 		}
 	}
-	defer e.nodesMu.RUnlock()
 	return nil
 }
 

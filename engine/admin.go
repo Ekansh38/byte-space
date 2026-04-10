@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
 )
 
 func (e *Engine) RunAdminCommand(command string) *computer.EngineIPCMessage {
@@ -40,6 +39,8 @@ func (e *Engine) RunAdminCommand(command string) *computer.EngineIPCMessage {
 }
 
 func (e *Engine) spawnNode(commandParsed []string) *computer.EngineIPCMessage {
+	e.nodesMu.Lock()
+	defer e.nodesMu.Unlock()
 
 	if len(commandParsed) != 4 {
 		message := "Usage: spawn <type> <name> <ip>"

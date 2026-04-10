@@ -1,13 +1,13 @@
 package computer
 
 import (
-	"byte-space/utils"
 	"context"
 	"fmt"
 	"path"
 	"strings"
-)
 
+	"byte-space/utils"
+)
 
 type Ls struct {
 	id          string
@@ -38,7 +38,7 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 		returnStatus <- utils.Error
 		return
 	}
-	if len(params) > 2 {
+	if len(params) > 3 {
 		p.graphicsAPI.Write("Usage: ls <flag> <path>, no path for working dir\n")
 		returnStatus <- utils.Error
 		return
@@ -46,12 +46,13 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 
 	dir := p.proc.CWD
 	flag := ""
+	params = params[1:]
 
 	for i := range params {
 		if strings.HasPrefix(params[i], "-") {
 			flag = params[i]
 		} else {
-			dir = params[i]
+			dir = params[i] // sets dir
 		}
 	}
 
@@ -92,7 +93,7 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 				name = fmt.Sprintf("\033[97m%s\033[0m", file.Name())
 			}
 			spacesToAdd := longestOwnerName - len(meta.Owner) // meta.Owner doesnt include the ANSI color values
-			for _ = range spacesToAdd {
+			for range spacesToAdd {
 				owner += " "
 			}
 
@@ -152,7 +153,7 @@ func (p *Clear) Run(ctx context.Context, returnStatus chan int, params []string)
 		returnStatus <- utils.Error
 		return
 	}
-	if len(params) > 0 {
+	if len(params) > 1 {
 		p.graphicsAPI.Write("Usage: clear\n")
 		returnStatus <- utils.Error
 		return
@@ -205,13 +206,13 @@ func (p *Cat) Run(ctx context.Context, returnStatus chan int, params []string) {
 		returnStatus <- utils.Error
 		return
 	}
-	if len(params) != 1 {
+	if len(params) != 2 {
 		p.graphicsAPI.Write("\nUsage: cat <path>\n")
 		returnStatus <- utils.Error
 		return
 	}
 
-	content, err := p.Kernel.ReadFile(p.proc, params[0])
+	content, err := p.Kernel.ReadFile(p.proc, params[1])
 	if err != nil {
 		message := "\nFailed to open file\n"
 		if strings.HasSuffix(err.Error(), "no such file or directory") {
@@ -266,13 +267,13 @@ func (p *MkDir) SetProcess(proc *Process) {
 }
 
 func (p *MkDir) Run(ctx context.Context, returnStatus chan int, params []string) {
-	if len(params) != 1 {
+	if len(params) != 2 {
 		p.graphicsAPI.Write("\nUsage: mkdir <path>\n")
 		returnStatus <- utils.Error
 		return
 	}
 
-	target := params[0]
+	target := params[1]
 	err := p.Kernel.MkDir(p.proc, target)
 	if err != nil {
 		message := fmt.Sprintf("\nFailed to create directory %s\n", err)
@@ -327,13 +328,13 @@ func (p *Touch) SetProcess(proc *Process) {
 }
 
 func (p *Touch) Run(ctx context.Context, returnStatus chan int, params []string) {
-	if len(params) != 1 {
+	if len(params) != 2 {
 		p.graphicsAPI.Write("\nUsage: touch <path>\n")
 		returnStatus <- utils.Error
 		return
 	}
 
-	target := params[0]
+	target := params[1]
 	err := p.Kernel.CreateFile(p.proc, target)
 	if err != nil {
 		message := fmt.Sprintf("\nFailed to create directory %s\n", err)
@@ -388,14 +389,14 @@ func (p *Chmod) SetProcess(proc *Process) {
 }
 
 func (p *Chmod) Run(ctx context.Context, returnStatus chan int, params []string) {
-	if len(params) != 2 {
+	if len(params) != 3 {
 		p.graphicsAPI.Write("\nUsage: chmod <mode> <path>\n")
 		returnStatus <- utils.Error
 		return
 	}
 
-	modeStr := params[0]
-	target := params[1]
+	modeStr := params[1]
+	target := params[2]
 
 	newOwner, newOther, err := parseChmodMode(modeStr, p.Kernel, p.proc, target)
 	if err != nil {
@@ -521,4 +522,66 @@ func formatMode(owner, other uint8, setuid bool) string {
 		perms += "  "
 	}
 	return perms
+}
+
+type Rm struct {
+	id          string
+	graphicsAPI *GraphicsAPI
+	ttyAPI      *TTYAPI
+	Kernel      *Kernel
+	proc        *Process
+}
+
+func (p *Rm) SetTTyAPI(api *TTYAPI) {
+	p.ttyAPI = api
+}
+
+func (p *Rm) TTYAPI() *TTYAPI {
+	return p.ttyAPI
+}
+
+func (p *Rm) SetKernel(api *Kernel) {
+	p.Kernel = api
+}
+
+func (p *Rm) SetProcess(proc *Process) {
+	p.proc = proc
+}
+
+func (p *Rm) Run(ctx context.Context, returnStatus chan int, params []string) {
+	if p.graphicsAPI == nil {
+		returnStatus <- utils.Error
+		return
+	}
+	if len(params) != 2 {
+		p.graphicsAPI.Write("\nUsage: rm <path>, equivalent to rm -rf\n")
+		returnStatus <- utils.Error
+		return
+	}
+
+	err := p.Kernel.RemoveAll(p.proc, params[1])
+	if err != nil {
+		message := fmt.Sprintf("\nFailed to delete file: %s\n", err)
+		p.graphicsAPI.Write(message)
+		returnStatus <- utils.Error
+		return
+	}
+
+	p.graphicsAPI.Write("\n")
+	returnStatus <- utils.Success
+}
+
+func (p *Rm) ID() string {
+	return p.id
+}
+
+func (p *Rm) HandleSignal(sig Signal) {
+}
+
+func (p *Rm) AddGraphicsAPI(api *GraphicsAPI) {
+	p.graphicsAPI = api
+}
+
+func (p *Rm) RemoveGraphicsAPI() {
+	p.graphicsAPI = nil
 }

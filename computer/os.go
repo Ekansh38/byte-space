@@ -97,3 +97,7 @@ func (o *OS) ReadFile(path string) ([]byte, error) {
 func (o *OS) ReadDir(path string) ([]os.FileInfo, error) {
 	return afero.ReadDir(o.Computer.filesystem, path)
 }
+
+func (o *OS) RemoveAll(path string) error {
+	return o.Computer.filesystem.RemoveAll(path)
+}

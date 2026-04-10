@@ -265,6 +265,32 @@ func (k *Kernel) ReadDir(proc *Process, target string) ([]os.FileInfo, error) { 
 	return k.computer.OS.ReadDir(target)
 }
 
+func (k *Kernel) RemoveAll(proc *Process, target string) error { // syscall
+	k.fsMu.Lock()
+	defer k.fsMu.Unlock()
+
+	target = k.resolvePath(proc, target)
+	parentDir := target
+	targetStat, err := k.computer.filesystem.Stat(target)
+	if err != nil {
+		return fmt.Errorf("error")
+	}
+
+	if !targetStat.IsDir() {
+		before, _, ok := strings.Cut(target, "/")
+		if !ok {
+			return fmt.Errorf("error")
+		}
+		parentDir = before
+	}
+
+	if !k.canWrite(proc.EUID, parentDir) || !k.canExecute(proc.EUID, parentDir) {
+		return fmt.Errorf("permission denied")
+	}
+	k.computer.OS.RemoveAll(target)
+	return nil
+}
+
 func (k *Kernel) Stat(proc *Process, target string) (FileMetadata, bool) { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
