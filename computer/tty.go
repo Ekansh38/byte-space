@@ -30,12 +30,20 @@ type FileDescription struct {
 type IoctlReq int
 
 const (
-	TIOCRAW IoctlReq = iota // raw mode (true o false)
-	TIOCPASSWD // password masking (true o false)
-	TIOCSPGRP // set foreground process group (int)
-	TIOCBUFFCLEAR // clear the line buffer (no arg)
-	TIOCSESSION // attach session to TTY (*session)
+	TIOCRAW       IoctlReq = iota // raw mode (true o false)
+	TIOCPASSWD                    // password masking (true o false)
+	TIOCSPGRP                     // set foreground process group (int)
+	TIOCBUFFCLEAR                 // clear the line buffer (no arg)
+	TIOCSESSION                   // attach session to TTY (*session)
+	TIOCSWINSZ                    // set terminal dimensions (Winsize)
+	TIOCGWINSZ                    // get terminal dimensions (*Winsize)
 )
+
+// Winsize holds terminal dimensions, mirrors the Unix winsize struct.
+type Winsize struct {
+	Width  int
+	Height int
+}
 
 // any nerds curious what TIOC means?
 // it means TTY I/O Control (pretty cool if I do say so myself!)
@@ -57,6 +65,8 @@ type TTY struct {
 	Echo           bool
 	Buffer         string
 	CursorPosition int
+	Width          int
+	Height         int
 	dataChannel    chan string
 	Session        *Session
 	Connection     net.Conn
@@ -92,10 +102,11 @@ func (t *TTY) writeToClient(data string, status int) {
 type Signal int
 
 const (
-	SIGINT Signal = iota
+	SIGINT   Signal = iota
 	SIGTSTP
 	SIGQUIT
 	SIGINFO
+	SIGWINCH // terminal window size changed
 )
 
 func (t *TTY) HandleKeystroke(keystroke string) {
@@ -128,6 +139,23 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 		}
 	default:
 		t.dataChannel <- keystroke
+	}
+}
+
+func (t *TTY) SetWinsize(width, height int) {
+	if width == t.Width && height == t.Height {
+		return // no change, no SIGWINCH
+	}
+	t.Width = width
+	t.Height = height
+	// send SIGWINCH to all foreground processes
+	if t.ForegroundPGID != -1 && t.Session != nil {
+		procs := t.Session.Computer.Kernel.GetProcs()
+		for _, proc := range procs {
+			if proc.PGID == t.ForegroundPGID {
+				proc.Program.HandleSignal(SIGWINCH)
+			}
+		}
 	}
 }
 

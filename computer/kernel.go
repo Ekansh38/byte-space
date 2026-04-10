@@ -98,6 +98,25 @@ func (k *Kernel) Ioctl(proc *Process, fd int, req IoctlReq, arg interface{}) err
 		tty.BuffClear()
 	case TIOCSESSION:
 		tty.Session = arg.(*Session)
+	case TIOCSWINSZ:
+		ws, ok := arg.(Winsize)
+
+		if !ok {
+			return fmt.Errorf("WRONG TYPE ARG! ARF ARF")
+		}
+
+		tty.SetWinsize(ws.Width, ws.Height)
+
+	case TIOCGWINSZ:
+
+		ws, ok := arg.(*Winsize)
+
+		if !ok {
+			return fmt.Errorf("WRONG TYPE ARG! ARF ARF")
+		}
+
+		ws.Width = tty.Width
+		ws.Height = tty.Height
 	}
 	return nil
 }

@@ -1,10 +1,11 @@
 package computer
 
 type ClientIPCMessage struct {
-	Program string `json:"program"`
-	RequestID int `json:"request_id"`
-	SessionID string `json:"session_id"`
+	Program   string `json:"program"`
+	RequestID int    `json:"request_id"`
 	Keystroke string `json:"keystroke"`
+	Width     int    `json:"width"`
+	Height    int    `json:"height"`
 }
 
 

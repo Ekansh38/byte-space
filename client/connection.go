@@ -11,15 +11,17 @@ import (
 
 	"byte-space/engine"
 	"byte-space/utils"
+
+	"golang.org/x/term"
 )
 
 var (
-	sessionID = ""
-	prompt    = adminPrompt
+	prompt = adminPrompt
 )
 
 func writeToEngine(c net.Conn, rawKeystroke string, mode string) int {
-	data := engine.ClientIPCMessage{Program: mode, RequestID: 1, Keystroke: rawKeystroke, SessionID: sessionID}
+	w, h, _ := term.GetSize(int(os.Stdin.Fd()))
+	data := engine.ClientIPCMessage{Program: mode, RequestID: 1, Keystroke: rawKeystroke, Width: w, Height: h}
 
 	jsonData, err := json.Marshal(data)
 	if err != nil {

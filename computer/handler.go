@@ -77,7 +77,10 @@ func (c *Computer) HandleClient(conn net.Conn) {
 			log.Println("Error unmarshalling JSON:", err)
 			continue
 		}
-		tty.HandleKeystroke(message.Keystroke)
+		tty.SetWinsize(message.Width, message.Height) // no-op if unchanged
+		if message.Keystroke != "" {
+			tty.HandleKeystroke(message.Keystroke)
+		}
 	}
 	defer connCancel()
 }
