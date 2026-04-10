@@ -11,4 +11,6 @@ type Process struct {
 	ctxCancel context.CancelFunc
 
 	Program Program
+
+	FDs []*FileDescription // index is the fd number they point to a FileDescription
 }

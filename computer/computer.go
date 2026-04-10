@@ -87,6 +87,7 @@ func initFileSystem(fs afero.Fs, hostname string, ip string) {
 	createIfNotExists("/bin/touch", "")
 	createIfNotExists("/bin/chmod", "")
 	createIfNotExists("/bin/rm", "")
+	createIfNotExists("/bin/v", "")
 }
 
 func populateFileMetadata(filesystm afero.Fs, computer *Computer) {
@@ -144,6 +145,7 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *Even
 			"/bin/touch":  func(pid int) Program { return &Touch{id: fmt.Sprintf("touch-%d", pid)} },
 			"/bin/chmod":  func(pid int) Program { return &Chmod{id: fmt.Sprintf("chmod-%d", pid)} },
 			"/bin/rm":  func(pid int) Program { return &Rm{id: fmt.Sprintf("rm-%d", pid)} },
+			"/bin/v":  func(pid int) Program { return &VEdit{id: fmt.Sprintf("v-%d", pid)} },
 		},
 		procs: map[int]*Process{},
 	}

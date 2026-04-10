@@ -9,61 +9,31 @@ import (
 )
 
 type Adduser struct {
-	id          string
-	graphicsAPI *GraphicsAPI
-	ttyAPI      *TTYAPI
-	Kernel      *Kernel
-	proc        *Process
+	id     string
+	Kernel *Kernel
+	proc   *Process
 }
 
-func (p *Adduser) SetProcess(proc *Process) {
-	p.proc = proc
-}
-
-func (p *Adduser) SetTTyAPI(api *TTYAPI) {
-	p.ttyAPI = api
-}
-
-func (p *Adduser) TTYAPI() *TTYAPI {
-	return p.ttyAPI
-}
-
-func (p *Adduser) SetKernel(api *Kernel) {
-	p.Kernel = api
-}
-
-func (p *Adduser) AddGraphicsAPI(api *GraphicsAPI) {
-	p.graphicsAPI = api
-}
-
-func (p *Adduser) RemoveGraphicsAPI() {
-	p.graphicsAPI = nil
-}
-
-func (p *Adduser) ID() string {
-	return p.id
-}
+func (p *Adduser) SetProcess(proc *Process) { p.proc = proc }
+func (p *Adduser) SetKernel(k *Kernel)      { p.Kernel = k }
+func (p *Adduser) ID() string               { return p.id }
 
 func (p *Adduser) HandleSignal(sig Signal) {
 	if sig == SIGINT {
-		p.ttyAPI.BuffClear()
-		p.graphicsAPI.Write("\n(SIGINT), force quitting!\n")
+		p.Kernel.Ioctl(p.proc, 0, TIOCBUFFCLEAR, nil)
+		p.Kernel.Write(p.proc, 1, []byte("\n(SIGINT), force quitting!\n"))
 		p.proc.ctxCancel()
 	}
 }
 
 func (p *Adduser) Run(ctx context.Context, returnStatus chan int, params []string) {
-	if p.graphicsAPI == nil {
-		returnStatus <- utils.Error
-		return
-	}
-	if len(params) != 0 {
-		p.graphicsAPI.Write("\nUsage: adduser\n")
+	if len(params) != 1 {
+		p.Kernel.Write(p.proc, 1, []byte("\nUsage: adduser\n"))
 		returnStatus <- utils.Error
 		return
 	}
 
-	p.graphicsAPI.Write("\nEnter username: ")
+	p.Kernel.Write(p.proc, 1, []byte("\nEnter username: "))
 
 	username := ""
 	usernameRecorded := false
@@ -71,38 +41,38 @@ func (p *Adduser) Run(ctx context.Context, returnStatus chan int, params []strin
 	passwordRecorded := false
 
 	for {
-		value, status := p.ttyAPI.Read(ctx)
+		value, status := p.Kernel.Read(p.proc, 0, ctx)
 		switch status {
 		case utils.Success:
 			if !usernameRecorded {
 				if value == "" {
-					p.graphicsAPI.Write("\that a horrible username, its empty child!\n")
+					p.Kernel.Write(p.proc, 1, []byte("\that a horrible username, its empty child!\n"))
 					returnStatus <- utils.Error
 					return
 				}
 				if !p.isUsernameUnique(value) {
-					p.graphicsAPI.Write("\nUsername already exists, don't be so generic\n")
+					p.Kernel.Write(p.proc, 1, []byte("\nUsername already exists, don't be so generic\n"))
 					returnStatus <- utils.Error
 					return
 				}
 				username = value
 				usernameRecorded = true
-				p.graphicsAPI.Write("\nPassword: ")
-				p.ttyAPI.SetPasswdMode(true)
+				p.Kernel.Write(p.proc, 1, []byte("\nPassword: "))
+				p.Kernel.Ioctl(p.proc, 0, TIOCPASSWD, true)
 			} else if !passwordRecorded {
 				password = value
 				passwordRecorded = true
-				p.ttyAPI.SetPasswdMode(false)
+				p.Kernel.Ioctl(p.proc, 0, TIOCPASSWD, false)
 
 				uid, ok := p.findUID()
 				if !ok {
-					p.graphicsAPI.Write("\nErr: could not create valid UID\n")
+					p.Kernel.Write(p.proc, 1, []byte("\nErr: could not create valid UID\n"))
 					returnStatus <- utils.Error
 					return
 				}
 
 				msg := p.addUser(username, password, uid)
-				p.graphicsAPI.Write("\n" + msg + "\n")
+				p.Kernel.Write(p.proc, 1, []byte("\n"+msg+"\n"))
 				returnStatus <- utils.Success
 				return
 			}

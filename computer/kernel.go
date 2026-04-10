@@ -26,6 +26,9 @@ type Kernel struct {
 	procsMu sync.Mutex
 
 	fsMu sync.RWMutex
+
+	openFiles   []*FileDescription // kernel-owned open file description table
+	openFilesMu sync.Mutex
 }
 
 func (k *Kernel) PublishEvent(proc *Process, eventType EventType, data map[string]interface{}) {
@@ -33,7 +36,82 @@ func (k *Kernel) PublishEvent(proc *Process, eventType EventType, data map[strin
 }
 
 func (k *Kernel) GetTtyID(proc *Process) string {
-	return proc.Program.TTYAPI().GetTTYID()
+	if len(proc.FDs) > 0 && proc.FDs[0] != nil && proc.FDs[0].Type == FDTTY {
+		return proc.FDs[0].TTY.id
+	}
+	return ""
+}
+
+// returns the file descriptor to a new tty
+func (k *Kernel) OpenTTY(tty *TTY) *FileDescription {
+	k.openFilesMu.Lock()
+	defer k.openFilesMu.Unlock()
+	desc := &FileDescription{Type: FDTTY, TTY: tty, refs: 1}
+	k.openFiles = append(k.openFiles, desc)
+	return desc
+}
+
+func (k *Kernel) Read(proc *Process, fd int, ctx context.Context) (string, int) {
+	if fd < 0 || fd >= len(proc.FDs) || proc.FDs[fd] == nil {
+		return "bad file descriptor", utils.Error
+	}
+	switch proc.FDs[fd].Type {
+	case FDTTY:
+		return proc.FDs[fd].TTY.Read(proc, ctx)
+	}
+	return "unsupported fd type", utils.Error
+}
+
+func (k *Kernel) Write(proc *Process, fd int, data []byte) (int, error) {
+	if fd < 0 || fd >= len(proc.FDs) || proc.FDs[fd] == nil {
+		return 0, fmt.Errorf("bad file descriptor")
+	}
+	switch proc.FDs[fd].Type {
+	case FDTTY:
+		return proc.FDs[fd].TTY.Write(data)
+	}
+	return 0, fmt.Errorf("unsupported fd type")
+}
+
+func (k *Kernel) Ioctl(proc *Process, fd int, req IoctlReq, arg interface{}) error {
+	if fd < 0 || fd >= len(proc.FDs) || proc.FDs[fd] == nil {
+		return fmt.Errorf("bad file descriptor")
+	}
+	if proc.FDs[fd].Type != FDTTY {
+		return fmt.Errorf("not a tty")
+	}
+	tty := proc.FDs[fd].TTY
+	switch req {
+	case TIOCRAW:
+		if arg.(bool) {
+			tty.Canonical = false
+			tty.Echo = false
+		} else {
+			tty.Canonical = true
+			tty.Echo = true
+		}
+	case TIOCPASSWD:
+		tty.PasswdMode = arg.(bool)
+	case TIOCSPGRP:
+		tty.SetForegroundPGID(arg.(int))
+	case TIOCBUFFCLEAR:
+		tty.BuffClear()
+	case TIOCSESSION:
+		tty.Session = arg.(*Session)
+	}
+	return nil
+}
+
+func (k *Kernel) NewSession(proc *Process, username string) (int, string) {
+	var tty *TTY
+	if len(proc.FDs) > 0 && proc.FDs[0] != nil && proc.FDs[0].Type == FDTTY {
+		tty = proc.FDs[0].TTY
+	}
+	status, sessionID := k.computer.NewSession(username, tty)
+	if status == utils.Success && tty != nil {
+		tty.Session = k.computer.sessions[sessionID]
+	}
+	return status, sessionID
 }
 
 func (k *Kernel) GetNodeOnNetwork(ipAdress string) (*Computer, bool) {
@@ -109,16 +187,23 @@ func (k *Kernel) Exec(parentCtx context.Context, parentProc *Process, binPath st
 	k.procs[pid] = proc
 	k.procsMu.Unlock()
 
+	// Inherit parent's FD table — shallow copy so child shares the same FileDescriptions
+	childFDs := make([]*FileDescription, len(parentProc.FDs))
+	copy(childFDs, parentProc.FDs)
+	proc.FDs = childFDs
+
 	program.SetProcess(proc)
-	program.SetTTyAPI(&TTYAPI{tty: parentProc.Program.TTYAPI().tty, proc: proc})
 	program.SetKernel(k)
-	parentProc.Program.TTYAPI().tty.SetForegroundPGID(pgid)
+
+	if len(childFDs) > 0 && childFDs[0] != nil && childFDs[0].Type == FDTTY {
+		childFDs[0].TTY.SetForegroundPGID(pgid)
+	}
 
 	status := make(chan int)
 
 	k.EventBus.Publish(EventProgramStarted, map[string]interface{}{
 		"program_id": program.ID(),
-		"tty_id":     parentProc.Program.TTYAPI().tty.id,
+		"tty_id":     k.GetTtyID(parentProc),
 	})
 
 	go program.Run(ctx, status, args)
@@ -129,7 +214,7 @@ func (k *Kernel) Exec(parentCtx context.Context, parentProc *Process, binPath st
 			k.EventBus.Publish(EventProgramExited, map[string]interface{}{
 				"program_id": program.ID(),
 				"status":     exitCode,
-				"tty_id":     parentProc.Program.TTYAPI().tty.id,
+				"tty_id":     k.GetTtyID(parentProc),
 			})
 			k.cleanupProcess(pid)
 		}()
@@ -141,7 +226,7 @@ func (k *Kernel) Exec(parentCtx context.Context, parentProc *Process, binPath st
 	k.EventBus.Publish(EventProgramExited, map[string]interface{}{
 		"program_id": program.ID(),
 		"status":     exitCode,
-		"tty_id":     parentProc.Program.TTYAPI().tty.id,
+		"tty_id":     k.GetTtyID(parentProc),
 	})
 	k.cleanupProcess(pid)
 
@@ -329,7 +414,7 @@ func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
 
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
-	// TOCTOU racing
+	// TOCTOU racing // no more toctou racing
 	if !k.canWrite(proc.EUID, parent) {
 		return fmt.Errorf("permission denied")
 	}
@@ -347,18 +432,23 @@ func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
 	return nil
 }
 
-func (k *Kernel) WriteFile(proc *Process, target string, data []byte) error { // syscall
-
+func (k *Kernel) WriteFile(proc *Process, target string, content []byte) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
 	target = k.resolvePath(proc, target)
 	parent := path.Dir(target)
-	// TOCTOU racing
-	if !k.canWrite(proc.EUID, parent) {
+	// later: check all parent dirs for execute, ALL, rn only checking one TODO
+
+	if !k.canExecute(proc.EUID, parent) || !k.canWrite(proc.EUID, target) {
 		return fmt.Errorf("permission denied")
 	}
-	return k.computer.OS.WriteFile(target, data) // little more abstraction didnt hurt anybody! the kernel never touch afero directly, YUCK
+
+	if err := k.computer.OS.WriteFile(target, content); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (k *Kernel) ChangeDirectory(proc *Process, target string) error { // syscall

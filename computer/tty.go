@@ -12,73 +12,38 @@ import (
 	"byte-space/utils"
 )
 
-type GraphicsAPI struct {
-	writer io.Writer
+// FDType represents the type of a file description, rn its only TTY but latr it can be pipes and stuff
+type FDType int
+
+const (
+	FDTTY  FDType = iota
+	FDFile        // for later additions, rn no need!
+)
+
+// Multiple processes share the same FileDescription pointer
+type FileDescription struct {
+	Type FDType
+	TTY  *TTY // valid when Type == FDTTY else its NIL
+	refs int
 }
 
-func NewGraphicsAPI(writer io.Writer) *GraphicsAPI {
-	return &GraphicsAPI{writer: writer}
-}
+type IoctlReq int
 
-func (g *GraphicsAPI) Write(str string) (int, error) {
-	if g == nil {
-		return 0, fmt.Errorf("nil")
-	}
+const (
+	TIOCRAW IoctlReq = iota // raw mode (true o false)
+	TIOCPASSWD // password masking (true o false)
+	TIOCSPGRP // set foreground process group (int)
+	TIOCBUFFCLEAR // clear the line buffer (no arg)
+	TIOCSESSION // attach session to TTY (*session)
+)
 
-	return g.writer.Write([]byte(str))
-}
-
-type TTYAPI struct {
-	tty  *TTY
-	proc *Process
-}
-
-func (t *TTYAPI) SetForegroundPGID(pgid int) (string, int) {
-	return t.tty.SetForegroundPGID(pgid)
-}
-
-func (t *TTYAPI) Read(ctx context.Context) (string, int) {
-	return t.tty.Read(t.proc, ctx)
-}
-
-func (t *TTYAPI) BuffClear() {
-	t.tty.BuffClear()
-}
-
-func (t *TTYAPI) SetPasswdMode(mode bool) {
-	t.tty.PasswdMode = mode
-}
-
-func (t *TTYAPI) SetSession(session *Session) {
-	t.tty.Session = session
-}
-
-func (t *TTYAPI) GetTTYID() string {
-	return t.tty.id
-}
-
-func (t *TTYAPI) GetSession() *Session {
-	return t.tty.Session
-}
+// any nerds curious what TIOC means?
+// it means TTY I/O Control (pretty cool if I do say so myself!)
 
 type Program interface {
-	// API's (aces based security)
-
-	SetTTyAPI(api *TTYAPI)
-
-	SetKernel(api *Kernel)
-
-	// no acces to session, the only "state" it has acess to is from the kernel syscalls or the proc
-
 	SetProcess(proc *Process)
-
-	AddGraphicsAPI(api *GraphicsAPI)
-	RemoveGraphicsAPI()
-
-	// General
-
+	SetKernel(k *Kernel)
 	ID() string
-	TTYAPI() *TTYAPI
 	Run(ctx context.Context, returnStatus chan int, params []string)
 	HandleSignal(sig Signal)
 }
@@ -166,35 +131,14 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 	}
 }
 
-func (t *TTY) SetForegroundPGID(pgid int) (string, int) {
-	procs := t.Session.Computer.Kernel.GetProcs()
-
-	// Remove graphicsAPI from old foreground programs
-	if t.ForegroundPGID != -1 {
-		for _, proc := range procs {
-			if proc.PGID == t.ForegroundPGID {
-				proc.Program.RemoveGraphicsAPI()
-			}
-		}
-	}
-
+func (t *TTY) SetForegroundPGID(pgid int) {
 	t.ForegroundPGID = pgid
-
-	// Add graphicsAPI to new foreground programs
-	for _, proc := range procs {
-		if proc.PGID == pgid {
-			t.EventBus.Publish(EventForegroundChanged, map[string]interface{}{
-				"program": proc.Program.ID(),
-				"tty_id":  t.id,
-			})
-			proc.Program.AddGraphicsAPI(NewGraphicsAPI(t))
-		}
-	}
-
-	return "Successfully set foreground program", utils.Success
+	t.EventBus.Publish(EventForegroundChanged, map[string]interface{}{
+		"tty_id": t.id,
+	})
 }
 
-func (t *TTY) Read(proc *Process, ctx context.Context)(string, int) {
+func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 	if proc.PGID != t.ForegroundPGID {
 		return "Err: You are not foreground program", utils.Error
 	}
@@ -315,7 +259,7 @@ func (t *TTY) Read(proc *Process, ctx context.Context)(string, int) {
 				if t.CursorPosition != 0 {
 					t.CursorPosition -= 1
 				}
-			case "\x1b[A", "\x1b[B","\x1b\x7f", "\x1bw", "\x15":
+			case "\x1b[A", "\x1b[B", "\x1b\x7f", "\x1bw", "\x15":
 				continue
 			default:
 

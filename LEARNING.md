@@ -61,9 +61,8 @@
 
 tODOS TODAY:
 
-	- `rm`
-	- `cp` and `mv`
-	- text editor, basic
-	- Admin panel (issue #7)
-	- Fix issues #6, #5, #4 (quick fixes)
-	- Filesystem v2
+==- `rm`==
+- text editor, basic
+- Admin panel (issue #7)
+- Fix issues #6, #5, #4 (quick fixes)
+- Filesystem v2

@@ -1,6 +1,1875 @@
-2026/04/09 16:38:17 5
-2026/04/09 16:38:26 5
-2026/04/09 16:40:11 Spaces to add: -9, longestOwnerName: 5, len owner: 14
-2026/04/09 16:40:11 Spaces to add: -8, longestOwnerName: 5, len owner: 13
-2026/04/09 16:40:11 Spaces to add: -9, longestOwnerName: 5, len owner: 14
-2026/04/09 16:40:11 Spaces to add: -4, longestOwnerName: 5, len owner: 9
+2026/04/10 12:17:14 v: read keystroke="j" status=0
+2026/04/10 12:17:14 1
+2026/04/10 12:17:14 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:17:14 15
+2026/04/10 12:17:26 v: read keystroke="l" status=0
+2026/04/10 12:17:27 v: read keystroke="l" status=0
+2026/04/10 12:17:28 v: read keystroke="l" status=0
+2026/04/10 12:17:29 v: read keystroke="l" status=0
+2026/04/10 12:17:30 v: read keystroke="l" status=0
+2026/04/10 12:17:30 v: read keystroke="l" status=0
+2026/04/10 12:17:31 v: read keystroke="l" status=0
+2026/04/10 12:17:33 v: read keystroke="j" status=0
+2026/04/10 12:17:33 8
+2026/04/10 12:17:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:17:33 50
+2026/04/10 12:18:46 v: read keystroke="SIGINT" status=10
+2026/04/10 12:18:59 v: read keystroke="j" status=0
+2026/04/10 12:18:59 1
+2026/04/10 12:18:59 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:18:59 15
+2026/04/10 12:19:38 v: read keystroke="l" status=0
+2026/04/10 12:19:38 v: read keystroke="l" status=0
+2026/04/10 12:19:38 v: read keystroke="l" status=0
+2026/04/10 12:19:40 v: read keystroke="j" status=0
+2026/04/10 12:19:40 4
+2026/04/10 12:19:40 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:19:40 46
+2026/04/10 12:20:18 v: read keystroke="j" status=0
+2026/04/10 12:20:18 4
+2026/04/10 12:20:18 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:20:18 73
+2026/04/10 12:20:18 v: read keystroke="j" status=0
+2026/04/10 12:20:18 4
+2026/04/10 12:20:18 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:20:18 99
+2026/04/10 12:20:19 v: read keystroke="l" status=0
+2026/04/10 12:20:19 v: read keystroke="l" status=0
+2026/04/10 12:20:19 v: read keystroke="l" status=0
+2026/04/10 12:20:19 v: read keystroke="j" status=0
+2026/04/10 12:20:19 7
+2026/04/10 12:20:19 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:20:19 131
+2026/04/10 12:20:20 v: read keystroke="j" status=0
+2026/04/10 12:20:20 7
+2026/04/10 12:20:20 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:20:20 131
+2026/04/10 12:20:20 v: read keystroke="k" status=0
+2026/04/10 12:20:21 v: read keystroke="h" status=0
+2026/04/10 12:20:21 v: read keystroke="h" status=0
+2026/04/10 12:20:21 v: read keystroke="h" status=0
+2026/04/10 12:20:21 v: read keystroke="h" status=0
+2026/04/10 12:20:21 v: read keystroke="k" status=0
+2026/04/10 12:20:23 v: read keystroke="SIGINT" status=10
+2026/04/10 12:23:50 v: read keystroke="j" status=0
+2026/04/10 12:23:50 1
+2026/04/10 12:23:50 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:50 15
+2026/04/10 12:23:50 v: read keystroke="j" status=0
+2026/04/10 12:23:50 1
+2026/04/10 12:23:50 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:50 43
+2026/04/10 12:23:50 v: read keystroke="l" status=0
+2026/04/10 12:23:50 v: read keystroke="l" status=0
+2026/04/10 12:23:51 v: read keystroke="l" status=0
+2026/04/10 12:23:51 v: read keystroke="l" status=0
+2026/04/10 12:23:51 v: read keystroke="l" status=0
+2026/04/10 12:23:51 v: read keystroke="k" status=0
+2026/04/10 12:23:51 6
+2026/04/10 12:23:51 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:51 48
+2026/04/10 12:23:51 v: read keystroke="k" status=0
+2026/04/10 12:23:51 6
+2026/04/10 12:23:51 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:51 48
+2026/04/10 12:23:51 v: read keystroke="j" status=0
+2026/04/10 12:23:51 6
+2026/04/10 12:23:51 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:51 75
+2026/04/10 12:23:51 v: read keystroke="j" status=0
+2026/04/10 12:23:51 6
+2026/04/10 12:23:51 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:51 101
+2026/04/10 12:23:52 v: read keystroke="k" status=0
+2026/04/10 12:23:52 6
+2026/04/10 12:23:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:52 101
+2026/04/10 12:23:52 v: read keystroke="k" status=0
+2026/04/10 12:23:52 6
+2026/04/10 12:23:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:52 101
+2026/04/10 12:23:52 v: read keystroke="k" status=0
+2026/04/10 12:23:52 6
+2026/04/10 12:23:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:52 101
+2026/04/10 12:23:52 v: read keystroke="k" status=0
+2026/04/10 12:23:52 6
+2026/04/10 12:23:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:52 101
+2026/04/10 12:23:52 v: read keystroke="k" status=0
+2026/04/10 12:23:52 6
+2026/04/10 12:23:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:52 101
+2026/04/10 12:23:52 v: read keystroke="k" status=0
+2026/04/10 12:23:52 6
+2026/04/10 12:23:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:52 101
+2026/04/10 12:23:53 v: read keystroke="k" status=0
+2026/04/10 12:23:53 6
+2026/04/10 12:23:53 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:53 101
+2026/04/10 12:23:53 v: read keystroke="k" status=0
+2026/04/10 12:23:53 6
+2026/04/10 12:23:53 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:53 101
+2026/04/10 12:23:53 v: read keystroke="k" status=0
+2026/04/10 12:23:53 6
+2026/04/10 12:23:53 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:53 101
+2026/04/10 12:23:54 v: read keystroke="k" status=0
+2026/04/10 12:23:54 6
+2026/04/10 12:23:54 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:54 101
+2026/04/10 12:23:54 v: read keystroke="j" status=0
+2026/04/10 12:23:54 6
+2026/04/10 12:23:54 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:54 130
+2026/04/10 12:23:54 v: read keystroke="j" status=0
+2026/04/10 12:23:54 6
+2026/04/10 12:23:54 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:54 130
+2026/04/10 12:23:54 v: read keystroke="j" status=0
+2026/04/10 12:23:54 6
+2026/04/10 12:23:54 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:54 130
+2026/04/10 12:23:55 v: read keystroke="j" status=0
+2026/04/10 12:23:55 6
+2026/04/10 12:23:55 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:55 130
+2026/04/10 12:23:55 v: read keystroke="k" status=0
+2026/04/10 12:23:55 6
+2026/04/10 12:23:55 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:55 130
+2026/04/10 12:23:55 v: read keystroke="k" status=0
+2026/04/10 12:23:55 6
+2026/04/10 12:23:55 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:55 130
+2026/04/10 12:23:55 v: read keystroke="k" status=0
+2026/04/10 12:23:55 6
+2026/04/10 12:23:55 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:55 130
+2026/04/10 12:23:55 v: read keystroke="k" status=0
+2026/04/10 12:23:55 6
+2026/04/10 12:23:55 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:55 130
+2026/04/10 12:23:55 v: read keystroke="k" status=0
+2026/04/10 12:23:55 6
+2026/04/10 12:23:55 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:55 130
+2026/04/10 12:23:55 v: read keystroke="k" status=0
+2026/04/10 12:23:55 6
+2026/04/10 12:23:55 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:55 130
+2026/04/10 12:23:56 v: read keystroke="k" status=0
+2026/04/10 12:23:56 6
+2026/04/10 12:23:56 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:56 130
+2026/04/10 12:23:56 v: read keystroke="k" status=0
+2026/04/10 12:23:56 6
+2026/04/10 12:23:56 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:56 130
+2026/04/10 12:23:56 v: read keystroke="k" status=0
+2026/04/10 12:23:56 6
+2026/04/10 12:23:56 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:56 130
+2026/04/10 12:23:56 v: read keystroke="k" status=0
+2026/04/10 12:23:56 6
+2026/04/10 12:23:56 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:56 130
+2026/04/10 12:23:56 v: read keystroke="k" status=0
+2026/04/10 12:23:56 6
+2026/04/10 12:23:56 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:56 130
+2026/04/10 12:23:56 v: read keystroke="k" status=0
+2026/04/10 12:23:56 6
+2026/04/10 12:23:56 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:56 130
+2026/04/10 12:23:57 v: read keystroke="l" status=0
+2026/04/10 12:23:57 v: read keystroke="l" status=0
+2026/04/10 12:23:57 v: read keystroke="l" status=0
+2026/04/10 12:23:57 v: read keystroke="l" status=0
+2026/04/10 12:23:58 v: read keystroke="l" status=0
+2026/04/10 12:23:58 v: read keystroke="k" status=0
+2026/04/10 12:23:58 11
+2026/04/10 12:23:58 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:23:58 135
+2026/04/10 12:23:58 v: read keystroke="SIGINT" status=10
+2026/04/10 12:31:09 v: read keystroke="j" status=0
+2026/04/10 12:31:09 1
+2026/04/10 12:31:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:31:09 15
+2026/04/10 12:31:14 v: read keystroke="k" status=0
+2026/04/10 12:31:14 1
+2026/04/10 12:31:14 FIRST BACKWORD: 14
+2026/04/10 12:32:48 v: read keystroke="j" status=0
+2026/04/10 12:32:48 1
+2026/04/10 12:32:48 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:32:48 15
+2026/04/10 12:32:49 v: read keystroke="k" status=0
+2026/04/10 12:32:49 1
+2026/04/10 12:32:49 FIRST BACKWORD: 15
+2026/04/10 12:32:49 SECOND BACKWORD: 14
+2026/04/10 12:32:49 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:32:49 15
+2026/04/10 12:33:04 v: read keystroke="k" status=0
+2026/04/10 12:33:04 1
+2026/04/10 12:33:04 FIRST BACKWORD: 15
+2026/04/10 12:33:04 SECOND BACKWORD: 14
+2026/04/10 12:33:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:04 15
+2026/04/10 12:33:05 v: read keystroke="k" status=0
+2026/04/10 12:33:05 1
+2026/04/10 12:33:05 FIRST BACKWORD: 15
+2026/04/10 12:33:05 SECOND BACKWORD: 14
+2026/04/10 12:33:05 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:05 15
+2026/04/10 12:33:06 v: read keystroke="k" status=0
+2026/04/10 12:33:06 1
+2026/04/10 12:33:06 FIRST BACKWORD: 15
+2026/04/10 12:33:06 SECOND BACKWORD: 14
+2026/04/10 12:33:06 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:06 15
+2026/04/10 12:33:06 v: read keystroke="k" status=0
+2026/04/10 12:33:06 1
+2026/04/10 12:33:06 FIRST BACKWORD: 15
+2026/04/10 12:33:06 SECOND BACKWORD: 14
+2026/04/10 12:33:06 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:06 15
+2026/04/10 12:33:06 v: read keystroke="k" status=0
+2026/04/10 12:33:06 1
+2026/04/10 12:33:06 FIRST BACKWORD: 15
+2026/04/10 12:33:06 SECOND BACKWORD: 14
+2026/04/10 12:33:06 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:06 15
+2026/04/10 12:33:06 v: read keystroke="k" status=0
+2026/04/10 12:33:06 1
+2026/04/10 12:33:06 FIRST BACKWORD: 15
+2026/04/10 12:33:06 SECOND BACKWORD: 14
+2026/04/10 12:33:06 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:06 15
+2026/04/10 12:33:06 v: read keystroke="k" status=0
+2026/04/10 12:33:06 1
+2026/04/10 12:33:06 FIRST BACKWORD: 15
+2026/04/10 12:33:06 SECOND BACKWORD: 14
+2026/04/10 12:33:06 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:06 15
+2026/04/10 12:33:06 v: read keystroke="k" status=0
+2026/04/10 12:33:06 1
+2026/04/10 12:33:06 FIRST BACKWORD: 15
+2026/04/10 12:33:06 SECOND BACKWORD: 14
+2026/04/10 12:33:06 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:06 15
+2026/04/10 12:33:07 v: read keystroke="k" status=0
+2026/04/10 12:33:07 1
+2026/04/10 12:33:07 FIRST BACKWORD: 15
+2026/04/10 12:33:07 SECOND BACKWORD: 14
+2026/04/10 12:33:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:07 15
+2026/04/10 12:33:07 v: read keystroke="k" status=0
+2026/04/10 12:33:07 1
+2026/04/10 12:33:07 FIRST BACKWORD: 15
+2026/04/10 12:33:07 SECOND BACKWORD: 14
+2026/04/10 12:33:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:07 15
+2026/04/10 12:33:07 v: read keystroke="k" status=0
+2026/04/10 12:33:07 1
+2026/04/10 12:33:07 FIRST BACKWORD: 15
+2026/04/10 12:33:07 SECOND BACKWORD: 14
+2026/04/10 12:33:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:07 15
+2026/04/10 12:33:07 v: read keystroke="k" status=0
+2026/04/10 12:33:07 1
+2026/04/10 12:33:07 FIRST BACKWORD: 15
+2026/04/10 12:33:07 SECOND BACKWORD: 14
+2026/04/10 12:33:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:07 15
+2026/04/10 12:33:07 v: read keystroke="k" status=0
+2026/04/10 12:33:07 1
+2026/04/10 12:33:07 FIRST BACKWORD: 15
+2026/04/10 12:33:07 SECOND BACKWORD: 14
+2026/04/10 12:33:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:07 15
+2026/04/10 12:33:07 v: read keystroke="k" status=0
+2026/04/10 12:33:07 1
+2026/04/10 12:33:07 FIRST BACKWORD: 15
+2026/04/10 12:33:07 SECOND BACKWORD: 14
+2026/04/10 12:33:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:07 15
+2026/04/10 12:33:07 v: read keystroke="k" status=0
+2026/04/10 12:33:07 1
+2026/04/10 12:33:07 FIRST BACKWORD: 15
+2026/04/10 12:33:07 SECOND BACKWORD: 14
+2026/04/10 12:33:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:07 15
+2026/04/10 12:33:08 v: read keystroke="k" status=0
+2026/04/10 12:33:08 1
+2026/04/10 12:33:08 FIRST BACKWORD: 15
+2026/04/10 12:33:08 SECOND BACKWORD: 14
+2026/04/10 12:33:08 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:08 15
+2026/04/10 12:33:08 v: read keystroke="k" status=0
+2026/04/10 12:33:08 1
+2026/04/10 12:33:08 FIRST BACKWORD: 15
+2026/04/10 12:33:08 SECOND BACKWORD: 14
+2026/04/10 12:33:08 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:08 15
+2026/04/10 12:33:08 v: read keystroke="k" status=0
+2026/04/10 12:33:08 1
+2026/04/10 12:33:08 FIRST BACKWORD: 15
+2026/04/10 12:33:08 SECOND BACKWORD: 14
+2026/04/10 12:33:08 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:08 15
+2026/04/10 12:33:08 v: read keystroke="k" status=0
+2026/04/10 12:33:08 1
+2026/04/10 12:33:08 FIRST BACKWORD: 15
+2026/04/10 12:33:08 SECOND BACKWORD: 14
+2026/04/10 12:33:08 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:08 15
+2026/04/10 12:33:08 v: read keystroke="k" status=0
+2026/04/10 12:33:08 1
+2026/04/10 12:33:08 FIRST BACKWORD: 15
+2026/04/10 12:33:08 SECOND BACKWORD: 14
+2026/04/10 12:33:08 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:08 15
+2026/04/10 12:33:08 v: read keystroke="k" status=0
+2026/04/10 12:33:08 1
+2026/04/10 12:33:08 FIRST BACKWORD: 15
+2026/04/10 12:33:08 SECOND BACKWORD: 14
+2026/04/10 12:33:08 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:08 15
+2026/04/10 12:33:08 v: read keystroke="k" status=0
+2026/04/10 12:33:08 1
+2026/04/10 12:33:08 FIRST BACKWORD: 15
+2026/04/10 12:33:08 SECOND BACKWORD: 14
+2026/04/10 12:33:08 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:08 15
+2026/04/10 12:33:09 v: read keystroke="k" status=0
+2026/04/10 12:33:09 1
+2026/04/10 12:33:09 FIRST BACKWORD: 15
+2026/04/10 12:33:09 SECOND BACKWORD: 14
+2026/04/10 12:33:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:09 15
+2026/04/10 12:33:09 v: read keystroke="k" status=0
+2026/04/10 12:33:09 1
+2026/04/10 12:33:09 FIRST BACKWORD: 15
+2026/04/10 12:33:09 SECOND BACKWORD: 14
+2026/04/10 12:33:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:09 15
+2026/04/10 12:33:09 v: read keystroke="k" status=0
+2026/04/10 12:33:09 1
+2026/04/10 12:33:09 FIRST BACKWORD: 15
+2026/04/10 12:33:09 SECOND BACKWORD: 14
+2026/04/10 12:33:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:09 15
+2026/04/10 12:33:09 v: read keystroke="k" status=0
+2026/04/10 12:33:09 1
+2026/04/10 12:33:09 FIRST BACKWORD: 15
+2026/04/10 12:33:09 SECOND BACKWORD: 14
+2026/04/10 12:33:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:09 15
+2026/04/10 12:33:09 v: read keystroke="k" status=0
+2026/04/10 12:33:09 1
+2026/04/10 12:33:09 FIRST BACKWORD: 15
+2026/04/10 12:33:09 SECOND BACKWORD: 14
+2026/04/10 12:33:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:09 15
+2026/04/10 12:33:09 v: read keystroke="k" status=0
+2026/04/10 12:33:09 1
+2026/04/10 12:33:09 FIRST BACKWORD: 15
+2026/04/10 12:33:09 SECOND BACKWORD: 14
+2026/04/10 12:33:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:09 15
+2026/04/10 12:33:09 v: read keystroke="k" status=0
+2026/04/10 12:33:09 1
+2026/04/10 12:33:09 FIRST BACKWORD: 15
+2026/04/10 12:33:09 SECOND BACKWORD: 14
+2026/04/10 12:33:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:09 15
+2026/04/10 12:33:10 v: read keystroke="k" status=0
+2026/04/10 12:33:10 1
+2026/04/10 12:33:10 FIRST BACKWORD: 15
+2026/04/10 12:33:10 SECOND BACKWORD: 14
+2026/04/10 12:33:10 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:10 15
+2026/04/10 12:33:10 v: read keystroke="k" status=0
+2026/04/10 12:33:10 1
+2026/04/10 12:33:10 FIRST BACKWORD: 15
+2026/04/10 12:33:10 SECOND BACKWORD: 14
+2026/04/10 12:33:10 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:10 15
+2026/04/10 12:33:10 v: read keystroke="k" status=0
+2026/04/10 12:33:10 1
+2026/04/10 12:33:10 FIRST BACKWORD: 15
+2026/04/10 12:33:10 SECOND BACKWORD: 14
+2026/04/10 12:33:10 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:10 15
+2026/04/10 12:33:10 v: read keystroke="k" status=0
+2026/04/10 12:33:10 1
+2026/04/10 12:33:10 FIRST BACKWORD: 15
+2026/04/10 12:33:10 SECOND BACKWORD: 14
+2026/04/10 12:33:10 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:10 15
+2026/04/10 12:33:10 v: read keystroke="k" status=0
+2026/04/10 12:33:10 1
+2026/04/10 12:33:10 FIRST BACKWORD: 15
+2026/04/10 12:33:10 SECOND BACKWORD: 14
+2026/04/10 12:33:10 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:10 15
+2026/04/10 12:33:10 v: read keystroke="k" status=0
+2026/04/10 12:33:10 1
+2026/04/10 12:33:10 FIRST BACKWORD: 15
+2026/04/10 12:33:10 SECOND BACKWORD: 14
+2026/04/10 12:33:10 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:10 15
+2026/04/10 12:33:10 v: read keystroke="k" status=0
+2026/04/10 12:33:10 1
+2026/04/10 12:33:10 FIRST BACKWORD: 15
+2026/04/10 12:33:10 SECOND BACKWORD: 14
+2026/04/10 12:33:10 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:10 15
+2026/04/10 12:33:11 v: read keystroke="k" status=0
+2026/04/10 12:33:11 1
+2026/04/10 12:33:11 FIRST BACKWORD: 15
+2026/04/10 12:33:11 SECOND BACKWORD: 14
+2026/04/10 12:33:11 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:11 15
+2026/04/10 12:33:11 v: read keystroke="k" status=0
+2026/04/10 12:33:11 1
+2026/04/10 12:33:11 FIRST BACKWORD: 15
+2026/04/10 12:33:11 SECOND BACKWORD: 14
+2026/04/10 12:33:11 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:11 15
+2026/04/10 12:33:11 v: read keystroke="k" status=0
+2026/04/10 12:33:11 1
+2026/04/10 12:33:11 FIRST BACKWORD: 15
+2026/04/10 12:33:11 SECOND BACKWORD: 14
+2026/04/10 12:33:11 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:11 15
+2026/04/10 12:33:11 v: read keystroke="k" status=0
+2026/04/10 12:33:11 1
+2026/04/10 12:33:11 FIRST BACKWORD: 15
+2026/04/10 12:33:11 SECOND BACKWORD: 14
+2026/04/10 12:33:11 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:11 15
+2026/04/10 12:33:11 v: read keystroke="k" status=0
+2026/04/10 12:33:11 1
+2026/04/10 12:33:11 FIRST BACKWORD: 15
+2026/04/10 12:33:11 SECOND BACKWORD: 14
+2026/04/10 12:33:11 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:11 15
+2026/04/10 12:33:11 v: read keystroke="k" status=0
+2026/04/10 12:33:11 1
+2026/04/10 12:33:11 FIRST BACKWORD: 15
+2026/04/10 12:33:11 SECOND BACKWORD: 14
+2026/04/10 12:33:11 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:11 15
+2026/04/10 12:33:11 v: read keystroke="k" status=0
+2026/04/10 12:33:11 1
+2026/04/10 12:33:11 FIRST BACKWORD: 15
+2026/04/10 12:33:11 SECOND BACKWORD: 14
+2026/04/10 12:33:11 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:11 15
+2026/04/10 12:33:12 v: read keystroke="k" status=0
+2026/04/10 12:33:12 1
+2026/04/10 12:33:12 FIRST BACKWORD: 15
+2026/04/10 12:33:12 SECOND BACKWORD: 14
+2026/04/10 12:33:12 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:12 15
+2026/04/10 12:33:12 v: read keystroke="k" status=0
+2026/04/10 12:33:12 1
+2026/04/10 12:33:12 FIRST BACKWORD: 15
+2026/04/10 12:33:12 SECOND BACKWORD: 14
+2026/04/10 12:33:12 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:12 15
+2026/04/10 12:33:12 v: read keystroke="k" status=0
+2026/04/10 12:33:12 1
+2026/04/10 12:33:12 FIRST BACKWORD: 15
+2026/04/10 12:33:12 SECOND BACKWORD: 14
+2026/04/10 12:33:12 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:12 15
+2026/04/10 12:33:12 v: read keystroke="k" status=0
+2026/04/10 12:33:12 1
+2026/04/10 12:33:12 FIRST BACKWORD: 15
+2026/04/10 12:33:12 SECOND BACKWORD: 14
+2026/04/10 12:33:12 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:12 15
+2026/04/10 12:33:12 v: read keystroke="k" status=0
+2026/04/10 12:33:12 1
+2026/04/10 12:33:12 FIRST BACKWORD: 15
+2026/04/10 12:33:12 SECOND BACKWORD: 14
+2026/04/10 12:33:12 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:12 15
+2026/04/10 12:33:13 v: read keystroke="k" status=0
+2026/04/10 12:33:13 1
+2026/04/10 12:33:13 FIRST BACKWORD: 15
+2026/04/10 12:33:13 SECOND BACKWORD: 14
+2026/04/10 12:33:13 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:13 15
+2026/04/10 12:33:13 v: read keystroke="k" status=0
+2026/04/10 12:33:13 1
+2026/04/10 12:33:13 FIRST BACKWORD: 15
+2026/04/10 12:33:13 SECOND BACKWORD: 14
+2026/04/10 12:33:13 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:13 15
+2026/04/10 12:33:13 v: read keystroke="k" status=0
+2026/04/10 12:33:13 1
+2026/04/10 12:33:13 FIRST BACKWORD: 15
+2026/04/10 12:33:13 SECOND BACKWORD: 14
+2026/04/10 12:33:13 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:13 15
+2026/04/10 12:33:13 v: read keystroke="k" status=0
+2026/04/10 12:33:13 1
+2026/04/10 12:33:13 FIRST BACKWORD: 15
+2026/04/10 12:33:13 SECOND BACKWORD: 14
+2026/04/10 12:33:13 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:13 15
+2026/04/10 12:33:13 v: read keystroke="k" status=0
+2026/04/10 12:33:13 1
+2026/04/10 12:33:13 FIRST BACKWORD: 15
+2026/04/10 12:33:13 SECOND BACKWORD: 14
+2026/04/10 12:33:13 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:13 15
+2026/04/10 12:33:13 v: read keystroke="k" status=0
+2026/04/10 12:33:13 1
+2026/04/10 12:33:13 FIRST BACKWORD: 15
+2026/04/10 12:33:13 SECOND BACKWORD: 14
+2026/04/10 12:33:13 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:13 15
+2026/04/10 12:33:13 v: read keystroke="k" status=0
+2026/04/10 12:33:13 1
+2026/04/10 12:33:13 FIRST BACKWORD: 15
+2026/04/10 12:33:13 SECOND BACKWORD: 14
+2026/04/10 12:33:13 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:33:13 15
+2026/04/10 12:36:41 v: read keystroke="j" status=0
+2026/04/10 12:36:41 1
+2026/04/10 12:36:41 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:36:41 15
+2026/04/10 12:36:46 v: read keystroke="j" status=0
+2026/04/10 12:36:46 1
+2026/04/10 12:36:46 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:36:46 43
+2026/04/10 12:36:49 v: read keystroke="k" status=0
+2026/04/10 12:36:49 1
+2026/04/10 12:36:49 FIRST BACKWORD: 43
+2026/04/10 12:36:49 YAHHHHOOOO 43
+2026/04/10 12:36:49 SECOND BACKWORD: 42
+2026/04/10 12:36:49 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:36:49 43
+2026/04/10 12:36:54 v: read keystroke="j" status=0
+2026/04/10 12:36:54 1
+2026/04/10 12:36:54 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:36:54 70
+2026/04/10 12:36:58 v: read keystroke="k" status=0
+2026/04/10 12:36:58 1
+2026/04/10 12:36:58 FIRST BACKWORD: 70
+2026/04/10 12:36:58 YAHHHHOOOO 70
+2026/04/10 12:36:58 SECOND BACKWORD: 69
+2026/04/10 12:36:58 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:36:58 70
+2026/04/10 12:36:59 v: read keystroke="j" status=0
+2026/04/10 12:36:59 1
+2026/04/10 12:36:59 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:36:59 96
+2026/04/10 12:36:59 v: read keystroke="j" status=0
+2026/04/10 12:36:59 1
+2026/04/10 12:36:59 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:36:59 125
+2026/04/10 12:37:01 v: read keystroke="k" status=0
+2026/04/10 12:37:01 1
+2026/04/10 12:37:01 FIRST BACKWORD: 125
+2026/04/10 12:37:01 YAHHHHOOOO 125
+2026/04/10 12:37:01 SECOND BACKWORD: 124
+2026/04/10 12:37:01 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:01 125
+2026/04/10 12:37:01 v: read keystroke="k" status=0
+2026/04/10 12:37:01 1
+2026/04/10 12:37:01 FIRST BACKWORD: 125
+2026/04/10 12:37:01 YAHHHHOOOO 125
+2026/04/10 12:37:01 SECOND BACKWORD: 124
+2026/04/10 12:37:01 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:01 125
+2026/04/10 12:37:02 v: read keystroke="h" status=0
+2026/04/10 12:37:02 v: read keystroke="h" status=0
+2026/04/10 12:37:02 v: read keystroke="j" status=0
+2026/04/10 12:37:02 1
+2026/04/10 12:37:02 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:02 125
+2026/04/10 12:37:02 v: read keystroke="j" status=0
+2026/04/10 12:37:02 1
+2026/04/10 12:37:02 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:02 125
+2026/04/10 12:37:02 v: read keystroke="j" status=0
+2026/04/10 12:37:02 1
+2026/04/10 12:37:02 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:02 125
+2026/04/10 12:37:03 v: read keystroke="j" status=0
+2026/04/10 12:37:03 1
+2026/04/10 12:37:03 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:03 125
+2026/04/10 12:37:03 v: read keystroke="j" status=0
+2026/04/10 12:37:03 1
+2026/04/10 12:37:03 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:03 125
+2026/04/10 12:37:03 v: read keystroke="k" status=0
+2026/04/10 12:37:03 1
+2026/04/10 12:37:03 FIRST BACKWORD: 125
+2026/04/10 12:37:03 YAHHHHOOOO 125
+2026/04/10 12:37:03 SECOND BACKWORD: 124
+2026/04/10 12:37:03 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:03 125
+2026/04/10 12:37:03 v: read keystroke="j" status=0
+2026/04/10 12:37:03 1
+2026/04/10 12:37:03 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:03 125
+2026/04/10 12:37:03 v: read keystroke="k" status=0
+2026/04/10 12:37:03 1
+2026/04/10 12:37:03 FIRST BACKWORD: 125
+2026/04/10 12:37:03 YAHHHHOOOO 125
+2026/04/10 12:37:03 SECOND BACKWORD: 124
+2026/04/10 12:37:03 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:03 125
+2026/04/10 12:37:03 v: read keystroke="j" status=0
+2026/04/10 12:37:03 1
+2026/04/10 12:37:03 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:03 125
+2026/04/10 12:37:04 v: read keystroke="k" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 FIRST BACKWORD: 125
+2026/04/10 12:37:04 YAHHHHOOOO 125
+2026/04/10 12:37:04 SECOND BACKWORD: 124
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="j" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="k" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 FIRST BACKWORD: 125
+2026/04/10 12:37:04 YAHHHHOOOO 125
+2026/04/10 12:37:04 SECOND BACKWORD: 124
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="j" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="k" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 FIRST BACKWORD: 125
+2026/04/10 12:37:04 YAHHHHOOOO 125
+2026/04/10 12:37:04 SECOND BACKWORD: 124
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="j" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="k" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 FIRST BACKWORD: 125
+2026/04/10 12:37:04 YAHHHHOOOO 125
+2026/04/10 12:37:04 SECOND BACKWORD: 124
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="j" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="k" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 FIRST BACKWORD: 125
+2026/04/10 12:37:04 YAHHHHOOOO 125
+2026/04/10 12:37:04 SECOND BACKWORD: 124
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="j" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="k" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 FIRST BACKWORD: 125
+2026/04/10 12:37:04 YAHHHHOOOO 125
+2026/04/10 12:37:04 SECOND BACKWORD: 124
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="j" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="k" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 FIRST BACKWORD: 125
+2026/04/10 12:37:04 YAHHHHOOOO 125
+2026/04/10 12:37:04 SECOND BACKWORD: 124
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="j" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:04 v: read keystroke="j" status=0
+2026/04/10 12:37:04 1
+2026/04/10 12:37:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:04 125
+2026/04/10 12:37:05 v: read keystroke="k" status=0
+2026/04/10 12:37:05 1
+2026/04/10 12:37:05 FIRST BACKWORD: 125
+2026/04/10 12:37:05 YAHHHHOOOO 125
+2026/04/10 12:37:05 SECOND BACKWORD: 124
+2026/04/10 12:37:05 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:05 125
+2026/04/10 12:37:05 v: read keystroke="j" status=0
+2026/04/10 12:37:05 1
+2026/04/10 12:37:05 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:05 125
+2026/04/10 12:37:15 v: read keystroke="SIGINT" status=10
+2026/04/10 12:37:22 v: read keystroke="j" status=0
+2026/04/10 12:37:22 1
+2026/04/10 12:37:22 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:22 15
+2026/04/10 12:37:25 v: read keystroke="j" status=0
+2026/04/10 12:37:25 1
+2026/04/10 12:37:25 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:25 43
+2026/04/10 12:37:27 v: read keystroke="k" status=0
+2026/04/10 12:37:27 1
+2026/04/10 12:37:27 FIRST BACKWORD: 43
+2026/04/10 12:37:27 YAHHHHOOOO 43
+2026/04/10 12:37:27 SECOND BACKWORD: 42
+2026/04/10 12:37:27 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:37:27 43
+2026/04/10 12:40:19 v: read keystroke="j" status=0
+2026/04/10 12:40:19 1
+2026/04/10 12:40:19 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:40:19 15
+2026/04/10 12:40:21 v: read keystroke="k" status=0
+2026/04/10 12:40:21 1
+2026/04/10 12:40:21 FIRST BACKWORD: 15
+2026/04/10 12:40:21 YAHHHHOOOO 15
+2026/04/10 12:40:21 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:40:21 15
+2026/04/10 12:41:27 v: read keystroke="SIGINT" status=10
+2026/04/10 12:41:45 v: read keystroke="j" status=0
+2026/04/10 12:41:45 1
+2026/04/10 12:41:45 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:41:45 15
+2026/04/10 12:41:46 v: read keystroke="j" status=0
+2026/04/10 12:41:46 1
+2026/04/10 12:41:46 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:41:46 43
+2026/04/10 12:41:47 v: read keystroke="k" status=0
+2026/04/10 12:41:47 1
+2026/04/10 12:41:47 FIRST BACKWORD: 42
+2026/04/10 12:41:47 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:41:47 43
+2026/04/10 12:42:30 v: read keystroke="j" status=0
+2026/04/10 12:42:30 1
+2026/04/10 12:42:30 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:30 70
+2026/04/10 12:42:30 v: read keystroke="j" status=0
+2026/04/10 12:42:30 1
+2026/04/10 12:42:30 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:30 96
+2026/04/10 12:42:31 v: read keystroke="j" status=0
+2026/04/10 12:42:31 1
+2026/04/10 12:42:31 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:31 125
+2026/04/10 12:42:31 v: read keystroke="j" status=0
+2026/04/10 12:42:31 1
+2026/04/10 12:42:31 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:31 125
+2026/04/10 12:42:31 v: read keystroke="j" status=0
+2026/04/10 12:42:31 1
+2026/04/10 12:42:31 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:31 125
+2026/04/10 12:42:32 v: read keystroke="k" status=0
+2026/04/10 12:42:32 1
+2026/04/10 12:42:32 FIRST BACKWORD: 124
+2026/04/10 12:42:32 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:32 125
+2026/04/10 12:42:33 v: read keystroke="k" status=0
+2026/04/10 12:42:33 1
+2026/04/10 12:42:33 FIRST BACKWORD: 124
+2026/04/10 12:42:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:33 125
+2026/04/10 12:42:33 v: read keystroke="k" status=0
+2026/04/10 12:42:33 1
+2026/04/10 12:42:33 FIRST BACKWORD: 124
+2026/04/10 12:42:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:33 125
+2026/04/10 12:42:33 v: read keystroke="k" status=0
+2026/04/10 12:42:33 1
+2026/04/10 12:42:33 FIRST BACKWORD: 124
+2026/04/10 12:42:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:33 125
+2026/04/10 12:42:34 v: read keystroke="k" status=0
+2026/04/10 12:42:34 1
+2026/04/10 12:42:34 FIRST BACKWORD: 124
+2026/04/10 12:42:34 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:34 125
+2026/04/10 12:42:34 v: read keystroke="k" status=0
+2026/04/10 12:42:34 1
+2026/04/10 12:42:34 FIRST BACKWORD: 124
+2026/04/10 12:42:34 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:34 125
+2026/04/10 12:42:34 v: read keystroke="k" status=0
+2026/04/10 12:42:34 1
+2026/04/10 12:42:34 FIRST BACKWORD: 124
+2026/04/10 12:42:34 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:34 125
+2026/04/10 12:42:34 v: read keystroke="j" status=0
+2026/04/10 12:42:34 1
+2026/04/10 12:42:34 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:34 125
+2026/04/10 12:42:35 v: read keystroke="j" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="j" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="j" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="k" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 FIRST BACKWORD: 124
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="j" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="k" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 FIRST BACKWORD: 124
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="j" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="k" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 FIRST BACKWORD: 124
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="j" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="k" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 FIRST BACKWORD: 124
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:35 v: read keystroke="j" status=0
+2026/04/10 12:42:35 1
+2026/04/10 12:42:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:35 125
+2026/04/10 12:42:36 v: read keystroke="k" status=0
+2026/04/10 12:42:36 1
+2026/04/10 12:42:36 FIRST BACKWORD: 124
+2026/04/10 12:42:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:36 125
+2026/04/10 12:42:36 v: read keystroke="j" status=0
+2026/04/10 12:42:36 1
+2026/04/10 12:42:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:36 125
+2026/04/10 12:42:36 v: read keystroke="j" status=0
+2026/04/10 12:42:36 1
+2026/04/10 12:42:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:36 125
+2026/04/10 12:42:36 v: read keystroke="k" status=0
+2026/04/10 12:42:36 1
+2026/04/10 12:42:36 FIRST BACKWORD: 124
+2026/04/10 12:42:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:36 125
+2026/04/10 12:42:36 v: read keystroke="j" status=0
+2026/04/10 12:42:36 1
+2026/04/10 12:42:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:36 125
+2026/04/10 12:42:36 v: read keystroke="k" status=0
+2026/04/10 12:42:36 1
+2026/04/10 12:42:36 FIRST BACKWORD: 124
+2026/04/10 12:42:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:36 125
+2026/04/10 12:42:36 v: read keystroke="j" status=0
+2026/04/10 12:42:36 1
+2026/04/10 12:42:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:36 125
+2026/04/10 12:42:36 v: read keystroke="j" status=0
+2026/04/10 12:42:36 1
+2026/04/10 12:42:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:36 125
+2026/04/10 12:42:36 v: read keystroke="SIGINT" status=10
+2026/04/10 12:42:42 v: read keystroke="j" status=0
+2026/04/10 12:42:42 1
+2026/04/10 12:42:42 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:42 15
+2026/04/10 12:42:42 v: read keystroke="j" status=0
+2026/04/10 12:42:42 1
+2026/04/10 12:42:42 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:42 43
+2026/04/10 12:42:43 v: read keystroke="j" status=0
+2026/04/10 12:42:43 1
+2026/04/10 12:42:43 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:43 70
+2026/04/10 12:42:43 v: read keystroke="j" status=0
+2026/04/10 12:42:43 1
+2026/04/10 12:42:43 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:43 96
+2026/04/10 12:42:43 v: read keystroke="k" status=0
+2026/04/10 12:42:43 1
+2026/04/10 12:42:43 FIRST BACKWORD: 95
+2026/04/10 12:42:43 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:43 96
+2026/04/10 12:42:44 v: read keystroke="k" status=0
+2026/04/10 12:42:44 1
+2026/04/10 12:42:44 FIRST BACKWORD: 95
+2026/04/10 12:42:44 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:42:44 96
+2026/04/10 12:42:52 v: read keystroke="\x1b\x03" status=0
+2026/04/10 12:42:52 v: read keystroke="c" status=0
+2026/04/10 12:42:53 v: read keystroke="e" status=0
+2026/04/10 12:42:53 v: read keystroke="i" status=0
+2026/04/10 12:42:53 v: read keystroke="x" status=0
+2026/04/10 12:42:54 v: read keystroke="\r" status=0
+2026/04/10 12:42:54 v: read keystroke="SIGINT" status=10
+2026/04/10 12:44:40 v: read keystroke="j" status=0
+2026/04/10 12:44:40 1
+2026/04/10 12:44:40 "\t\n\n    Welcome back, [[USERNAME]]\n\n\n"
+2026/04/10 12:44:40 2
+2026/04/10 12:44:42 v: read keystroke="k" status=0
+2026/04/10 12:44:42 1
+2026/04/10 12:44:42 FIRST BACKWORD: 1
+2026/04/10 12:47:32 v: read keystroke="j" status=0
+2026/04/10 12:47:32 1
+2026/04/10 12:47:32 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:32 15
+2026/04/10 12:47:35 v: read keystroke="j" status=0
+2026/04/10 12:47:35 1
+2026/04/10 12:47:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:35 43
+2026/04/10 12:47:36 v: read keystroke="j" status=0
+2026/04/10 12:47:36 1
+2026/04/10 12:47:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:36 70
+2026/04/10 12:47:37 v: read keystroke="j" status=0
+2026/04/10 12:47:37 1
+2026/04/10 12:47:37 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:37 96
+2026/04/10 12:47:38 v: read keystroke="j" status=0
+2026/04/10 12:47:38 1
+2026/04/10 12:47:38 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:38 125
+2026/04/10 12:47:42 v: read keystroke="k" status=0
+2026/04/10 12:47:42 1
+2026/04/10 12:47:42 FIRST BACKWORD: 124
+2026/04/10 12:47:42 YAHHHHOOOO 125
+2026/04/10 12:47:42 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:42 125
+2026/04/10 12:47:43 v: read keystroke="k" status=0
+2026/04/10 12:47:43 1
+2026/04/10 12:47:43 FIRST BACKWORD: 124
+2026/04/10 12:47:43 YAHHHHOOOO 125
+2026/04/10 12:47:43 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:43 125
+2026/04/10 12:47:44 v: read keystroke="k" status=0
+2026/04/10 12:47:44 1
+2026/04/10 12:47:44 FIRST BACKWORD: 124
+2026/04/10 12:47:44 YAHHHHOOOO 125
+2026/04/10 12:47:44 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:44 125
+2026/04/10 12:47:45 v: read keystroke="k" status=0
+2026/04/10 12:47:45 1
+2026/04/10 12:47:45 FIRST BACKWORD: 124
+2026/04/10 12:47:45 YAHHHHOOOO 125
+2026/04/10 12:47:45 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:45 125
+2026/04/10 12:47:46 v: read keystroke="k" status=0
+2026/04/10 12:47:46 1
+2026/04/10 12:47:46 FIRST BACKWORD: 124
+2026/04/10 12:47:46 YAHHHHOOOO 125
+2026/04/10 12:47:46 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:47:46 125
+2026/04/10 12:48:41 v: read keystroke="SIGINT" status=10
+2026/04/10 12:49:09 v: read keystroke="j" status=0
+2026/04/10 12:49:09 1
+2026/04/10 12:49:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:49:09 15
+2026/04/10 12:49:10 v: read keystroke="j" status=0
+2026/04/10 12:49:10 1
+2026/04/10 12:49:10 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:49:10 43
+2026/04/10 12:49:11 v: read keystroke="k" status=0
+2026/04/10 12:49:11 1
+2026/04/10 12:49:11 FIRST BACKWORD: 42
+2026/04/10 12:49:11 YAHHHHOOOO 43
+2026/04/10 12:49:11 YAHHHHOOOO 15
+2026/04/10 12:49:11 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:49:11 15
+2026/04/10 12:49:20 v: read keystroke="j" status=0
+2026/04/10 12:49:20 1
+2026/04/10 12:49:20 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:49:20 43
+2026/04/10 12:49:22 v: read keystroke="j" status=0
+2026/04/10 12:49:22 1
+2026/04/10 12:49:22 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:49:22 70
+2026/04/10 12:49:23 v: read keystroke="j" status=0
+2026/04/10 12:49:23 1
+2026/04/10 12:49:23 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:49:23 96
+2026/04/10 12:49:23 v: read keystroke="k" status=0
+2026/04/10 12:49:23 1
+2026/04/10 12:49:23 FIRST BACKWORD: 95
+2026/04/10 12:49:23 YAHHHHOOOO 96
+2026/04/10 12:49:23 YAHHHHOOOO 70
+2026/04/10 12:49:23 YAHHHHOOOO 43
+2026/04/10 12:49:23 YAHHHHOOOO 15
+2026/04/10 12:49:23 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:49:23 15
+2026/04/10 12:50:04 v: read keystroke="SIGINT" status=10
+2026/04/10 12:50:29 v: read keystroke="k" status=0
+2026/04/10 12:50:29 1
+2026/04/10 12:50:29 FIRST BACKWORD: 0
+2026/04/10 12:52:04 v: read keystroke="j" status=0
+2026/04/10 12:52:04 1
+2026/04/10 12:52:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:52:04 15
+2026/04/10 12:52:07 v: read keystroke="j" status=0
+2026/04/10 12:52:07 1
+2026/04/10 12:52:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:52:07 43
+2026/04/10 12:52:07 v: read keystroke="k" status=0
+2026/04/10 12:52:07 1
+2026/04/10 12:52:07 FIRST BACKWORD: 42
+2026/04/10 12:52:07 YAHHHHOOOO 43
+2026/04/10 12:52:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:52:07 43
+2026/04/10 12:52:41 v: read keystroke="SIGINT" status=10
+2026/04/10 12:53:12 v: read keystroke="j" status=0
+2026/04/10 12:53:12 1
+2026/04/10 12:53:12 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:12 15
+2026/04/10 12:53:13 v: read keystroke="j" status=0
+2026/04/10 12:53:13 1
+2026/04/10 12:53:13 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:13 43
+2026/04/10 12:53:14 v: read keystroke="j" status=0
+2026/04/10 12:53:14 1
+2026/04/10 12:53:14 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:14 70
+2026/04/10 12:53:14 v: read keystroke="j" status=0
+2026/04/10 12:53:14 1
+2026/04/10 12:53:14 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:14 96
+2026/04/10 12:53:15 v: read keystroke="k" status=0
+2026/04/10 12:53:15 1
+2026/04/10 12:53:15 FIRST BACKWORD: 95
+2026/04/10 12:53:15 YAHHHHOOOO 70
+2026/04/10 12:53:15 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:15 70
+2026/04/10 12:53:16 v: read keystroke="j" status=0
+2026/04/10 12:53:16 1
+2026/04/10 12:53:16 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:16 96
+2026/04/10 12:53:18 v: read keystroke="k" status=0
+2026/04/10 12:53:18 1
+2026/04/10 12:53:18 FIRST BACKWORD: 95
+2026/04/10 12:53:18 YAHHHHOOOO 70
+2026/04/10 12:53:18 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:18 70
+2026/04/10 12:53:18 v: read keystroke="k" status=0
+2026/04/10 12:53:18 1
+2026/04/10 12:53:18 FIRST BACKWORD: 69
+2026/04/10 12:53:18 YAHHHHOOOO 43
+2026/04/10 12:53:18 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:18 43
+2026/04/10 12:53:19 v: read keystroke="k" status=0
+2026/04/10 12:53:19 1
+2026/04/10 12:53:19 FIRST BACKWORD: 42
+2026/04/10 12:53:19 YAHHHHOOOO 15
+2026/04/10 12:53:19 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:19 15
+2026/04/10 12:53:20 v: read keystroke="k" status=0
+2026/04/10 12:53:20 1
+2026/04/10 12:53:20 FIRST BACKWORD: 14
+2026/04/10 12:53:20 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:20 15
+2026/04/10 12:53:21 v: read keystroke="l" status=0
+2026/04/10 12:53:23 v: read keystroke="l" status=0
+2026/04/10 12:53:23 v: read keystroke="l" status=0
+2026/04/10 12:53:25 v: read keystroke="j" status=0
+2026/04/10 12:53:25 4
+2026/04/10 12:53:25 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:25 46
+2026/04/10 12:53:27 v: read keystroke="j" status=0
+2026/04/10 12:53:27 4
+2026/04/10 12:53:27 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:27 73
+2026/04/10 12:53:28 v: read keystroke="k" status=0
+2026/04/10 12:53:28 4
+2026/04/10 12:53:28 FIRST BACKWORD: 69
+2026/04/10 12:53:28 YAHHHHOOOO 46
+2026/04/10 12:53:28 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:28 46
+2026/04/10 12:53:29 v: read keystroke="j" status=0
+2026/04/10 12:53:29 4
+2026/04/10 12:53:29 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:29 73
+2026/04/10 12:53:29 v: read keystroke="j" status=0
+2026/04/10 12:53:29 4
+2026/04/10 12:53:29 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:29 99
+2026/04/10 12:53:29 v: read keystroke="j" status=0
+2026/04/10 12:53:29 4
+2026/04/10 12:53:29 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:29 128
+2026/04/10 12:53:29 v: read keystroke="j" status=0
+2026/04/10 12:53:29 4
+2026/04/10 12:53:29 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:29 128
+2026/04/10 12:53:30 v: read keystroke="k" status=0
+2026/04/10 12:53:30 4
+2026/04/10 12:53:30 FIRST BACKWORD: 124
+2026/04/10 12:53:30 YAHHHHOOOO 99
+2026/04/10 12:53:30 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:30 99
+2026/04/10 12:53:30 v: read keystroke="k" status=0
+2026/04/10 12:53:30 4
+2026/04/10 12:53:30 FIRST BACKWORD: 95
+2026/04/10 12:53:30 YAHHHHOOOO 73
+2026/04/10 12:53:30 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:30 73
+2026/04/10 12:53:30 v: read keystroke="k" status=0
+2026/04/10 12:53:30 4
+2026/04/10 12:53:30 FIRST BACKWORD: 69
+2026/04/10 12:53:30 YAHHHHOOOO 46
+2026/04/10 12:53:30 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:30 46
+2026/04/10 12:53:30 v: read keystroke="k" status=0
+2026/04/10 12:53:30 4
+2026/04/10 12:53:30 FIRST BACKWORD: 42
+2026/04/10 12:53:30 YAHHHHOOOO 18
+2026/04/10 12:53:30 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:30 18
+2026/04/10 12:53:30 v: read keystroke="j" status=0
+2026/04/10 12:53:30 4
+2026/04/10 12:53:30 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:30 46
+2026/04/10 12:53:30 v: read keystroke="j" status=0
+2026/04/10 12:53:30 4
+2026/04/10 12:53:30 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:30 73
+2026/04/10 12:53:31 v: read keystroke="j" status=0
+2026/04/10 12:53:31 4
+2026/04/10 12:53:31 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:31 99
+2026/04/10 12:53:31 v: read keystroke="k" status=0
+2026/04/10 12:53:31 4
+2026/04/10 12:53:31 FIRST BACKWORD: 95
+2026/04/10 12:53:31 YAHHHHOOOO 73
+2026/04/10 12:53:31 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:31 73
+2026/04/10 12:53:31 v: read keystroke="j" status=0
+2026/04/10 12:53:31 4
+2026/04/10 12:53:31 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:31 99
+2026/04/10 12:53:31 v: read keystroke="k" status=0
+2026/04/10 12:53:31 4
+2026/04/10 12:53:31 FIRST BACKWORD: 95
+2026/04/10 12:53:31 YAHHHHOOOO 73
+2026/04/10 12:53:31 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:31 73
+2026/04/10 12:53:31 v: read keystroke="j" status=0
+2026/04/10 12:53:31 4
+2026/04/10 12:53:31 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:31 99
+2026/04/10 12:53:31 v: read keystroke="l" status=0
+2026/04/10 12:53:32 v: read keystroke="l" status=0
+2026/04/10 12:53:32 v: read keystroke="l" status=0
+2026/04/10 12:53:32 v: read keystroke="k" status=0
+2026/04/10 12:53:32 7
+2026/04/10 12:53:32 FIRST BACKWORD: 95
+2026/04/10 12:53:32 YAHHHHOOOO 76
+2026/04/10 12:53:32 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:32 76
+2026/04/10 12:53:32 v: read keystroke="l" status=0
+2026/04/10 12:53:32 v: read keystroke="k" status=0
+2026/04/10 12:53:32 8
+2026/04/10 12:53:32 FIRST BACKWORD: 69
+2026/04/10 12:53:32 YAHHHHOOOO 50
+2026/04/10 12:53:32 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:32 50
+2026/04/10 12:53:32 v: read keystroke="l" status=0
+2026/04/10 12:53:32 v: read keystroke="k" status=0
+2026/04/10 12:53:32 9
+2026/04/10 12:53:32 FIRST BACKWORD: 42
+2026/04/10 12:53:32 YAHHHHOOOO 23
+2026/04/10 12:53:32 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:32 23
+2026/04/10 12:53:32 v: read keystroke="l" status=0
+2026/04/10 12:53:32 v: read keystroke="j" status=0
+2026/04/10 12:53:32 10
+2026/04/10 12:53:32 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:32 52
+2026/04/10 12:53:32 v: read keystroke="k" status=0
+2026/04/10 12:53:32 10
+2026/04/10 12:53:32 FIRST BACKWORD: 42
+2026/04/10 12:53:32 YAHHHHOOOO 24
+2026/04/10 12:53:32 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:32 24
+2026/04/10 12:53:32 v: read keystroke="j" status=0
+2026/04/10 12:53:32 10
+2026/04/10 12:53:32 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:32 52
+2026/04/10 12:53:33 v: read keystroke="k" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 FIRST BACKWORD: 42
+2026/04/10 12:53:33 YAHHHHOOOO 24
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 24
+2026/04/10 12:53:33 v: read keystroke="j" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 52
+2026/04/10 12:53:33 v: read keystroke="k" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 FIRST BACKWORD: 42
+2026/04/10 12:53:33 YAHHHHOOOO 24
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 24
+2026/04/10 12:53:33 v: read keystroke="j" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 52
+2026/04/10 12:53:33 v: read keystroke="k" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 FIRST BACKWORD: 42
+2026/04/10 12:53:33 YAHHHHOOOO 24
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 24
+2026/04/10 12:53:33 v: read keystroke="j" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 52
+2026/04/10 12:53:33 v: read keystroke="k" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 FIRST BACKWORD: 42
+2026/04/10 12:53:33 YAHHHHOOOO 24
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 24
+2026/04/10 12:53:33 v: read keystroke="j" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 52
+2026/04/10 12:53:33 v: read keystroke="j" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 79
+2026/04/10 12:53:33 v: read keystroke="j" status=0
+2026/04/10 12:53:33 10
+2026/04/10 12:53:33 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:33 105
+2026/04/10 12:53:34 v: read keystroke="j" status=0
+2026/04/10 12:53:34 10
+2026/04/10 12:53:34 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:34 134
+2026/04/10 12:53:34 v: read keystroke="j" status=0
+2026/04/10 12:53:34 10
+2026/04/10 12:53:34 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:34 134
+2026/04/10 12:53:34 v: read keystroke="k" status=0
+2026/04/10 12:53:34 10
+2026/04/10 12:53:34 FIRST BACKWORD: 124
+2026/04/10 12:53:34 YAHHHHOOOO 105
+2026/04/10 12:53:34 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:34 105
+2026/04/10 12:53:34 v: read keystroke="k" status=0
+2026/04/10 12:53:34 10
+2026/04/10 12:53:34 FIRST BACKWORD: 95
+2026/04/10 12:53:34 YAHHHHOOOO 79
+2026/04/10 12:53:34 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:34 79
+2026/04/10 12:53:34 v: read keystroke="l" status=0
+2026/04/10 12:53:34 v: read keystroke="l" status=0
+2026/04/10 12:53:35 v: read keystroke="l" status=0
+2026/04/10 12:53:35 v: read keystroke="k" status=0
+2026/04/10 12:53:35 13
+2026/04/10 12:53:35 FIRST BACKWORD: 69
+2026/04/10 12:53:35 YAHHHHOOOO 55
+2026/04/10 12:53:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:35 55
+2026/04/10 12:53:35 v: read keystroke="l" status=0
+2026/04/10 12:53:35 v: read keystroke="k" status=0
+2026/04/10 12:53:35 14
+2026/04/10 12:53:35 FIRST BACKWORD: 42
+2026/04/10 12:53:35 YAHHHHOOOO 28
+2026/04/10 12:53:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:35 28
+2026/04/10 12:53:35 v: read keystroke="l" status=0
+2026/04/10 12:53:35 v: read keystroke="k" status=0
+2026/04/10 12:53:35 15
+2026/04/10 12:53:35 FIRST BACKWORD: 14
+2026/04/10 12:53:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:35 29
+2026/04/10 12:53:35 v: read keystroke="j" status=0
+2026/04/10 12:53:35 15
+2026/04/10 12:53:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:35 57
+2026/04/10 12:53:35 v: read keystroke="j" status=0
+2026/04/10 12:53:35 15
+2026/04/10 12:53:35 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:35 84
+2026/04/10 12:53:36 v: read keystroke="j" status=0
+2026/04/10 12:53:36 15
+2026/04/10 12:53:36 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 12:53:36 110
+2026/04/10 12:53:36 v: read keystroke="h" status=0
+2026/04/10 12:53:36 v: read keystroke="h" status=0
+2026/04/10 12:53:36 v: read keystroke="h" status=0
+2026/04/10 12:53:36 v: read keystroke="h" status=0
+2026/04/10 12:53:36 v: read keystroke="h" status=0
+2026/04/10 12:53:37 v: read keystroke="\r" status=0
+2026/04/10 12:53:37 v: read keystroke="e" status=0
+2026/04/10 12:53:38 v: read keystroke="SIGINT" status=10
+2026/04/10 12:53:47 v: read keystroke="\x17" status=0
+2026/04/10 12:53:48 v: read keystroke="\x17" status=0
+2026/04/10 12:53:48 v: read keystroke="\x17" status=0
+2026/04/10 12:53:48 v: read keystroke="\x17" status=0
+2026/04/10 12:53:49 v: read keystroke="\x17" status=0
+2026/04/10 12:53:49 v: read keystroke="\x17" status=0
+2026/04/10 12:53:49 v: read keystroke="\x17" status=0
+2026/04/10 12:53:50 v: read keystroke=":" status=0
+2026/04/10 12:53:50 v: read keystroke="q" status=0
+2026/04/10 12:53:50 v: read keystroke="\r" status=0
+2026/04/10 12:53:51 v: read keystroke="SIGINT" status=10
+2026/04/10 13:03:04 v: read keystroke="j" status=0
+2026/04/10 13:03:04 1
+2026/04/10 13:03:04 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:03:04 15
+2026/04/10 13:03:05 v: read keystroke="j" status=0
+2026/04/10 13:03:05 1
+2026/04/10 13:03:05 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:03:05 43
+2026/04/10 13:03:07 v: read keystroke="i" status=0
+2026/04/10 13:03:09 v: read keystroke="k" status=0
+2026/04/10 13:04:48 v: read keystroke="j" status=0
+2026/04/10 13:04:48 1
+2026/04/10 13:04:48 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:04:48 15
+2026/04/10 13:04:49 v: read keystroke="l" status=0
+2026/04/10 13:04:50 v: read keystroke="l" status=0
+2026/04/10 13:04:50 v: read keystroke="i" status=0
+2026/04/10 13:04:52 v: read keystroke="a" status=0
+2026/04/10 13:04:52 RUNES: ['a']
+2026/04/10 13:06:06 v: read keystroke="j" status=0
+2026/04/10 13:06:06 1
+2026/04/10 13:06:06 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:06:06 15
+2026/04/10 13:06:07 v: read keystroke="j" status=0
+2026/04/10 13:06:07 1
+2026/04/10 13:06:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:06:07 43
+2026/04/10 13:06:08 v: read keystroke="k" status=0
+2026/04/10 13:06:08 1
+2026/04/10 13:06:08 FIRST BACKWORD: 42
+2026/04/10 13:06:08 YAHHHHOOOO 15
+2026/04/10 13:06:08 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:06:08 15
+2026/04/10 13:06:08 v: read keystroke="l" status=0
+2026/04/10 13:06:09 v: read keystroke="l" status=0
+2026/04/10 13:06:11 v: read keystroke="a" status=0
+2026/04/10 13:06:12 v: read keystroke="a" status=0
+2026/04/10 13:06:13 v: read keystroke="a" status=0
+2026/04/10 13:06:14 v: read keystroke="a" status=0
+2026/04/10 13:06:14 v: read keystroke="a" status=0
+2026/04/10 13:06:14 v: read keystroke="a" status=0
+2026/04/10 13:06:14 v: read keystroke="a" status=0
+2026/04/10 13:06:15 v: read keystroke="a" status=0
+2026/04/10 13:06:15 v: read keystroke="a" status=0
+2026/04/10 13:06:15 v: read keystroke="a" status=0
+2026/04/10 13:06:15 v: read keystroke="a" status=0
+2026/04/10 13:06:15 v: read keystroke="a" status=0
+2026/04/10 13:06:15 v: read keystroke="a" status=0
+2026/04/10 13:06:16 v: read keystroke="a" status=0
+2026/04/10 13:06:16 v: read keystroke="a" status=0
+2026/04/10 13:06:16 v: read keystroke="a" status=0
+2026/04/10 13:06:16 v: read keystroke="a" status=0
+2026/04/10 13:06:16 v: read keystroke="a" status=0
+2026/04/10 13:06:16 v: read keystroke="a" status=0
+2026/04/10 13:06:16 v: read keystroke="a" status=0
+2026/04/10 13:06:17 v: read keystroke="a" status=0
+2026/04/10 13:06:17 v: read keystroke="a" status=0
+2026/04/10 13:06:17 v: read keystroke="a" status=0
+2026/04/10 13:06:17 v: read keystroke="a" status=0
+2026/04/10 13:06:17 v: read keystroke="a" status=0
+2026/04/10 13:06:17 v: read keystroke="a" status=0
+2026/04/10 13:06:18 v: read keystroke="a" status=0
+2026/04/10 13:06:19 v: read keystroke="a" status=0
+2026/04/10 13:06:19 v: read keystroke="a" status=0
+2026/04/10 13:06:20 v: read keystroke="a" status=0
+2026/04/10 13:06:20 v: read keystroke="a" status=0
+2026/04/10 13:06:21 v: read keystroke="a" status=0
+2026/04/10 13:06:21 v: read keystroke="a" status=0
+2026/04/10 13:06:25 v: read keystroke="a" status=0
+2026/04/10 13:06:25 v: read keystroke="a" status=0
+2026/04/10 13:06:26 v: read keystroke="a" status=0
+2026/04/10 13:06:26 v: read keystroke="a" status=0
+2026/04/10 13:06:26 v: read keystroke="a" status=0
+2026/04/10 13:06:26 v: read keystroke="a" status=0
+2026/04/10 13:06:26 v: read keystroke="a" status=0
+2026/04/10 13:06:26 v: read keystroke="a" status=0
+2026/04/10 13:06:27 v: read keystroke="a" status=0
+2026/04/10 13:06:27 v: read keystroke="a" status=0
+2026/04/10 13:06:27 v: read keystroke="a" status=0
+2026/04/10 13:06:27 v: read keystroke="a" status=0
+2026/04/10 13:06:27 v: read keystroke="a" status=0
+2026/04/10 13:06:28 v: read keystroke="s" status=0
+2026/04/10 13:06:28 v: read keystroke="d" status=0
+2026/04/10 13:06:28 v: read keystroke="f" status=0
+2026/04/10 13:06:28 v: read keystroke="i" status=0
+2026/04/10 13:06:30 v: read keystroke="SIGINT" status=10
+2026/04/10 13:28:50 v: read keystroke="j" status=0
+2026/04/10 13:28:50 1
+2026/04/10 13:28:50 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:28:50 15
+2026/04/10 13:28:55 v: read keystroke="h" status=0
+2026/04/10 13:28:57 v: read keystroke="h" status=0
+2026/04/10 13:28:57 v: read keystroke="h" status=0
+2026/04/10 13:28:57 v: read keystroke="h" status=0
+2026/04/10 13:28:57 v: read keystroke="h" status=0
+2026/04/10 13:28:58 v: read keystroke="h" status=0
+2026/04/10 13:28:58 v: read keystroke="h" status=0
+2026/04/10 13:28:58 v: read keystroke="h" status=0
+2026/04/10 13:28:58 v: read keystroke="j" status=0
+2026/04/10 13:28:58 1
+2026/04/10 13:28:58 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:28:58 43
+2026/04/10 13:28:59 v: read keystroke="j" status=0
+2026/04/10 13:28:59 1
+2026/04/10 13:28:59 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:28:59 70
+2026/04/10 13:28:59 v: read keystroke="k" status=0
+2026/04/10 13:28:59 1
+2026/04/10 13:28:59 FIRST BACKWORD: 69
+2026/04/10 13:28:59 YAHHHHOOOO 43
+2026/04/10 13:28:59 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:28:59 43
+2026/04/10 13:28:59 v: read keystroke="k" status=0
+2026/04/10 13:28:59 1
+2026/04/10 13:28:59 FIRST BACKWORD: 42
+2026/04/10 13:28:59 YAHHHHOOOO 15
+2026/04/10 13:28:59 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:28:59 15
+2026/04/10 13:28:59 v: read keystroke="j" status=0
+2026/04/10 13:28:59 1
+2026/04/10 13:28:59 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:28:59 43
+2026/04/10 13:28:59 v: read keystroke="j" status=0
+2026/04/10 13:28:59 1
+2026/04/10 13:28:59 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:28:59 70
+2026/04/10 13:29:00 v: read keystroke="k" status=0
+2026/04/10 13:29:00 1
+2026/04/10 13:29:00 FIRST BACKWORD: 69
+2026/04/10 13:29:00 YAHHHHOOOO 43
+2026/04/10 13:29:00 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:00 43
+2026/04/10 13:29:00 v: read keystroke="k" status=0
+2026/04/10 13:29:00 1
+2026/04/10 13:29:00 FIRST BACKWORD: 42
+2026/04/10 13:29:00 YAHHHHOOOO 15
+2026/04/10 13:29:00 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:00 15
+2026/04/10 13:29:00 v: read keystroke="k" status=0
+2026/04/10 13:29:00 1
+2026/04/10 13:29:00 FIRST BACKWORD: 14
+2026/04/10 13:29:00 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:00 15
+2026/04/10 13:29:01 v: read keystroke="j" status=0
+2026/04/10 13:29:01 1
+2026/04/10 13:29:01 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:01 43
+2026/04/10 13:29:01 v: read keystroke="j" status=0
+2026/04/10 13:29:01 1
+2026/04/10 13:29:01 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:01 70
+2026/04/10 13:29:01 v: read keystroke="k" status=0
+2026/04/10 13:29:01 1
+2026/04/10 13:29:01 FIRST BACKWORD: 69
+2026/04/10 13:29:01 YAHHHHOOOO 43
+2026/04/10 13:29:01 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:01 43
+2026/04/10 13:29:02 v: read keystroke="j" status=0
+2026/04/10 13:29:02 1
+2026/04/10 13:29:02 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:02 70
+2026/04/10 13:29:02 v: read keystroke="j" status=0
+2026/04/10 13:29:02 1
+2026/04/10 13:29:02 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:02 96
+2026/04/10 13:29:03 v: read keystroke="k" status=0
+2026/04/10 13:29:03 1
+2026/04/10 13:29:03 FIRST BACKWORD: 95
+2026/04/10 13:29:03 YAHHHHOOOO 70
+2026/04/10 13:29:03 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:03 70
+2026/04/10 13:29:03 v: read keystroke="k" status=0
+2026/04/10 13:29:03 1
+2026/04/10 13:29:03 FIRST BACKWORD: 69
+2026/04/10 13:29:03 YAHHHHOOOO 43
+2026/04/10 13:29:03 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:29:03 43
+2026/04/10 13:29:04 v: read keystroke="l" status=0
+2026/04/10 13:29:04 v: read keystroke="l" status=0
+2026/04/10 13:29:04 v: read keystroke="l" status=0
+2026/04/10 13:29:05 v: read keystroke="h" status=0
+2026/04/10 13:29:06 v: read keystroke="i" status=0
+2026/04/10 13:29:11 v: read keystroke="i" status=0
+2026/04/10 13:29:11 INSERT MODE
+2026/04/10 13:29:11 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:17 v: read keystroke="a" status=0
+2026/04/10 13:29:17 INSERT MODE
+2026/04/10 13:29:17 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:17 v: read keystroke="s" status=0
+2026/04/10 13:29:17 INSERT MODE
+2026/04/10 13:29:17 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:17 v: read keystroke="d" status=0
+2026/04/10 13:29:17 INSERT MODE
+2026/04/10 13:29:17 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:24 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:29:24 INSERT MODE
+2026/04/10 13:29:24 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 's' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:24 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:29:24 INSERT MODE
+2026/04/10 13:29:24 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 's' 'd' '\x1b' '\x1b' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:25 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:29:25 INSERT MODE
+2026/04/10 13:29:25 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 's' 'd' '\x1b' '\x1b' '\x1b' '\x1b' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:25 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:29:25 INSERT MODE
+2026/04/10 13:29:25 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 's' 'd' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:27 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:29:27 INSERT MODE
+2026/04/10 13:29:27 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 's' 'd' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:28 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:29:28 INSERT MODE
+2026/04/10 13:29:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 's' 'd' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:29 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:29:29 INSERT MODE
+2026/04/10 13:29:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 's' 'd' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:29:41 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:29:41 INSERT MODE
+2026/04/10 13:29:41 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'i' 'a' 's' 'd' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' '\x1b' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:31:52 v: read keystroke="k" status=0
+2026/04/10 13:31:52 1
+2026/04/10 13:31:52 FIRST BACKWORD: 0
+2026/04/10 13:31:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:52 0
+2026/04/10 13:31:52 v: read keystroke="k" status=0
+2026/04/10 13:31:52 1
+2026/04/10 13:31:52 FIRST BACKWORD: 0
+2026/04/10 13:31:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:52 0
+2026/04/10 13:31:52 v: read keystroke="j" status=0
+2026/04/10 13:31:52 1
+2026/04/10 13:31:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:52 15
+2026/04/10 13:31:52 v: read keystroke="j" status=0
+2026/04/10 13:31:52 1
+2026/04/10 13:31:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:52 43
+2026/04/10 13:31:52 v: read keystroke="j" status=0
+2026/04/10 13:31:52 1
+2026/04/10 13:31:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:52 70
+2026/04/10 13:31:52 v: read keystroke="j" status=0
+2026/04/10 13:31:52 1
+2026/04/10 13:31:52 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:52 96
+2026/04/10 13:31:53 v: read keystroke="k" status=0
+2026/04/10 13:31:53 1
+2026/04/10 13:31:53 FIRST BACKWORD: 95
+2026/04/10 13:31:53 YAHHHHOOOO 70
+2026/04/10 13:31:53 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:53 70
+2026/04/10 13:31:53 v: read keystroke="k" status=0
+2026/04/10 13:31:53 1
+2026/04/10 13:31:53 FIRST BACKWORD: 69
+2026/04/10 13:31:53 YAHHHHOOOO 43
+2026/04/10 13:31:53 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:53 43
+2026/04/10 13:31:53 v: read keystroke="j" status=0
+2026/04/10 13:31:53 1
+2026/04/10 13:31:53 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:53 70
+2026/04/10 13:31:53 v: read keystroke="k" status=0
+2026/04/10 13:31:53 1
+2026/04/10 13:31:53 FIRST BACKWORD: 69
+2026/04/10 13:31:53 YAHHHHOOOO 43
+2026/04/10 13:31:53 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:53 43
+2026/04/10 13:31:53 v: read keystroke="k" status=0
+2026/04/10 13:31:53 1
+2026/04/10 13:31:53 FIRST BACKWORD: 42
+2026/04/10 13:31:53 YAHHHHOOOO 15
+2026/04/10 13:31:53 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:53 15
+2026/04/10 13:31:53 v: read keystroke="k" status=0
+2026/04/10 13:31:53 1
+2026/04/10 13:31:53 FIRST BACKWORD: 14
+2026/04/10 13:31:53 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:53 15
+2026/04/10 13:31:54 v: read keystroke="j" status=0
+2026/04/10 13:31:54 1
+2026/04/10 13:31:54 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:31:54 43
+2026/04/10 13:31:54 v: read keystroke="l" status=0
+2026/04/10 13:31:54 v: read keystroke="l" status=0
+2026/04/10 13:31:56 v: read keystroke="i" status=0
+2026/04/10 13:31:59 v: read keystroke="i" status=0
+2026/04/10 13:31:59 INSERT MODE
+2026/04/10 13:31:59 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:32:15 v: read keystroke="SIGINT" status=10
+2026/04/10 13:38:06 v: read keystroke="j" status=0
+2026/04/10 13:38:06 1
+2026/04/10 13:38:06 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:06 15
+2026/04/10 13:38:07 v: read keystroke="j" status=0
+2026/04/10 13:38:07 1
+2026/04/10 13:38:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:07 43
+2026/04/10 13:38:07 v: read keystroke="j" status=0
+2026/04/10 13:38:07 1
+2026/04/10 13:38:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:07 70
+2026/04/10 13:38:07 v: read keystroke="j" status=0
+2026/04/10 13:38:07 1
+2026/04/10 13:38:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:07 96
+2026/04/10 13:38:07 v: read keystroke="j" status=0
+2026/04/10 13:38:07 1
+2026/04/10 13:38:07 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:07 125
+2026/04/10 13:38:09 v: read keystroke="k" status=0
+2026/04/10 13:38:09 1
+2026/04/10 13:38:09 FIRST BACKWORD: 124
+2026/04/10 13:38:09 YAHHHHOOOO 96
+2026/04/10 13:38:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:09 96
+2026/04/10 13:38:09 v: read keystroke="k" status=0
+2026/04/10 13:38:09 1
+2026/04/10 13:38:09 FIRST BACKWORD: 95
+2026/04/10 13:38:09 YAHHHHOOOO 70
+2026/04/10 13:38:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:09 70
+2026/04/10 13:38:09 v: read keystroke="k" status=0
+2026/04/10 13:38:09 1
+2026/04/10 13:38:09 FIRST BACKWORD: 69
+2026/04/10 13:38:09 YAHHHHOOOO 43
+2026/04/10 13:38:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:09 43
+2026/04/10 13:38:09 v: read keystroke="k" status=0
+2026/04/10 13:38:09 1
+2026/04/10 13:38:09 FIRST BACKWORD: 42
+2026/04/10 13:38:09 YAHHHHOOOO 15
+2026/04/10 13:38:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:09 15
+2026/04/10 13:38:09 v: read keystroke="k" status=0
+2026/04/10 13:38:09 1
+2026/04/10 13:38:09 FIRST BACKWORD: 14
+2026/04/10 13:38:09 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:09 15
+2026/04/10 13:38:10 v: read keystroke="j" status=0
+2026/04/10 13:38:10 1
+2026/04/10 13:38:10 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbob:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:10 43
+2026/04/10 13:38:10 v: read keystroke="l" status=0
+2026/04/10 13:38:11 v: read keystroke="l" status=0
+2026/04/10 13:38:11 v: read keystroke="i" status=0
+2026/04/10 13:38:17 v: read keystroke="l" status=0
+2026/04/10 13:38:17 INSERT MODE
+2026/04/10 13:38:17 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:25 v: read keystroke="l" status=0
+2026/04/10 13:38:25 INSERT MODE
+2026/04/10 13:38:25 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:26 v: read keystroke="k" status=0
+2026/04/10 13:38:26 INSERT MODE
+2026/04/10 13:38:26 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:26 v: read keystroke="s" status=0
+2026/04/10 13:38:26 INSERT MODE
+2026/04/10 13:38:26 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:26 v: read keystroke="d" status=0
+2026/04/10 13:38:26 INSERT MODE
+2026/04/10 13:38:26 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:26 v: read keystroke="a" status=0
+2026/04/10 13:38:26 INSERT MODE
+2026/04/10 13:38:26 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:26 v: read keystroke="j" status=0
+2026/04/10 13:38:26 INSERT MODE
+2026/04/10 13:38:26 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:26 v: read keystroke="s" status=0
+2026/04/10 13:38:26 INSERT MODE
+2026/04/10 13:38:26 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:27 v: read keystroke="h" status=0
+2026/04/10 13:38:27 INSERT MODE
+2026/04/10 13:38:27 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:27 v: read keystroke="a" status=0
+2026/04/10 13:38:27 INSERT MODE
+2026/04/10 13:38:27 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:27 v: read keystroke="j" status=0
+2026/04/10 13:38:27 INSERT MODE
+2026/04/10 13:38:27 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:27 v: read keystroke="s" status=0
+2026/04/10 13:38:27 INSERT MODE
+2026/04/10 13:38:27 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:27 v: read keystroke="h" status=0
+2026/04/10 13:38:27 INSERT MODE
+2026/04/10 13:38:27 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:27 v: read keystroke="d" status=0
+2026/04/10 13:38:27 INSERT MODE
+2026/04/10 13:38:27 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="a" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="j" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="s" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="d" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="h" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="a" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="j" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="s" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="d" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:28 v: read keystroke="h" status=0
+2026/04/10 13:38:28 INSERT MODE
+2026/04/10 13:38:28 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="j" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="a" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="s" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="d" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="h" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="a" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="j" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="s" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="d" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:29 v: read keystroke="h" status=0
+2026/04/10 13:38:29 INSERT MODE
+2026/04/10 13:38:29 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="a" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="s" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="j" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="d" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="h" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="a" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="s" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="j" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="d" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'j' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="h" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'j' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="a" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:30 v: read keystroke="s" status=0
+2026/04/10 13:38:30 INSERT MODE
+2026/04/10 13:38:30 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:31 v: read keystroke="j" status=0
+2026/04/10 13:38:31 INSERT MODE
+2026/04/10 13:38:31 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:31 v: read keystroke="d" status=0
+2026/04/10 13:38:31 INSERT MODE
+2026/04/10 13:38:31 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'j' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:33 v: read keystroke="\x1bj" status=0
+2026/04/10 13:38:33 INSERT MODE
+2026/04/10 13:38:33 RUNES: ['r' 'o' 'o' 't' ':' '1' '2' '3' '4' ':' '1' '0' '0' '0' '\n' 'v' 'i' 'a' 'a' 'n' ':' 'g' 'o' 'a' 't' ':' '1' '0' '0' '1' ':' '/' 'h' 'o' 'm' 'e' '/' 'v' 'i' 'a' 'a' 'n' '\n' 'b' 'o' 'l' 'l' 'k' 's' 'd' 'a' 'j' 's' 'h' 'a' 'j' 's' 'h' 'd' 'a' 'j' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'j' 'a' 's' 'd' 'h' 'a' 'j' 's' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'j' 'd' 'h' 'a' 's' 'j' 'd' 'b' ':' 'b' 'u' 'i' 'l' 'd' 'e' 'r' ':' '1' '0' '0' '2' ':' '/' 'h' 'o' 'm' 'e' '/' 'b' 'o' 'b' '\n' 't' 'e' 's' 't' ':' 't' 'e' 's' 't' ':' '1' '0' '0' '3' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '\n' 'd' 'a' 'd' ':' 'v' 'i' 'b' 'e' 'c' 'o' 'd' 'e' 'r' ':' '1' '0' '0' '4' ':' '/' 'h' 'o' 'm' 'e' '/' 'd' 'a' 'd' '\n' 't' 'e' 's' 't' '1' ':' 't' 'e' 's' 't' '1' ':' '1' '0' '0' '5' ':' '/' 'h' 'o' 'm' 'e' '/' 't' 'e' 's' 't' '1' '\n']
+2026/04/10 13:38:34 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:35 v: read keystroke="\x1bj" status=0
+2026/04/10 13:38:36 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:36 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:36 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:37 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:37 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:37 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:38 v: read keystroke="\x1bj" status=0
+2026/04/10 13:38:38 v: read keystroke="j" status=0
+2026/04/10 13:38:38 53
+2026/04/10 13:38:38 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbollksdajshajshdajsdhajsdhjasdhajsdhasjdhasjdhasjd\x1bjb:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:38 172
+2026/04/10 13:38:39 v: read keystroke="k" status=0
+2026/04/10 13:38:39 27
+2026/04/10 13:38:39 FIRST BACKWORD: 145
+2026/04/10 13:38:39 YAHHHHOOOO 146
+2026/04/10 13:38:39 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbollksdajshajshdajsdhajsdhjasdhajsdhasjdhasjdhasjd\x1bjb:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:39 146
+2026/04/10 13:38:39 v: read keystroke="k" status=0
+2026/04/10 13:38:39 1
+2026/04/10 13:38:39 FIRST BACKWORD: 145
+2026/04/10 13:38:39 YAHHHHOOOO 120
+2026/04/10 13:38:39 "root:1234:1000\nviaan:goat:1001:/home/viaan\nbollksdajshajshdajsdhajsdhjasdhajsdhasjdhasjdhasjd\x1bjb:builder:1002:/home/bob\ntest:test:1003:/home/test\ndad:vibecoder:1004:/home/dad\ntest1:test1:1005:/home/test1\n"
+2026/04/10 13:38:39 120
+2026/04/10 13:38:40 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:41 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:41 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:41 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 13:38:42 v: read keystroke="\x1b\x1b" status=0
+2026/04/10 18:26:26 v: read keystroke="SIGINT" status=10

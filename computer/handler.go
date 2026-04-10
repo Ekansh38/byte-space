@@ -2,11 +2,11 @@ package computer
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net"
-	"context"
 
 	"byte-space/utils"
 )
@@ -29,17 +29,17 @@ func (c *Computer) HandleClient(conn net.Conn) {
 	connCtx, connCancel := context.WithCancel(context.Background())
 
 	go func() {
+		ttyDesc := c.Kernel.OpenTTY(tty) // pointer to that tty file FileDescription, it makes one too!
 		daddyProc := &Process{
-			PID:  0,
-			UID:  "root",
-			EUID: "root",
-			CWD:  "/",
-			PGID: 0,
-		}
-		daddyProgram := &Shell{
-			ttyAPI: &TTYAPI{tty: tty, proc: daddyProc},
-		}
-		daddyProc.Program = daddyProgram // BOOTSTRAPPP!!!! I learned that word yesterday from the crafting interpetters book, pull urself up from ur own bootstraps!!!
+			PID:     0,
+			UID:     "root",
+			EUID:    "root",
+			CWD:     "/",
+			PGID:    0,
+			Program: &Shell{},
+			FDs:     []*FileDescription{ttyDesc, ttyDesc, ttyDesc}, // 0=stdin 1=stdout 2=stderr
+		} // BOOTSTRAPPP!!!! I learned that word yesterday from the crafting interpetters book, pull urself up from ur own bootstraps!!!
+		// all child processes so everything including the shell and everything the shell launches will inherit from this daddy proc.
 
 		if err := c.Kernel.Exec(connCtx, daddyProc, "/bin/login", []string{}, &ExecOpts{}); err != nil {
 			tty.writeToClient("\nInvalid login or exit.\r\n", utils.Exit)

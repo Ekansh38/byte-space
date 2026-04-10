@@ -8,53 +8,32 @@ import (
 )
 
 type LoginProgram struct {
-	id          string
-	graphicsAPI *GraphicsAPI
-	ttyAPI      *TTYAPI
-	Kernel      *Kernel
-	proc        *Process
+	id     string
+	Kernel *Kernel
+	proc   *Process
 }
 
-func (p *LoginProgram) SetProcess(proc *Process) {
-	p.proc = proc
-}
+func (p *LoginProgram) SetProcess(proc *Process) { p.proc = proc }
+func (p *LoginProgram) SetKernel(k *Kernel)      { p.Kernel = k }
+func (p *LoginProgram) ID() string               { return p.id }
 
-func (p *LoginProgram) TTYAPI() *TTYAPI {
-	return p.ttyAPI
-}
-
-func (p *LoginProgram) SetTTyAPI(api *TTYAPI) {
-	p.ttyAPI = api
-}
-
-func (p *LoginProgram) SetKernel(api *Kernel) {
-	p.Kernel = api
-}
-
-func (p *LoginProgram) AddGraphicsAPI(api *GraphicsAPI) {
-	p.graphicsAPI = api
-}
-
-func (p *LoginProgram) RemoveGraphicsAPI() {
-	p.graphicsAPI = nil
+func (p *LoginProgram) HandleSignal(sig Signal) {
+	if sig == SIGINT {
+		p.proc.ctxCancel()
+	}
 }
 
 func (p *LoginProgram) Run(ctx context.Context, returnStatus chan int, params []string) {
-	if p.graphicsAPI == nil {
-		returnStatus <- utils.Error
-		return
-	}
-
 	thisComputer := p.Kernel.computer
 
-	p.graphicsAPI.Write(thisComputer.OS.GetIssue())
-	p.graphicsAPI.Write("\r\nUSERNAME: ")
+	p.Kernel.Write(p.proc, 1, []byte(thisComputer.OS.GetIssue()))
+	p.Kernel.Write(p.proc, 1, []byte("\r\nUSERNAME: "))
 
 	username := ""
 	password := ""
 
 	for {
-		value, status := p.ttyAPI.Read(ctx)
+		value, status := p.Kernel.Read(p.proc, 0, ctx)
 		switch status {
 		case utils.Success:
 			if value == "" {
@@ -64,23 +43,22 @@ func (p *LoginProgram) Run(ctx context.Context, returnStatus chan int, params []
 
 			if username == "" {
 				username = value
-				p.ttyAPI.SetPasswdMode(true)
-				p.graphicsAPI.Write("\r\nPASSWORD: ")
+				p.Kernel.Ioctl(p.proc, 0, TIOCPASSWD, true)
+				p.Kernel.Write(p.proc, 1, []byte("\r\nPASSWORD: "))
 
 			} else if password == "" {
 				password = value
-				p.ttyAPI.SetPasswdMode(false)
+				p.Kernel.Ioctl(p.proc, 0, TIOCPASSWD, false)
 
 				if thisComputer.OS.Login(username, password) == utils.Success {
-					p.graphicsAPI.Write(strings.ReplaceAll(thisComputer.OS.GetMotd(), "[[USERNAME]]", username))
+					p.Kernel.Write(p.proc, 1, []byte(strings.ReplaceAll(thisComputer.OS.GetMotd(), "[[USERNAME]]", username)))
 
-					sessionStatus, sessionID := thisComputer.NewSession(username, p.ttyAPI.tty)
+					sessionStatus, _ := p.Kernel.NewSession(p.proc, username)
 					if sessionStatus != utils.Success {
 						returnStatus <- utils.Error
 						return
 					}
 
-					p.ttyAPI.SetSession(thisComputer.sessions[sessionID])
 					returnStatus <- utils.Success
 					return
 				}
@@ -94,17 +72,4 @@ func (p *LoginProgram) Run(ctx context.Context, returnStatus chan int, params []
 			return
 		}
 	}
-}
-
-func (p *LoginProgram) HandleSignal(sig Signal) {
-	if sig == SIGINT {
-		// close this program, this will close any child processes which is neat, cuz they will be children.
-		// propagation
-		// i think u can call ctxCancel even if its already canceled so it should be okay.
-		p.proc.ctxCancel()
-	}
-}
-
-func (p *LoginProgram) ID() string {
-	return p.id
 }
