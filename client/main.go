@@ -4,6 +4,9 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"byte-space/utils"
 
@@ -21,10 +24,20 @@ func commandLoop(c net.Conn, mode string, done <-chan struct{}) {
 	input := make(chan []byte)
 	keystroke := make([]byte, 0)
 
+	winch := make(chan os.Signal, 1)
+	signal.Notify(winch, syscall.SIGWINCH)
+	defer signal.Stop(winch)
+
 	go readLoop(input)
 
 	for {
 		select {
+		case <-winch:
+			if writeToEngine(c, "", mode) == utils.Error {
+				return
+			}
+			continue
+
 		case b, ok := <-input:
 			if !ok {
 				return
@@ -34,7 +47,22 @@ func commandLoop(c net.Conn, mode string, done <-chan struct{}) {
 			if len(keystroke) == 0 {
 				keystroke = append(keystroke, b[0])
 				if int(b[0]) == 27 { // ESC
+					next, ok := readWithTimeout(input, 30*time.Millisecond)
+
+					if !ok {
+						// actually just esc
+						if writeToEngine(c, string(keystroke), mode) == utils.Error {
+							return
+						}
+						keystroke = nil
+						continue
+					}
+
+					// More input → it's a sequence
+					keystroke = append(keystroke, next[0])
 					canWrite = false
+					continue
+
 				}
 			} else if len(keystroke) == 1 && int(keystroke[0]) == 27 {
 				keystroke = append(keystroke, b[0])
@@ -83,5 +111,14 @@ func readLoop(input chan []byte) {
 			return
 		}
 		input <- b[:n]
+	}
+}
+
+func readWithTimeout(input chan []byte, timeout time.Duration) ([]byte, bool) {
+	select {
+	case b := <-input:
+		return b, true
+	case <-time.After(timeout):
+		return nil, false
 	}
 }

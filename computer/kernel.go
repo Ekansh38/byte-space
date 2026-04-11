@@ -1,5 +1,11 @@
 package computer
 
+// okay ill be honest this is not really a real kernel. all the cool juicy stuff like virtual memory, timers all that
+// is mostly managed by the go runtime and the real operating system kernel, this is more like a syscall api.
+// keep that in mind!
+
+// one day ill build an ACTUAL kernel that boots on startup and does all that jazz but, imma focus on byte-space for now...
+
 import (
 	"context"
 	"fmt"
@@ -10,6 +16,52 @@ import (
 
 	"byte-space/utils"
 )
+
+// FDType represents the type of a file description, rn its only TTY but latr it can be pipes and stuff
+type FDType int
+
+const (
+	FDTTY  FDType = iota
+	FDFile        // for later additions, rn no need!
+	FDSocket  // for networking later
+	FDPipe
+)
+
+// Multiple processes share the same FileDescription pointer
+type FileDescription struct {
+	Type FDType
+	TTY  *TTY // valid when Type == FDTTY else its NIL
+	refs int
+}
+
+type IoctlReq int
+
+const (
+	TIOCRAW       IoctlReq = iota // raw mode (true o false)
+	TIOCPASSWD                    // password masking (true o false)
+	TIOCSPGRP                     // set foreground process group (int)
+	TIOCBUFFCLEAR                 // clear the line buffer (no arg)
+	TIOCSESSION                   // attach session to TTY (*session)
+	TIOCSWINSZ                    // set terminal dimensions (Winsize)
+	TIOCGWINSZ                    // get terminal dimensions (*Winsize)
+)
+
+// Winsize holds terminal dimensions, mirrors the Unix winsize struct.
+type Winsize struct {
+	Width  int
+	Height int
+}
+
+// any nerds curious what TIOC means?
+// it means TTY I/O Control (pretty cool if I do say so myself!)
+
+type Program interface {
+	SetProcess(proc *Process)
+	SetKernel(k *Kernel)
+	ID() string
+	Run(ctx context.Context, returnStatus chan int, params []string)
+	HandleSignal(sig Signal)
+}
 
 type Kernel struct {
 	computer *Computer

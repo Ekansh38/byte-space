@@ -12,49 +12,6 @@ import (
 	"byte-space/utils"
 )
 
-// FDType represents the type of a file description, rn its only TTY but latr it can be pipes and stuff
-type FDType int
-
-const (
-	FDTTY  FDType = iota
-	FDFile        // for later additions, rn no need!
-)
-
-// Multiple processes share the same FileDescription pointer
-type FileDescription struct {
-	Type FDType
-	TTY  *TTY // valid when Type == FDTTY else its NIL
-	refs int
-}
-
-type IoctlReq int
-
-const (
-	TIOCRAW       IoctlReq = iota // raw mode (true o false)
-	TIOCPASSWD                    // password masking (true o false)
-	TIOCSPGRP                     // set foreground process group (int)
-	TIOCBUFFCLEAR                 // clear the line buffer (no arg)
-	TIOCSESSION                   // attach session to TTY (*session)
-	TIOCSWINSZ                    // set terminal dimensions (Winsize)
-	TIOCGWINSZ                    // get terminal dimensions (*Winsize)
-)
-
-// Winsize holds terminal dimensions, mirrors the Unix winsize struct.
-type Winsize struct {
-	Width  int
-	Height int
-}
-
-// any nerds curious what TIOC means?
-// it means TTY I/O Control (pretty cool if I do say so myself!)
-
-type Program interface {
-	SetProcess(proc *Process)
-	SetKernel(k *Kernel)
-	ID() string
-	Run(ctx context.Context, returnStatus chan int, params []string)
-	HandleSignal(sig Signal)
-}
 
 type TTY struct {
 	io.Writer
@@ -287,7 +244,7 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 				if t.CursorPosition != 0 {
 					t.CursorPosition -= 1
 				}
-			case "\x1b[A", "\x1b[B", "\x1b\x7f", "\x1bw", "\x15", "\x02":
+			case "\x1b[A", "\x1b[B", "\x1b\x7f", "\x1bw", "\x15", "\x02", "\x1b":
 				continue
 			default:
 

@@ -144,7 +144,7 @@ func waitForEvent(ch chan computer.Event) tea.Cmd {
 }
 
 func (m Model) Init() tea.Cmd {
-	return tea.Batch(tea.EnterAltScreen, waitForEvent(m.events))
+	return waitForEvent(m.events)
 }
 
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -916,8 +916,13 @@ func (m Model) combinePanels(left, middle, right string, leftW, middleW, rightW 
 	writeCell := func(i int, lines []string, w int) {
 		if i < len(lines) {
 			line := lines[i]
+			lineW := lipgloss.Width(line)
+			if lineW > w {
+				line = truncateLogLine(line, w)
+				lineW = w
+			}
 			result.WriteString(line)
-			if pad := w - lipgloss.Width(line); pad > 0 {
+			if pad := w - lineW; pad > 0 {
 				result.WriteString(strings.Repeat(" ", pad))
 			}
 		} else {
