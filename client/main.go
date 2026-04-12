@@ -13,7 +13,7 @@ import (
 	"golang.org/x/term"
 )
 
-func commandLoop(c net.Conn, mode string, done <-chan struct{}) {
+func commandLoop(c net.Conn, done <-chan struct{}) {
 	fd := int(os.Stdin.Fd())
 	oldState, err := term.MakeRaw(fd)
 	if err != nil {
@@ -33,7 +33,7 @@ func commandLoop(c net.Conn, mode string, done <-chan struct{}) {
 	for {
 		select {
 		case <-winch:
-			if writeToEngine(c, "", mode) == utils.Error {
+			if writeToEngine(c, "") == utils.Error {
 				return
 			}
 			continue
@@ -51,7 +51,7 @@ func commandLoop(c net.Conn, mode string, done <-chan struct{}) {
 
 					if !ok {
 						// actually just esc
-						if writeToEngine(c, string(keystroke), mode) == utils.Error {
+						if writeToEngine(c, string(keystroke)) == utils.Error {
 							return
 						}
 						keystroke = nil
@@ -90,7 +90,7 @@ func commandLoop(c net.Conn, mode string, done <-chan struct{}) {
 			}
 
 			if canWrite {
-				if writeToEngine(c, string(keystroke), mode) == utils.Error {
+				if writeToEngine(c, string(keystroke)) == utils.Error {
 					return
 				}
 				keystroke = make([]byte, 0)

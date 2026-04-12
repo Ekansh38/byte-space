@@ -1,4 +1,9 @@
-package client
+package admin
+
+const (
+	adminPrompt = "admin> "
+	clearCommand = "clear"
+)
 
 const (
 	invalidMode = 1

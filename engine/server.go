@@ -2,6 +2,8 @@
 package engine
 
 import (
+	"bufio"
+	"encoding/json"
 	"log"
 	"net"
 	"os"
@@ -21,7 +23,26 @@ func (e *Engine) Run() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		go e.handleClient(conn)
+		go e.handleConn(conn)
 
 	}
+}
+
+func (e *Engine) handleConn(c net.Conn) {
+	// handle init message, based on that send off to correct place (for client, handleclient, for admin handleAdmin)
+
+	scanner := bufio.NewScanner(c)
+	for scanner.Scan() {
+		var msg ClientIPCMessage
+		if err := json.Unmarshal(scanner.Bytes(), &msg); err != nil {
+			continue
+		}
+
+		if msg.Program == "user" {
+			e.handleClient(c)
+		} else if msg.Program == "admin" {
+			e.handleAdmin(c)
+		}
+	}
+
 }

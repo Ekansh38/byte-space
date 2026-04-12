@@ -15,13 +15,9 @@ import (
 	"golang.org/x/term"
 )
 
-var (
-	prompt = adminPrompt
-)
-
-func writeToEngine(c net.Conn, rawKeystroke string, mode string) int {
+func writeToEngine(c net.Conn, rawKeystroke string) int {
 	w, h, _ := term.GetSize(int(os.Stdin.Fd()))
-	data := engine.ClientIPCMessage{Program: mode, RequestID: 1, Keystroke: rawKeystroke, Width: w, Height: h}
+	data := engine.ClientIPCMessage{Program: "user", Keystroke: rawKeystroke, Width: w, Height: h}
 
 	jsonData, err := json.Marshal(data)
 	if err != nil {
@@ -74,66 +70,35 @@ func runBanansi(message *engine.EngineIPCMessage) {
 	}
 }
 
-func ConnectToEngine(mode string) {
+func ConnectToEngine() {
 	c, err := net.Dial("unix", "/tmp/engine.sock")
 	if err != nil {
 		fmt.Println("Could not connect to engine!")
 		os.Exit(couldNotConnectToEngine)
 	}
 
-	//if mode == "user" {
-	//	connectToWorkstation(c)
-	//}
+	sendInitMessage(c)
 
 	done := make(chan struct{})
 
 	go engineReader(c, done)
-	commandLoop(c, mode, done)
+	commandLoop(c, done)
 }
 
-func getInput(prompt string) string {
-	fmt.Print(prompt)
-	var input string
-	_, err := fmt.Scanln(&input)
+func sendInitMessage(c net.Conn) {
+	w, h, _ := term.GetSize(int(os.Stdin.Fd()))
+	data := engine.ClientIPCMessage{Program: "user", Keystroke: "", Width: w, Height: h}
+
+	jsonData, err := json.Marshal(data)
 	if err != nil {
-		log.Fatalf("Error reading input: %v", err)
+		log.Fatalf("Error occurred during marshalling: %s", err.Error())
 	}
-	return input
+
+	jsonData = append(jsonData, '\n')
+
+	_, err = c.Write([]byte(jsonData))
+	if err != nil {
+		log.Println("Could not write to server!")
+	}
 }
 
-//func connectToWorkstation(c net.Conn) {
-//	// list workstations and ask user to select one
-//
-//	writeToEngine(c, "list-nodes computer", "admin")
-//	fmt.Println("Select a workstation to connect to:")
-//	msg := engineReader(c)
-//	if msg.Result == "No machines on network" {
-//		fmt.Println("No workstations found on the network. Please add a workstation before connecting.")
-//		os.Exit(noWorkstationsFound)
-//	}
-//
-//	fmt.Println(msg.Result)
-//
-//	workstation := getInput("Enter workstation name (case-sensitive): ")
-//
-//	writeToEngine(c, fmt.Sprintf("connect %s", workstation), "connection")
-//
-//	msg = engineReader(c)
-//	if msg.Status != utils.Success {
-//		fmt.Printf("Could not connect to workstation %s. Please check the name and try again.\n", workstation)
-//		os.Exit(noWorkstationsFound)
-//	}
-//	fmt.Printf("%s", msg.Result)
-//	username := getInput("")
-//	writeToEngine(c, fmt.Sprintf("username %s", username), "connection")
-//	engineReader(c)
-//	password := getInput("")
-//	writeToEngine(c, fmt.Sprintf("login %s %s %s", workstation, username, password), "connection")
-//	engineReader(c)
-//	if loginMsg.Status != utils.Success {
-//		displayResponse(&engine.EngineIPCMessage{Status: loginMsg.Status, Result: "Login failed. Please check your credentials and try again."})
-//		os.Exit(invalidCredentials)
-//	}
-//	sessionID = loginMsg.SessionID
-//	fmt.Printf("Successfully connected to workstation %s with username %s. Session ID: %s\n", workstation, username, sessionID)
-//}

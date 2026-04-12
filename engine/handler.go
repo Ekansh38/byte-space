@@ -72,3 +72,17 @@ func (e *Engine) handleClient(conn net.Conn) {
 
 	conn.Close()
 }
+
+func getNodeByName(e *Engine, name string) (*computer.Computer, bool) {
+	for _, node := range e.nodes {
+		if node.Name == name {
+			return node, true
+		}
+	}
+	return nil, false
+}
+
+
+
+
+

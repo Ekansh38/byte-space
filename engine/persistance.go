@@ -2,7 +2,6 @@ package engine
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -73,15 +72,14 @@ func (e *Engine) LoadNetwork() error {
 		e.nodes[nodeConfig.IP] = node
 	}
 
-	fmt.Printf("Loaded %d nodes from disk\n", len(config.Nodes))
 	return nil
 }
 
-func (e *Engine) resetNetwork() *computer.EngineIPCMessage {
+func (e *Engine) resetNetwork() (string, int) {
 	os.RemoveAll(networkPath)
 
 	// Clear from memory
 	e.nodes = make(map[string]*computer.Computer)
 
-	return computer.NewIPCMessage("Network reset (memory + disk cleared)", utils.Success)
+	return "Network reset (memory + disk cleared)", utils.Success
 }

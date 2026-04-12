@@ -133,11 +133,11 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 					continue
 				}
 				if keystroke == "l" {
-					if p.cursorCol < len(p.buffer[p.cursorRow-1]) {
+					if p.cursorCol-1 < len(p.buffer[p.cursorRow-1]) {
 						p.cursorCol += 1
 					}
 				} else if keystroke == "h" {
-					if p.cursorCol-2 >= 0 {
+					if p.cursorCol-1 >= 0 {
 						p.cursorCol -= 1
 					}
 				} else if keystroke == "i" {
@@ -151,8 +151,8 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 					// +0 means +1, -1 means regular
 					if p.cursorRow < len(p.buffer)-1 {
 
-						if len(p.buffer[p.cursorRow+0]) < p.cursorCol {
-							p.cursorCol = len(p.buffer[p.cursorRow+0]) // cuz len is not index!!! oioiiooioioi
+						if len(p.buffer[p.cursorRow+0]) < p.cursorCol-1 {
+							p.cursorCol = len(p.buffer[p.cursorRow+0])+1 // cuz len is not index!!! oioiiooioioi
 						}
 
 						p.cursorRow++
@@ -162,8 +162,8 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 				if keystroke == "k" {
 					if p.cursorRow > 1 {
 						// -2 = -1
-						if len(p.buffer[p.cursorRow-2]) < p.cursorCol {
-							p.cursorCol = len(p.buffer[p.cursorRow-2])
+						if len(p.buffer[p.cursorRow-2]) < p.cursorCol-1 {
+							p.cursorCol = len(p.buffer[p.cursorRow-2])+1
 						}
 
 						p.cursorRow--
@@ -186,11 +186,56 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 
 				// insertion logic
 				switch keystroke {
-				case "\x1b[A", "\x1b[B", "\x1b\x7f", "\x1bw", "\x15", "\x02", "\x1b":
+				case "\x1b\x7f", "\x1bw", "\x15", "\x02", "\x1b", "\x1b[A", "\x1b[B", "\x1b[C", "\x1b[D":
 					continue
+				case "\r": // enter
+					row := p.cursorRow - 1
+					col := p.cursorCol - 1
+
+					line := p.buffer[row]
+
+					left := line[:col]
+					right := line[col:]
+
+					p.buffer[row] = left
+
+					p.buffer = append(
+						p.buffer[:row+1],
+						append([][]byte{right}, p.buffer[row+1:]...)...,
+					)
+
+					p.cursorRow++
+					p.cursorCol = 1
+				case "\x7f": // delete
+					runes := []rune(string(p.buffer[p.cursorRow-1]))
+
+					if p.cursorCol > 1 {
+						// normal delete
+						idx := p.cursorCol - 1
+						runes = append(runes[:idx-1], runes[idx:]...)
+						p.buffer[p.cursorRow-1] = []byte(string(runes))
+						p.cursorCol--
+
+					} else if p.cursorRow > 1 {
+						// merge with previous line
+						prev := p.buffer[p.cursorRow-2]
+						curr := p.buffer[p.cursorRow-1]
+
+						newLine := append(prev, curr...)
+
+						p.buffer[p.cursorRow-2] = newLine
+						p.buffer = append(p.buffer[:p.cursorRow-1], p.buffer[p.cursorRow:]...)
+
+						p.cursorRow--
+						p.cursorCol = len(prev) + 1
+					}
+
 				default:
 
 					index := p.cursorCol - 1 // minus 1 because its an index
+					if index < 0 {
+						index = 0
+					}
 					data := keystroke
 					if data == "\t" {
 						data = "    " // expand tab to 4 spaces in buffer
