@@ -1,8 +1,7 @@
 package admin
 
 const (
-	adminPrompt = "admin> "
-	clearCommand = "clear"
+	adminPrompt = "@> "
 )
 
 const (
