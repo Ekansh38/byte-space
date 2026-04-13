@@ -139,7 +139,7 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 	for {
 		select {
 		case receivedData := <-t.dataChannel:
-			if strings.HasPrefix(receivedData, "\x1b[1;5") {
+			if strings.HasPrefix(receivedData, "\x1b[1;5") { // incomplete key.
 				continue
 			}
 

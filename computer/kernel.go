@@ -21,9 +21,9 @@ import (
 type FDType int
 
 const (
-	FDTTY  FDType = iota
-	FDFile        // for later additions, rn no need!
-	FDSocket  // for networking later
+	FDTTY    FDType = iota
+	FDFile          // for later additions, rn no need!
+	FDSocket        // for networking later
 	FDPipe
 )
 

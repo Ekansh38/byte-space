@@ -36,7 +36,7 @@ func (p *VEdit) HandleSignal(sig computer.Signal) {
 		p.Kernel.Ioctl(p.proc, 0, computer.TIOCBUFFCLEAR, nil)
 		p.Kernel.Ioctl(p.proc, 0, computer.TIOCRAW, false)
 		p.Kernel.Write(p.proc, 1, []byte("\033[H\033[2J"))
-		p.Kernel.Write(p.proc, 1, []byte("\n(SIGINT), force quitting!\n"))
+		p.Kernel.Write(p.proc, 1, []byte("\n(SIGINT), quitting!\n"))
 		p.proc.CtxCancel()
 
 	} else if sig == computer.SIGWINCH {
@@ -259,7 +259,8 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 			p.vDraw()
 
 		case utils.Exit:
-			returnStatus <- utils.Error
+			// exiting on ctrl-c is correct behaviour in V!
+			returnStatus <- utils.Success
 			return
 		}
 	}
