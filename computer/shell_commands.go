@@ -48,6 +48,7 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 
 	output := ""
 	longestOwnerName := -1
+
 	for _, file := range files {
 		filePath := path.Join(dir, file.Name())
 		meta, _ := p.Kernel.Stat(p.proc, filePath)
@@ -58,12 +59,14 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 
 	for _, file := range files {
 		if flag == "" {
+			// REGULAR FORMAT
 			if file.IsDir() {
 				output += fmt.Sprintf("\033[94;1m%s\033[0m\n", file.Name())
 			} else {
 				output += fmt.Sprintf("\033[97m%s\033[0m\n", file.Name())
 			}
 		} else if flag == "-l" {
+			// LONG FORMAT
 			filePath := path.Join(dir, file.Name())
 			meta, _ := p.Kernel.Stat(p.proc, filePath)
 			perms := formatMode(meta.OwnerMode, meta.OtherMode, meta.Setuid)
