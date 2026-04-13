@@ -1,4 +1,4 @@
-package computer
+package v
 
 import (
 	"context"
@@ -6,13 +6,14 @@ import (
 	"log"
 	"strings"
 
+	"byte-space/computer"
 	"byte-space/utils"
 )
 
-type VEdit struct { // Not nvim, not vim, not even vi, just v
+type VEdit struct { // Not nvim, not vim, not even vi, just v (a prequel, to vi)
 	id         string
-	Kernel     *Kernel
-	proc       *Process
+	Kernel     *computer.Kernel
+	proc       *computer.Process
 	termHeight int
 	termWdith  int
 	cursorRow  int
@@ -24,21 +25,23 @@ type VEdit struct { // Not nvim, not vim, not even vi, just v
 	didWrite   bool
 }
 
-func (p *VEdit) SetProcess(proc *Process) { p.proc = proc }
-func (p *VEdit) SetKernel(k *Kernel)      { p.Kernel = k }
+func New(pid int) computer.Program { return &VEdit{id: fmt.Sprintf("v-%d", pid)} }
+
+func (p *VEdit) SetProcess(proc *computer.Process) { p.proc = proc }
+func (p *VEdit) SetKernel(k *computer.Kernel)      { p.Kernel = k }
 func (p *VEdit) ID() string               { return p.id }
 
-func (p *VEdit) HandleSignal(sig Signal) {
-	if sig == SIGINT {
-		p.Kernel.Ioctl(p.proc, 0, TIOCBUFFCLEAR, nil)
-		p.Kernel.Ioctl(p.proc, 0, TIOCRAW, false)
+func (p *VEdit) HandleSignal(sig computer.Signal) {
+	if sig == computer.SIGINT {
+		p.Kernel.Ioctl(p.proc, 0, computer.TIOCBUFFCLEAR, nil)
+		p.Kernel.Ioctl(p.proc, 0, computer.TIOCRAW, false)
 		p.Kernel.Write(p.proc, 1, []byte("\033[H\033[2J"))
 		p.Kernel.Write(p.proc, 1, []byte("\n(SIGINT), force quitting!\n"))
-		p.proc.ctxCancel()
+		p.proc.CtxCancel()
 
-	} else if sig == SIGWINCH {
-		var ws Winsize
-		p.Kernel.Ioctl(p.proc, 0, TIOCGWINSZ, &ws)
+	} else if sig == computer.SIGWINCH {
+		var ws computer.Winsize
+		p.Kernel.Ioctl(p.proc, 0, computer.TIOCGWINSZ, &ws)
 		p.termHeight = ws.Height
 		p.termWdith = ws.Width
 		p.vDraw()
@@ -64,7 +67,7 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 		return
 	}
 
-	if err := p.Kernel.Ioctl(p.proc, 0, TIOCRAW, true); err != nil {
+	if err := p.Kernel.Ioctl(p.proc, 0, computer.TIOCRAW, true); err != nil {
 		p.Kernel.Write(p.proc, 1, []byte(fmt.Sprintf("\nError setting raw p.mode: %s\n", err)))
 		returnStatus <- utils.Error
 		return
@@ -81,8 +84,8 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 	p.cursorCol = 1
 	p.cursorRow = 1
 
-	var ws Winsize
-	p.Kernel.Ioctl(p.proc, 0, TIOCGWINSZ, &ws)
+	var ws computer.Winsize
+	p.Kernel.Ioctl(p.proc, 0, computer.TIOCGWINSZ, &ws)
 	p.termHeight = ws.Height - 1 // for status bar
 	p.statusBar = p.termHeight + 1
 	p.termWdith = ws.Width
@@ -107,10 +110,10 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 				}
 				err := p.Kernel.WriteFile(p.proc, target, actualBuffer) // with newlines and all
 				if err != nil {
-					p.Kernel.Ioctl(p.proc, 0, TIOCBUFFCLEAR, nil)
-					p.Kernel.Ioctl(p.proc, 0, TIOCRAW, false)
+					p.Kernel.Ioctl(p.proc, 0, computer.TIOCBUFFCLEAR, nil)
+					p.Kernel.Ioctl(p.proc, 0, computer.TIOCRAW, false)
 					p.Kernel.Write(p.proc, 1, []byte("ERROR WRITING TO FILE!"))
-					p.proc.ctxCancel()
+					p.proc.CtxCancel()
 				}
 				p.didWrite = true
 

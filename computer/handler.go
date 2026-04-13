@@ -36,7 +36,7 @@ func (c *Computer) HandleClient(conn net.Conn) {
 			EUID:    "root",
 			CWD:     "/",
 			PGID:    0,
-			Program: &Shell{},
+			Program: nil,
 			FDs:     []*FileDescription{ttyDesc, ttyDesc, ttyDesc}, // 0=stdin 1=stdout 2=stderr
 		} // BOOTSTRAPPP!!!! I learned that word yesterday from the crafting interpetters book, pull urself up from ur own bootstraps!!!
 		// all child processes so everything including the shell and everything the shell launches will inherit from this daddy proc.

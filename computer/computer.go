@@ -135,17 +135,8 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *Even
 		computer: computer,
 		EventBus: eb,
 		programs: map[string]func(int) Program{
-			"/bin/ls":      func(pid int) Program { return &Ls{id: fmt.Sprintf("ls-%d", pid)} },
-			"/bin/cat":     func(pid int) Program { return &Cat{id: fmt.Sprintf("cat-%d", pid)} },
-			"/bin/clear":   func(pid int) Program { return &Clear{id: fmt.Sprintf("clear-%d", pid)} },
 			"/bin/adduser": func(pid int) Program { return &Adduser{id: fmt.Sprintf("adduser-%d", pid)} },
 			"/bin/login":   func(pid int) Program { return &LoginProgram{id: fmt.Sprintf("login-%d", pid)} },
-			"/bin/sh":      func(pid int) Program { return &Shell{id: fmt.Sprintf("sh-%d", pid)} },
-			"/bin/mkdir":  func(pid int) Program { return &MkDir{id: fmt.Sprintf("mkdir-%d", pid)} },
-			"/bin/touch":  func(pid int) Program { return &Touch{id: fmt.Sprintf("touch-%d", pid)} },
-			"/bin/chmod":  func(pid int) Program { return &Chmod{id: fmt.Sprintf("chmod-%d", pid)} },
-			"/bin/rm":  func(pid int) Program { return &Rm{id: fmt.Sprintf("rm-%d", pid)} },
-			"/bin/v":  func(pid int) Program { return &VEdit{id: fmt.Sprintf("v-%d", pid)} },
 		},
 		procs: map[int]*Process{},
 	}

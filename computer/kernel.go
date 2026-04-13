@@ -83,6 +83,10 @@ type Kernel struct {
 	openFilesMu sync.Mutex
 }
 
+func (k *Kernel) RegisterProgram(path string, factory func(int) Program) {
+	k.programs[path] = factory
+}
+
 func (k *Kernel) PublishEvent(proc *Process, eventType EventType, data map[string]interface{}) {
 	k.EventBus.Publish(eventType, data)
 }
@@ -250,7 +254,7 @@ func (k *Kernel) Exec(parentCtx context.Context, parentProc *Process, binPath st
 		EUID:      euid,
 		CWD:       parentProc.CWD,
 		Program:   program,
-		ctxCancel: ctxCancel,
+		CtxCancel: ctxCancel,
 	}
 
 	k.procsMu.Lock()

@@ -19,7 +19,7 @@ func (p *LoginProgram) ID() string               { return p.id }
 
 func (p *LoginProgram) HandleSignal(sig Signal) {
 	if sig == SIGINT {
-		p.proc.ctxCancel()
+		p.proc.CtxCancel()
 	}
 }
 

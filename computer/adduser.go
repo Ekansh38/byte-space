@@ -22,7 +22,7 @@ func (p *Adduser) HandleSignal(sig Signal) {
 	if sig == SIGINT {
 		p.Kernel.Ioctl(p.proc, 0, TIOCBUFFCLEAR, nil)
 		p.Kernel.Write(p.proc, 1, []byte("\n(SIGINT), force quitting!\n"))
-		p.proc.ctxCancel()
+		p.proc.CtxCancel()
 	}
 }
 

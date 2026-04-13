@@ -69,6 +69,7 @@ func (e *Engine) LoadNetwork() error {
 
 	for _, nodeConfig := range config.Nodes {
 		node := computer.NewComputer(nodeConfig.Name, nodeConfig.IP, nodeConfig.Type, e, e.EventBus)
+		registerPrograms(node) // so when loading, or creating a new node you registerPrograms.
 		e.nodes[nodeConfig.IP] = node
 	}
 

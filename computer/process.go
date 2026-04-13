@@ -8,7 +8,7 @@ type Process struct {
 	EUID      string // effective user (Owner if setuid or then UID)
 	CWD       string // working dir snapshot at exec time
 	PGID      int
-	ctxCancel context.CancelFunc
+	CtxCancel context.CancelFunc
 
 	Program Program
 

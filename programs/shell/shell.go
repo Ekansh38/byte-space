@@ -1,4 +1,4 @@
-package computer
+package shell
 
 import (
 	"context"
@@ -6,19 +6,24 @@ import (
 	"path"
 	"strings"
 
+	"byte-space/computer"
 	"byte-space/utils"
 )
 
 type Shell struct {
 	id     string
-	Kernel *Kernel
-	proc   *Process
+	Kernel *computer.Kernel
+	proc   *computer.Process
 }
 
-func (s *Shell) SetProcess(proc *Process) { s.proc = proc }
-func (s *Shell) SetKernel(k *Kernel)      { s.Kernel = k }
-func (s *Shell) ID() string               { return s.id }
-func (s *Shell) HandleSignal(sig Signal)  {}
+func New(pid int) computer.Program {
+	return &Shell{id: fmt.Sprintf("sh-%d", pid)}
+}
+
+func (s *Shell) SetProcess(proc *computer.Process) { s.proc = proc }
+func (s *Shell) SetKernel(k *computer.Kernel)      { s.Kernel = k }
+func (s *Shell) ID() string                        { return s.id }
+func (s *Shell) HandleSignal(sig computer.Signal)  {}
 
 func parse(value string) ([]string, []string) {
 	parts := strings.Fields(value)
@@ -82,57 +87,57 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 					break
 				}
 
-				s.Kernel.PublishEvent(s.proc, EventWorkingDirChanged, map[string]interface{}{
+				s.Kernel.PublishEvent(s.proc, computer.EventWorkingDirChanged, map[string]interface{}{
 					"dir":    dir,
 					"tty_id": s.Kernel.GetTtyID(s.proc),
 				})
 				s.Kernel.Write(s.proc, 1, []byte("\n"))
 
 			case "ls":
-				if err := s.Kernel.Exec(ctx, s.proc, "/bin/ls", append(value, flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/ls", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
 			case "clear":
-				if err := s.Kernel.Exec(ctx, s.proc, "/bin/clear", append(value, flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/clear", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
 			case "cat":
-				if err := s.Kernel.Exec(ctx, s.proc, "/bin/cat", append(value, flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/cat", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
 			case "adduser":
-				if err := s.Kernel.Exec(ctx, s.proc, "/bin/adduser", append(value, flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/adduser", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
 			case "mkdir":
-				if err := s.Kernel.Exec(ctx, s.proc, "/bin/mkdir", append(value, flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/mkdir", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
 			case "touch":
-				if err := s.Kernel.Exec(ctx, s.proc, "/bin/touch", append(value, flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/touch", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
 			case "chmod":
-				if err := s.Kernel.Exec(ctx, s.proc, "/bin/chmod", append(value, flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/chmod", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
 			case "rm":
-				if err := s.Kernel.Exec(ctx, s.proc, "/bin/rm", append(value, flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/rm", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
 			case "v":
-				if err := s.Kernel.Exec(ctx, s.proc, "/bin/v", append(value, flags...), &ExecOpts{PGID: 0, Background: false}); err != nil {
+				if err := s.Kernel.Exec(ctx, s.proc, "/bin/v", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
 			case "":
 				prefix = "\n"
 			default:

@@ -1,4 +1,4 @@
-package computer
+package cmds
 
 import (
 	"context"
@@ -6,19 +6,29 @@ import (
 	"path"
 	"strings"
 
+	"byte-space/computer"
 	"byte-space/utils"
 )
 
 type Ls struct {
 	id     string
-	Kernel *Kernel
-	proc   *Process
+	Kernel *computer.Kernel
+	proc   *computer.Process
 }
 
-func (p *Ls) SetProcess(proc *Process) { p.proc = proc }
-func (p *Ls) SetKernel(k *Kernel)      { p.Kernel = k }
+// TEMP, JUST FOR NOW!!, later we will have an actual interpreted programming language. no need for these unique factories, we will just have 1 generic.
+func NewLs(pid int) computer.Program    { return &Ls{id: fmt.Sprintf("ls-%d", pid)} }
+func NewClear(pid int) computer.Program { return &Clear{id: fmt.Sprintf("clear-%d", pid)} }
+func NewCat(pid int) computer.Program   { return &Cat{id: fmt.Sprintf("cat-%d", pid)} }
+func NewMkDir(pid int) computer.Program { return &MkDir{id: fmt.Sprintf("mkdir-%d", pid)} }
+func NewTouch(pid int) computer.Program { return &Touch{id: fmt.Sprintf("touch-%d", pid)} }
+func NewChmod(pid int) computer.Program { return &Chmod{id: fmt.Sprintf("chmod-%d", pid)} }
+func NewRm(pid int) computer.Program    { return &Rm{id: fmt.Sprintf("rm-%d", pid)} }
+
+func (p *Ls) SetProcess(proc *computer.Process) { p.proc = proc }
+func (p *Ls) SetKernel(k *computer.Kernel)      { p.Kernel = k }
 func (p *Ls) ID() string               { return p.id }
-func (p *Ls) HandleSignal(sig Signal)  {}
+func (p *Ls) HandleSignal(sig computer.Signal)  {}
 
 func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) > 3 {
@@ -96,14 +106,14 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 
 type Clear struct {
 	id     string
-	Kernel *Kernel
-	proc   *Process
+	Kernel *computer.Kernel
+	proc   *computer.Process
 }
 
-func (p *Clear) SetProcess(proc *Process) { p.proc = proc }
-func (p *Clear) SetKernel(k *Kernel)      { p.Kernel = k }
+func (p *Clear) SetProcess(proc *computer.Process) { p.proc = proc }
+func (p *Clear) SetKernel(k *computer.Kernel)      { p.Kernel = k }
 func (p *Clear) ID() string               { return p.id }
-func (p *Clear) HandleSignal(sig Signal)  {}
+func (p *Clear) HandleSignal(sig computer.Signal)  {}
 
 func (p *Clear) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) > 1 {
@@ -118,14 +128,14 @@ func (p *Clear) Run(ctx context.Context, returnStatus chan int, params []string)
 
 type Cat struct {
 	id     string
-	Kernel *Kernel
-	proc   *Process
+	Kernel *computer.Kernel
+	proc   *computer.Process
 }
 
-func (p *Cat) SetProcess(proc *Process) { p.proc = proc }
-func (p *Cat) SetKernel(k *Kernel)      { p.Kernel = k }
+func (p *Cat) SetProcess(proc *computer.Process) { p.proc = proc }
+func (p *Cat) SetKernel(k *computer.Kernel)      { p.Kernel = k }
 func (p *Cat) ID() string               { return p.id }
-func (p *Cat) HandleSignal(sig Signal)  {}
+func (p *Cat) HandleSignal(sig computer.Signal)  {}
 
 func (p *Cat) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) != 2 {
@@ -152,14 +162,14 @@ func (p *Cat) Run(ctx context.Context, returnStatus chan int, params []string) {
 
 type MkDir struct {
 	id     string
-	Kernel *Kernel
-	proc   *Process
+	Kernel *computer.Kernel
+	proc   *computer.Process
 }
 
-func (p *MkDir) SetProcess(proc *Process) { p.proc = proc }
-func (p *MkDir) SetKernel(k *Kernel)      { p.Kernel = k }
+func (p *MkDir) SetProcess(proc *computer.Process) { p.proc = proc }
+func (p *MkDir) SetKernel(k *computer.Kernel)      { p.Kernel = k }
 func (p *MkDir) ID() string               { return p.id }
-func (p *MkDir) HandleSignal(sig Signal)  {}
+func (p *MkDir) HandleSignal(sig computer.Signal)  {}
 
 func (p *MkDir) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) != 2 {
@@ -181,14 +191,14 @@ func (p *MkDir) Run(ctx context.Context, returnStatus chan int, params []string)
 
 type Touch struct {
 	id     string
-	Kernel *Kernel
-	proc   *Process
+	Kernel *computer.Kernel
+	proc   *computer.Process
 }
 
-func (p *Touch) SetProcess(proc *Process) { p.proc = proc }
-func (p *Touch) SetKernel(k *Kernel)      { p.Kernel = k }
+func (p *Touch) SetProcess(proc *computer.Process) { p.proc = proc }
+func (p *Touch) SetKernel(k *computer.Kernel)      { p.Kernel = k }
 func (p *Touch) ID() string               { return p.id }
-func (p *Touch) HandleSignal(sig Signal)  {}
+func (p *Touch) HandleSignal(sig computer.Signal)  {}
 
 func (p *Touch) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) != 2 {
@@ -210,14 +220,14 @@ func (p *Touch) Run(ctx context.Context, returnStatus chan int, params []string)
 
 type Chmod struct {
 	id     string
-	Kernel *Kernel
-	proc   *Process
+	Kernel *computer.Kernel
+	proc   *computer.Process
 }
 
-func (p *Chmod) SetProcess(proc *Process) { p.proc = proc }
-func (p *Chmod) SetKernel(k *Kernel)      { p.Kernel = k }
+func (p *Chmod) SetProcess(proc *computer.Process) { p.proc = proc }
+func (p *Chmod) SetKernel(k *computer.Kernel)      { p.Kernel = k }
 func (p *Chmod) ID() string               { return p.id }
-func (p *Chmod) HandleSignal(sig Signal)  {}
+func (p *Chmod) HandleSignal(sig computer.Signal)  {}
 
 func (p *Chmod) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) != 3 {
@@ -243,7 +253,7 @@ func (p *Chmod) Run(ctx context.Context, returnStatus chan int, params []string)
 	returnStatus <- utils.Success
 }
 
-func parseChmodMode(mode string, k *Kernel, proc *Process, target string) (uint8, uint8, error) {
+func parseChmodMode(mode string, k *computer.Kernel, proc *computer.Process, target string) (uint8, uint8, error) {
 	opIdx := strings.IndexAny(mode, "+-=")
 	if opIdx < 0 {
 		return 0, 0, fmt.Errorf("missing operator")
@@ -340,14 +350,14 @@ func formatMode(owner, other uint8, setuid bool) string {
 
 type Rm struct {
 	id     string
-	Kernel *Kernel
-	proc   *Process
+	Kernel *computer.Kernel
+	proc   *computer.Process
 }
 
-func (p *Rm) SetProcess(proc *Process) { p.proc = proc }
-func (p *Rm) SetKernel(k *Kernel)      { p.Kernel = k }
+func (p *Rm) SetProcess(proc *computer.Process) { p.proc = proc }
+func (p *Rm) SetKernel(k *computer.Kernel)      { p.Kernel = k }
 func (p *Rm) ID() string               { return p.id }
-func (p *Rm) HandleSignal(sig Signal)  {}
+func (p *Rm) HandleSignal(sig computer.Signal)  {}
 
 func (p *Rm) Run(ctx context.Context, returnStatus chan int, params []string) {
 	if len(params) != 2 {
