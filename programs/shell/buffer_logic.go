@@ -47,6 +47,8 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 
 	case "\r": // enter
 		data := s.buffer
+		s.history = append(s.history, data) // append to history
+		s.posInHistory = -1
 
 		s.cursorPosition = 0
 		s.buffer = ""
@@ -76,7 +78,60 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 		if s.cursorPosition != 0 {
 			s.cursorPosition -= 1
 		}
-	case "\x1b[A", "\x1b[B", "\x1b\x7f", "\x1bw", "\x15", "\x02", "\x1b": // handle arrow keys later, up and down for history
+	case "\x1b[A": // up arrow, most recent in history
+		// save current buffer to history:
+		if len(s.history) > 0 && s.buffer != "" {
+			s.history = append(s.history, s.buffer)
+		}
+		// remove repeats TODO
+		// make cursor pos and like rendering correct TODO
+
+
+		// change current buffer to the len of history -2, first minus to convert to index, second to skip the newly appended item
+		if s.posInHistory == -1 {
+			s.posInHistory = len(s.history) - 2
+			if s.posInHistory < 0 {
+				s.posInHistory = -1
+				return ""
+			}
+		} else {
+			if s.posInHistory > 0 {
+				s.posInHistory--
+			}
+		}
+
+		s.buffer = s.history[s.posInHistory]
+		prompt := fmt.Sprintf("%s$ %s", s.proc.CWD, s.buffer)
+		s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\r\033[K%s", prompt)))
+		s.cursorPosition = len(s.buffer) - 1
+		return ""
+
+	case "\x1b[B": // only works if posInHistory != -1
+		if s.posInHistory == -1 {
+			return ""
+		}
+
+		if s.posInHistory == len(s.history)-2 { // minus 1 because to turn it to an index
+			// most recent element
+			// back to empty prompt
+			s.buffer = s.history[len(s.history)-1] // into index, this gets the most recent half typed thingy.
+			s.posInHistory = -1
+			prompt := fmt.Sprintf("%s$ %s", s.proc.CWD, s.buffer)
+			s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\r\033[K%s", prompt)))
+			s.cursorPosition = len(s.buffer) - 1
+			return ""
+		}
+
+		if s.posInHistory < len(s.history)-1 {
+			s.posInHistory++
+		}
+		s.buffer = s.history[s.posInHistory]
+		prompt := fmt.Sprintf("%s$ %s", s.proc.CWD, s.buffer)
+		s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\r\033[K%s", prompt)))
+		s.cursorPosition = len(s.buffer) - 1
+		return ""
+
+	case "\x1b\x7f", "\x1bw", "\x15", "\x02", "\x1b": // handle arrow keys later, up and down for history
 		return ""
 	default:
 

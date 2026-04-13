@@ -45,9 +45,6 @@ func (p *VEdit) HandleSignal(sig computer.Signal) {
 		p.termHeight = ws.Height
 		p.termWdith = ws.Width
 		p.vDraw()
-
-		// tell run, later tho TODO
-
 	}
 }
 

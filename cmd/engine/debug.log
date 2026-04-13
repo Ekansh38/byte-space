@@ -172,3 +172,372 @@
 2026/04/13 17:42:17 WIDTH: 47
 2026/04/13 17:42:17 ROW: 1 COL: 1
 2026/04/13 17:42:17 ROW: 1 COL: 1
+2026/04/13 18:10:44 HISTORY [], POSINHISTORY: 0, BUFFER l, CURSORPOS 1
+2026/04/13 18:10:46 HISTORY [], POSINHISTORY: 0, BUFFER , CURSORPOS 0
+2026/04/13 18:10:56 HISTORY [], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:10:57 HISTORY [ ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:10:58 HISTORY [  ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:10:58 HISTORY [   ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:10:58 HISTORY [   ], POSINHISTORY: 1, BUFFER , CURSORPOS -1
+2026/04/13 18:10:58 HISTORY [   ], POSINHISTORY: 2, BUFFER , CURSORPOS -1
+2026/04/13 18:10:58 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:10:59 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:10:59 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:10:59 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:10:59 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:10:59 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:10:59 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:10:59 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:00 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:00 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:00 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:00 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:00 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:00 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:00 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:01 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:01 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:01 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:01 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:01 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:01 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:01 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:02 HISTORY [   ], POSINHISTORY: -1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:03 HISTORY [    ], POSINHISTORY: 3, BUFFER , CURSORPOS -1
+2026/04/13 18:11:03 HISTORY [     ], POSINHISTORY: 2, BUFFER , CURSORPOS -1
+2026/04/13 18:11:03 HISTORY [      ], POSINHISTORY: 1, BUFFER , CURSORPOS -1
+2026/04/13 18:11:03 HISTORY [       ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:03 HISTORY [        ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:04 HISTORY [         ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:04 HISTORY [          ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:04 HISTORY [           ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:05 HISTORY [            ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:05 HISTORY [             ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:05 HISTORY [              ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:05 HISTORY [               ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:06 HISTORY [                ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:06 HISTORY [                 ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:07 HISTORY [                  ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:07 HISTORY [                   ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:07 HISTORY [                    ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:07 HISTORY [                     ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:08 HISTORY [                      ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:08 HISTORY [                       ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:08 HISTORY [                        ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:08 HISTORY [                         ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:09 HISTORY [                          ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:09 HISTORY [                           ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:09 HISTORY [                            ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:09 HISTORY [                             ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:10 HISTORY [                              ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:10 HISTORY [                               ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:10 HISTORY [                                ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:10 HISTORY [                                 ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:11 HISTORY [                                  ], POSINHISTORY: 0, BUFFER , CURSORPOS -1
+2026/04/13 18:11:11 HISTORY [                                   ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:12 HISTORY [                                    ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:12 HISTORY [                                     ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:12 HISTORY [                                      ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:12 HISTORY [                                       ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:12 HISTORY [                                        ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:13 HISTORY [                                         ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:13 HISTORY [                                          ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:13 HISTORY [                                           ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:13 HISTORY [                                            ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:14 HISTORY [                                             ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:14 HISTORY [                                              ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:14 HISTORY [                                               ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:14 HISTORY [                                                ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:14 HISTORY [                                                 ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:14 HISTORY [                                                  ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:15 HISTORY [                                                   ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:15 HISTORY [                                                    ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:15 HISTORY [                                                     ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:15 HISTORY [                                                      ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:15 HISTORY [                                                       ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:15 HISTORY [                                                        ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:15 HISTORY [                                                         ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                          ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                           ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                            ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                             ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                              ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                               ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                                ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                                 ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                                  ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                                   ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                                    ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:16 HISTORY [                                                                     ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:17 HISTORY [                                                                      ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:17 HISTORY [                                                                       ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:17 HISTORY [                                                                        ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:17 HISTORY [                                                                         ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:11:17 HISTORY [                                                                          ], POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:12:11 HISTORY []string(nil), POSINHISTORY: 0, BUFFER l, CURSORPOS 1
+2026/04/13 18:12:16 HISTORY []string(nil), POSINHISTORY: 0, BUFFER ls, CURSORPOS 2
+2026/04/13 18:12:19 HISTORY []string(nil), POSINHISTORY: 0, BUFFER lss, CURSORPOS 3
+2026/04/13 18:12:20 HISTORY []string{"lss"}, POSINHISTORY: 0, BUFFER lss, CURSORPOS 2
+2026/04/13 18:12:24 HISTORY []string{"lss"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:12:24 HISTORY []string{"lss"}, POSINHISTORY: 0, BUFFER s, CURSORPOS 0
+2026/04/13 18:12:25 HISTORY []string{"lss"}, POSINHISTORY: 0, BUFFER s, CURSORPOS 0
+2026/04/13 18:12:25 HISTORY []string{"lss"}, POSINHISTORY: 0, BUFFER s, CURSORPOS 0
+2026/04/13 18:12:25 HISTORY []string{"lss"}, POSINHISTORY: 0, BUFFER es, CURSORPOS 1
+2026/04/13 18:12:25 HISTORY []string{"lss"}, POSINHISTORY: 0, BUFFER exs, CURSORPOS 2
+2026/04/13 18:12:25 HISTORY []string{"lss"}, POSINHISTORY: 0, BUFFER exis, CURSORPOS 3
+2026/04/13 18:12:25 HISTORY []string{"lss"}, POSINHISTORY: 0, BUFFER exits, CURSORPOS 4
+2026/04/13 18:12:25 HISTORY []string{"lss", "exits"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:12:26 HISTORY []string{"lss", "exits"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/13 18:12:26 HISTORY []string{"lss", "exits"}, POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/04/13 18:12:26 HISTORY []string{"lss", "exits"}, POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/04/13 18:12:26 HISTORY []string{"lss", "exits"}, POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/04/13 18:12:26 HISTORY []string{"lss", "exits"}, POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/04/13 18:12:26 HISTORY []string{"lss", "exits"}, POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/04/13 18:12:27 HISTORY []string{"lss", "exits"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/13 18:12:27 HISTORY []string{"lss", "exits"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:13:46 HISTORY []string(nil), POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/04/13 18:13:48 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:13:49 HISTORY []string(nil), POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/04/13 18:13:50 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ll, CURSORPOS 2
+2026/04/13 18:13:50 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lls, CURSORPOS 3
+2026/04/13 18:15:49 HISTORY []string(nil), POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/13 18:15:49 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/04/13 18:15:49 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cd , CURSORPOS 3
+2026/04/13 18:15:50 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/04/13 18:15:50 HISTORY []string(nil), POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/13 18:15:50 HISTORY []string(nil), POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:15:50 HISTORY []string(nil), POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:15:50 HISTORY []string(nil), POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:15:50 HISTORY []string(nil), POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:15:51 HISTORY []string(nil), POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:15:52 HISTORY []string(nil), POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/04/13 18:15:52 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:54 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:55 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:55 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:55 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:55 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:55 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:56 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:56 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:56 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:56 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:56 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:56 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:57 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:57 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:57 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:57 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:58 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:58 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:58 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:59 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:59 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:59 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:59 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:15:59 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:16:00 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:16:00 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:16:00 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:16:00 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:16:01 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/13 18:16:02 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:16:04 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/04/13 18:16:06 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:16:06 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:16:06 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 1
+2026/04/13 18:16:08 HISTORY []string{"ls", "p"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:14 HISTORY []string{"ls", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:19 HISTORY []string{"ls", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:24 HISTORY []string{"ls", "p", "p", "p"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:30 HISTORY []string{"ls", "p", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:40 HISTORY []string{"ls", "p", "p", "p", "p"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:41 HISTORY []string{"ls", "p", "p", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:41 HISTORY []string{"ls", "p", "p", "p", "p", "p"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:42 HISTORY []string{"ls", "p", "p", "p", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:42 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:42 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:42 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:42 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:43 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:43 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:43 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:43 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:43 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 2, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:44 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:44 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 4, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:44 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 5, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:44 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 6, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:44 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 7, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:44 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 8, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:45 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:45 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:45 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:45 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:45 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:45 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:46 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:46 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:46 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:46 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:46 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:46 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:47 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:47 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:47 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:47 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:47 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:47 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:48 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:48 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:48 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:48 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:48 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:48 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:49 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:49 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:49 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:49 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:49 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:49 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:50 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:50 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:50 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:50 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:50 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:51 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:51 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:51 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:51 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:51 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:51 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:52 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:52 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:52 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:52 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:52 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:53 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:53 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:53 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:53 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:53 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:54 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:54 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:54 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 9, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:54 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 8, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:55 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 7, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:55 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 6, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:55 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 5, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:55 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 4, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:56 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:56 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 2, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:56 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:56 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:57 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:57 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls"}, POSINHISTORY: 0, BUFFER ls, CURSORPOS 1
+2026/04/13 18:16:58 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:58 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls"}, POSINHISTORY: 2, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:58 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:58 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls"}, POSINHISTORY: 4, BUFFER p, CURSORPOS 0
+2026/04/13 18:16:59 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:16:59 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/13 18:16:59 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p"}, POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/04/13 18:16:59 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p"}, POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/04/13 18:16:59 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p"}, POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/04/13 18:17:00 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p"}, POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/04/13 18:17:00 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p", "clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:17:00 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p", "clear"}, POSINHISTORY: -1, BUFFER e, CURSORPOS 1
+2026/04/13 18:17:00 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p", "clear"}, POSINHISTORY: -1, BUFFER ex, CURSORPOS 2
+2026/04/13 18:17:00 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p", "clear"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
+2026/04/13 18:17:00 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p", "clear"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
+2026/04/13 18:17:00 HISTORY []string{"ls", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "p", "ls", "ls", "p", "clear", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:04 HISTORY []string(nil), POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/04/13 18:18:04 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lc, CURSORPOS 2
+2026/04/13 18:18:04 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lcl, CURSORPOS 3
+2026/04/13 18:18:05 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lcle, CURSORPOS 4
+2026/04/13 18:18:05 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lclea, CURSORPOS 5
+2026/04/13 18:18:05 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lclear, CURSORPOS 6
+2026/04/13 18:18:05 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lclea, CURSORPOS 5
+2026/04/13 18:18:05 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lcle, CURSORPOS 4
+2026/04/13 18:18:06 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lcl, CURSORPOS 3
+2026/04/13 18:18:06 HISTORY []string(nil), POSINHISTORY: -1, BUFFER lc, CURSORPOS 2
+2026/04/13 18:18:06 HISTORY []string(nil), POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/04/13 18:18:06 HISTORY []string(nil), POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:06 HISTORY []string(nil), POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:06 HISTORY []string(nil), POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/13 18:18:06 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/04/13 18:18:07 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/04/13 18:18:07 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/04/13 18:18:07 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/04/13 18:18:08 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:11 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 1
+2026/04/13 18:18:12 HISTORY []string{"clear", "p"}, POSINHISTORY: 0, BUFFER clear, CURSORPOS 4
+2026/04/13 18:18:13 HISTORY []string{"clear", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:15 HISTORY []string{"clear", "p", "p"}, POSINHISTORY: 1, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:16 HISTORY []string{"clear", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:16 HISTORY []string{"clear", "p", "p", "p"}, POSINHISTORY: 2, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:17 HISTORY []string{"clear", "p", "p", "p"}, POSINHISTORY: -1, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:17 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:18 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER ep, CURSORPOS 1
+2026/04/13 18:18:18 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER exp, CURSORPOS 2
+2026/04/13 18:18:18 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER exip, CURSORPOS 3
+2026/04/13 18:18:18 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER exp, CURSORPOS 2
+2026/04/13 18:18:19 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER ep, CURSORPOS 1
+2026/04/13 18:18:19 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:19 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:19 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER ep, CURSORPOS 1
+2026/04/13 18:18:19 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER exp, CURSORPOS 2
+2026/04/13 18:18:19 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER exip, CURSORPOS 3
+2026/04/13 18:18:19 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER exp, CURSORPOS 2
+2026/04/13 18:18:19 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER ep, CURSORPOS 1
+2026/04/13 18:18:20 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:20 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:20 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 0
+2026/04/13 18:18:20 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER p, CURSORPOS 1
+2026/04/13 18:18:20 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:21 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:21 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:21 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:21 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:21 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:21 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:22 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:22 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:22 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:22 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:22 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:24 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER =, CURSORPOS 1
+2026/04/13 18:18:25 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER ==, CURSORPOS 2
+2026/04/13 18:18:25 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER =, CURSORPOS 1
+2026/04/13 18:18:25 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:25 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:25 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:26 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:26 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:26 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:26 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:26 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:27 HISTORY []string{"clear", "p", "p", "p", "p"}, POSINHISTORY: 3, BUFFER , CURSORPOS 0
+2026/04/13 18:18:35 HISTORY []string{"clear", "p", "p", "p", "p", ""}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:36 HISTORY []string{"clear", "p", "p", "p", "p", "", ""}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:37 HISTORY []string{"clear", "p", "p", "p", "p", "", "", ""}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:37 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", ""}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:38 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:38 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:38 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:38 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:46 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER a, CURSORPOS 1
+2026/04/13 18:18:46 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER as, CURSORPOS 2
+2026/04/13 18:18:46 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER asd, CURSORPOS 3
+2026/04/13 18:18:47 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER asda, CURSORPOS 4
+2026/04/13 18:18:47 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER asdas, CURSORPOS 5
+2026/04/13 18:18:47 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER asdasd, CURSORPOS 6
+2026/04/13 18:18:47 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER asdasda, CURSORPOS 7
+2026/04/13 18:18:47 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER asdasdas, CURSORPOS 8
+2026/04/13 18:18:47 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", ""}, POSINHISTORY: -1, BUFFER asdasdasd, CURSORPOS 9
+2026/04/13 18:18:49 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", "", "asdasdasd"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/13 18:18:50 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", "", "asdasdasd"}, POSINHISTORY: -1, BUFFER e, CURSORPOS 1
+2026/04/13 18:18:50 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", "", "asdasdasd"}, POSINHISTORY: -1, BUFFER ex, CURSORPOS 2
+2026/04/13 18:18:50 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", "", "asdasdasd"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
+2026/04/13 18:18:51 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", "", "asdasdasd"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
+2026/04/13 18:18:51 HISTORY []string{"clear", "p", "p", "p", "p", "", "", "", "", "", "", "", "", "asdasdasd", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0

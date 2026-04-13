@@ -3,6 +3,7 @@ package shell
 import (
 	"context"
 	"fmt"
+	"log"
 	"path"
 	"strings"
 
@@ -17,6 +18,7 @@ type Shell struct {
 	buffer         string // switch this to []byte, one day!!
 	cursorPosition int
 	history        []string
+	posInHistory   int // -1 is most recent, end of list. then while navigating history with arrow keys, it changes.
 }
 
 func New(pid int) computer.Program {
@@ -50,6 +52,7 @@ func parse(value string) ([]string, []string) {
 }
 
 func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string) {
+	s.posInHistory = -1 // default, starting val
 	s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\n\r%s$ ", s.proc.CWD)))
 	s.Kernel.Ioctl(s.proc, 0, computer.TIOCRAW, true) // set TTY to raw mode.
 
@@ -62,6 +65,7 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 			// canonical logic, plus history logic.
 
 			thingyMaBOB := s.canonicalLogic(data)
+			log.Printf("HISTORY %#v, POSINHISTORY: %d, BUFFER %s, CURSORPOS %d", s.history, s.posInHistory, s.buffer, s.cursorPosition)
 			if thingyMaBOB == "" {
 				continue
 			}
@@ -156,7 +160,7 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 				if err := s.Kernel.Exec(ctx, s.proc, "/bin/v", append(value, flags...), &computer.ExecOpts{PGID: 0, Background: false}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, computer.TIOCRAW, true) // set to raw mode just in case!
+				s.Kernel.Ioctl(s.proc, 0, computer.TIOCRAW, true)          // set to raw mode just in case!
 				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID) // set shell back to foreground
 			case "":
 				prefix = "\n"
