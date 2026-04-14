@@ -47,9 +47,13 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 
 	case "\r": // enter
 		data := s.buffer
-		s.history = append(s.history, data) // append to history
-		s.posInHistory = -1
+		if data != "" {
+			if len(s.history) == 0 || s.history[len(s.history)-1] != data {
+				s.history = append(s.history, data)
+			}
+		}
 
+		s.posInHistory = -1
 		s.cursorPosition = 0
 		s.buffer = ""
 		return data
@@ -80,16 +84,29 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 		}
 	case "\x1b[A": // up arrow, most recent in history
 		// save current buffer to history:
-		if len(s.history) > 0 && s.buffer != "" {
-			s.history = append(s.history, s.buffer)
+		if len(s.history) == 0 {
+			return ""
+		}
+
+		added := false
+		if len(s.history) > 0 {
+			if s.posInHistory == -1 {
+				s.history = append(s.history, s.buffer)
+				added = true
+			} else if s.posInHistory >= 0 && s.posInHistory < len(s.history) {
+				s.history[s.posInHistory] = s.buffer
+			}
 		}
 		// remove repeats TODO
 		// make cursor pos and like rendering correct TODO
 
-
 		// change current buffer to the len of history -2, first minus to convert to index, second to skip the newly appended item
 		if s.posInHistory == -1 {
-			s.posInHistory = len(s.history) - 2
+			vale := len(s.history) - 1
+			if added {
+				vale--
+			}
+			s.posInHistory = vale
 			if s.posInHistory < 0 {
 				s.posInHistory = -1
 				return ""
@@ -103,12 +120,19 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 		s.buffer = s.history[s.posInHistory]
 		prompt := fmt.Sprintf("%s$ %s", s.proc.CWD, s.buffer)
 		s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\r\033[K%s", prompt)))
-		s.cursorPosition = len(s.buffer) - 1
+		s.cursorPosition = len(s.buffer)
 		return ""
 
 	case "\x1b[B": // only works if posInHistory != -1
+		if len(s.history) == 0 {
+			return ""
+		}
 		if s.posInHistory == -1 {
 			return ""
+		}
+
+		if s.posInHistory >= 0 && s.posInHistory < len(s.history) { // save value to buffer.
+			s.history[s.posInHistory] = s.buffer
 		}
 
 		if s.posInHistory == len(s.history)-2 { // minus 1 because to turn it to an index
@@ -118,7 +142,7 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 			s.posInHistory = -1
 			prompt := fmt.Sprintf("%s$ %s", s.proc.CWD, s.buffer)
 			s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\r\033[K%s", prompt)))
-			s.cursorPosition = len(s.buffer) - 1
+			s.cursorPosition = len(s.buffer)
 			return ""
 		}
 
@@ -128,7 +152,7 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 		s.buffer = s.history[s.posInHistory]
 		prompt := fmt.Sprintf("%s$ %s", s.proc.CWD, s.buffer)
 		s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\r\033[K%s", prompt)))
-		s.cursorPosition = len(s.buffer) - 1
+		s.cursorPosition = len(s.buffer)
 		return ""
 
 	case "\x1b\x7f", "\x1bw", "\x15", "\x02", "\x1b": // handle arrow keys later, up and down for history
