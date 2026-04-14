@@ -37,13 +37,13 @@ type FileDescription struct {
 type IoctlReq int
 
 const (
-	TIOCRAW       IoctlReq = iota // raw mode (true o false)
-	TIOCPASSWD                    // password masking (true o false)
-	TIOCSPGRP                     // set foreground process group (int)
-	TIOCBUFFCLEAR                 // clear the line buffer (no arg)
-	TIOCSESSION                   // attach session to TTY (*session)
+	TIOCRAW       IoctlReq = iota // raw mode (bool: true = raw, false = canonical)
+	TIOCPASSWD                    // password masking (bool: true = mask input)
+	TIOCSPGRP                     // set foreground process group (int: pgid)
 	TIOCSWINSZ                    // set terminal dimensions (Winsize)
-	TIOCGWINSZ                    // get terminal dimensions (*Winsize)
+	TIOCBUFFCLEAR                 // clear the line buffer (bool: true = clear)
+	TIOCGWINSZ                    // get terminal dimensions (*Winsize, written in place)
+	TIOCSESSION                   // attach session to TTY (*Session)
 )
 
 // Winsize holds terminal dimensions, mirrors the Unix winsize struct.
@@ -129,7 +129,8 @@ func (k *Kernel) Write(proc *Process, fd int, data []byte) (int, error) {
 	return 0, fmt.Errorf("unsupported fd type")
 }
 
-func (k *Kernel) Ioctl(proc *Process, fd int, req IoctlReq, arg interface{}) error {
+// Ik that there are better ways to approach this in go, type safe ways, but I wanna stick with the old school unix/C style cuz its a classic!
+func (k *Kernel) Ioctl(proc *Process, fd int, req IoctlReq, arg any) error {
 	if fd < 0 || fd >= len(proc.FDs) || proc.FDs[fd] == nil {
 		return fmt.Errorf("bad file descriptor")
 	}
@@ -139,40 +140,57 @@ func (k *Kernel) Ioctl(proc *Process, fd int, req IoctlReq, arg interface{}) err
 	tty := proc.FDs[fd].TTY
 	switch req {
 	case TIOCRAW:
-		if arg.(bool) {
-			tty.Canonical = false
-			tty.Echo = false
-		} else {
-			tty.Canonical = true
-			tty.Echo = true
+		raw, ok := arg.(bool)
+		if !ok {
+			return fmt.Errorf("Invalid type for TIOCRAW, needed bool!")
 		}
+		tty.Canonical = !raw
+		tty.Echo = !raw
 	case TIOCPASSWD:
-		tty.PasswdMode = arg.(bool)
+		value, ok := arg.(bool)
+		if !ok {
+			return fmt.Errorf("Invalid type for TIOCPASSWD, needed bool!")
+		}
+		tty.PasswdMode = value
 	case TIOCSPGRP:
-		tty.SetForegroundPGID(arg.(int))
-	case TIOCBUFFCLEAR:
-		tty.BuffClear()
-	case TIOCSESSION:
-		tty.Session = arg.(*Session)
+		value, ok := arg.(int)
+		if !ok {
+			return fmt.Errorf("Invalid type for TIOCSPGRP, needed int!")
+		}
+		tty.SetForegroundPGID(value)
 	case TIOCSWINSZ:
-		ws, ok := arg.(Winsize)
-
+		value, ok := arg.(Winsize)
 		if !ok {
-			return fmt.Errorf("WRONG TYPE ARG! ARF ARF")
+			return fmt.Errorf("Invalid type for TIOCSWINSZ, needed Winsize!")
 		}
-
+		ws := value
 		tty.SetWinsize(ws.Width, ws.Height)
-
+	case TIOCBUFFCLEAR:
+		value, ok := arg.(bool)
+		if !ok {
+			return fmt.Errorf("Invalid type for TIOCBUFFCLEAR, needed bool!")
+		}
+		if value {
+			tty.BuffClear()
+		}
 	case TIOCGWINSZ:
-
-		ws, ok := arg.(*Winsize)
+		value, ok := arg.(*Winsize)
 
 		if !ok {
-			return fmt.Errorf("WRONG TYPE ARG! ARF ARF")
+			return fmt.Errorf("Invalid type for TIOCGWINSZ, needed *Winsize!")
 		}
 
+		ws := value
 		ws.Width = tty.Width
 		ws.Height = tty.Height
+
+	case TIOCSESSION:
+		value, ok := arg.(*Session)
+
+		if !ok {
+			return fmt.Errorf("Invalid type for TIOCSESSION, needed *Session!")
+		}
+		tty.Session = value
 	}
 	return nil
 }

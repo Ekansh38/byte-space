@@ -840,3 +840,68 @@
 2026/04/14 17:03:00 HISTORY []string{"clear", "lsp", "l", "clear"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
 2026/04/14 17:03:00 HISTORY []string{"clear", "lsp", "l", "clear"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
 2026/04/14 17:03:00 HISTORY []string{"clear", "lsp", "l", "clear", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:02 HISTORY []string(nil), POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/14 17:52:02 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/04/14 17:52:02 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/04/14 17:52:03 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/04/14 17:52:03 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/04/14 17:52:03 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:03 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/04/14 17:52:03 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:03 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER s, CURSORPOS 1
+2026/04/14 17:52:04 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER sc, CURSORPOS 2
+2026/04/14 17:52:04 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER s, CURSORPOS 1
+2026/04/14 17:52:04 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:04 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:04 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/14 17:52:04 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER c , CURSORPOS 2
+2026/04/14 17:52:04 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER c d, CURSORPOS 3
+2026/04/14 17:52:04 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER c d/, CURSORPOS 4
+2026/04/14 17:52:04 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER c d/e, CURSORPOS 5
+2026/04/14 17:52:05 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER c d/, CURSORPOS 4
+2026/04/14 17:52:05 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER c d, CURSORPOS 3
+2026/04/14 17:52:05 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER c , CURSORPOS 2
+2026/04/14 17:52:05 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/14 17:52:05 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/04/14 17:52:05 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER cd , CURSORPOS 3
+2026/04/14 17:52:05 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER cd /, CURSORPOS 4
+2026/04/14 17:52:06 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER cd /e, CURSORPOS 5
+2026/04/14 17:52:06 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER cd /et, CURSORPOS 6
+2026/04/14 17:52:06 HISTORY []string{"clear", "l"}, POSINHISTORY: -1, BUFFER cd /etc, CURSORPOS 7
+2026/04/14 17:52:06 HISTORY []string{"clear", "l", "cd /etc"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:07 HISTORY []string{"clear", "l", "cd /etc", ""}, POSINHISTORY: 2, BUFFER cd /etc, CURSORPOS 7
+2026/04/14 17:52:07 HISTORY []string{"clear", "l", "cd /etc", ""}, POSINHISTORY: 1, BUFFER l, CURSORPOS 1
+2026/04/14 17:52:07 HISTORY []string{"clear", "l", "cd /etc", ""}, POSINHISTORY: 0, BUFFER clear, CURSORPOS 5
+2026/04/14 17:52:08 HISTORY []string{"clear", "l", "cd /etc", ""}, POSINHISTORY: 1, BUFFER l, CURSORPOS 1
+2026/04/14 17:52:08 HISTORY []string{"clear", "l", "cd /etc", ""}, POSINHISTORY: 2, BUFFER cd /etc, CURSORPOS 7
+2026/04/14 17:52:08 HISTORY []string{"clear", "l", "cd /etc", ""}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:10 HISTORY []string{"clear", "l", "cd /etc", ""}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/04/14 17:52:10 HISTORY []string{"clear", "l", "cd /etc", ""}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/04/14 17:52:10 HISTORY []string{"clear", "l", "cd /etc", "", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:11 HISTORY []string{"clear", "l", "cd /etc", "", "ls"}, POSINHISTORY: -1, BUFFER v, CURSORPOS 1
+2026/04/14 17:52:11 HISTORY []string{"clear", "l", "cd /etc", "", "ls"}, POSINHISTORY: -1, BUFFER v , CURSORPOS 2
+2026/04/14 17:52:11 HISTORY []string{"clear", "l", "cd /etc", "", "ls"}, POSINHISTORY: -1, BUFFER v p, CURSORPOS 3
+2026/04/14 17:52:11 HISTORY []string{"clear", "l", "cd /etc", "", "ls"}, POSINHISTORY: -1, BUFFER v pa, CURSORPOS 4
+2026/04/14 17:52:11 HISTORY []string{"clear", "l", "cd /etc", "", "ls"}, POSINHISTORY: -1, BUFFER v pas, CURSORPOS 5
+2026/04/14 17:52:11 HISTORY []string{"clear", "l", "cd /etc", "", "ls"}, POSINHISTORY: -1, BUFFER v pass, CURSORPOS 6
+2026/04/14 17:52:11 HISTORY []string{"clear", "l", "cd /etc", "", "ls"}, POSINHISTORY: -1, BUFFER v passw, CURSORPOS 7
+2026/04/14 17:52:12 HISTORY []string{"clear", "l", "cd /etc", "", "ls"}, POSINHISTORY: -1, BUFFER v passwd, CURSORPOS 8
+2026/04/14 17:52:12 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:12 WIDTH: 65
+2026/04/14 17:52:12 ROW: 1 COL: 1
+2026/04/14 17:52:12 ROW: 2 COL: 1
+2026/04/14 17:52:12 ROW: 3 COL: 1
+2026/04/14 17:52:12 ROW: 3 COL: 1
+2026/04/14 17:52:13 ROW: 3 COL: 1
+2026/04/14 17:52:13 ROW: 3 COL: 1
+2026/04/14 17:52:14 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/04/14 17:52:14 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd"}, POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/04/14 17:52:14 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd"}, POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/04/14 17:52:14 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd"}, POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/04/14 17:52:14 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd"}, POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/04/14 17:52:14 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd", "clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/04/14 17:52:14 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd", "clear"}, POSINHISTORY: -1, BUFFER e, CURSORPOS 1
+2026/04/14 17:52:14 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd", "clear"}, POSINHISTORY: -1, BUFFER ex, CURSORPOS 2
+2026/04/14 17:52:15 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd", "clear"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
+2026/04/14 17:52:15 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd", "clear"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
+2026/04/14 17:52:15 HISTORY []string{"clear", "l", "cd /etc", "", "ls", "v passwd", "clear", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
