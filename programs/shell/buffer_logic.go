@@ -84,7 +84,7 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 		}
 	case "\x1b[A": // up arrow, most recent in history
 		// save current buffer to history:
-		if len(s.history) == 0 {
+		if len(s.history) == 0 { // on empty history, nothing
 			return ""
 		}
 
@@ -96,12 +96,10 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 			} else if s.posInHistory >= 0 && s.posInHistory < len(s.history) {
 				s.history[s.posInHistory] = s.buffer
 			}
-		}
-		// remove repeats TODO
-		// make cursor pos and like rendering correct TODO
+		} // add or update history.
 
 		// change current buffer to the len of history -2, first minus to convert to index, second to skip the newly appended item
-		if s.posInHistory == -1 {
+		if s.posInHistory == -1 { // top of history, default.
 			vale := len(s.history) - 1
 			if added {
 				vale--
@@ -111,10 +109,12 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 				s.posInHistory = -1
 				return ""
 			}
+			// moves pos in history back with correct error checking.
 		} else {
 			if s.posInHistory > 0 {
 				s.posInHistory--
 			}
+			// regular move back
 		}
 
 		s.buffer = s.history[s.posInHistory]
@@ -122,16 +122,18 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 		s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\r\033[K%s", prompt)))
 		s.cursorPosition = len(s.buffer)
 		return ""
+		// update buffer and things.
 
 	case "\x1b[B": // only works if posInHistory != -1
 		if len(s.history) == 0 {
 			return ""
-		}
+		} // if history is empty, NOTHING TO DO!
+
 		if s.posInHistory == -1 {
 			return ""
-		}
+		} // if at end of history, nothing to do!!
 
-		if s.posInHistory >= 0 && s.posInHistory < len(s.history) { // save value to buffer.
+		if s.posInHistory >= 0 && s.posInHistory < len(s.history) { // save value to buffer for updates.
 			s.history[s.posInHistory] = s.buffer
 		}
 
@@ -140,6 +142,8 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 			// back to empty prompt
 			s.buffer = s.history[len(s.history)-1] // into index, this gets the most recent half typed thingy.
 			s.posInHistory = -1
+
+			// exit early + update stuff
 			prompt := fmt.Sprintf("%s$ %s", s.proc.CWD, s.buffer)
 			s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\r\033[K%s", prompt)))
 			s.cursorPosition = len(s.buffer)
@@ -148,7 +152,9 @@ func (s *Shell) canonicalLogic(receivedData string) string {
 
 		if s.posInHistory < len(s.history)-1 {
 			s.posInHistory++
-		}
+		} // regular move forward
+
+		// updates + exit
 		s.buffer = s.history[s.posInHistory]
 		prompt := fmt.Sprintf("%s$ %s", s.proc.CWD, s.buffer)
 		s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\r\033[K%s", prompt)))
