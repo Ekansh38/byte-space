@@ -375,3 +375,10 @@ func (p *Rm) Run(ctx context.Context, returnStatus chan int, params []string) {
 	p.Kernel.Write(p.proc, 1, []byte("\n"))
 	returnStatus <- utils.Success
 }
+
+
+
+
+
+
+

@@ -530,11 +530,32 @@ func (k *Kernel) WriteFile(proc *Process, target string, content []byte) error {
 	defer k.fsMu.Unlock()
 
 	target = k.resolvePath(proc, target)
-	parent := path.Dir(target)
-	// later: check all parent dirs for execute, ALL, rn only checking one TODO
+	// later will use i-node stuff.
+	var parents []string
+	current := path.Dir(target)
 
-	if !k.canExecute(proc.EUID, parent) || !k.canWrite(proc.EUID, target) {
+	if !k.canWrite(proc.EUID, current) {
 		return fmt.Errorf("permission denied")
+	}
+
+	for {
+		parents = append(parents, current)
+		next := path.Dir(current)
+		if current == next {
+			break // reached ROOT
+		}
+
+		current = next
+	}
+	if !k.canWrite(proc.EUID, target) {
+		return fmt.Errorf("permission denied")
+	}
+
+	for i := range parents {
+		parent := parents[i]
+		if !k.canExecute(proc.EUID, parent) {
+			return fmt.Errorf("permission denied")
+		}
 	}
 
 	if err := k.computer.OS.WriteFile(target, content); err != nil {
