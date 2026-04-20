@@ -33,7 +33,7 @@ type FileDescription struct {
 	TTY  *TTY // valid when Type == FDTTY else its NIL
 
 	InodeIndex int
-	Offset int64
+	Offset     int64
 
 	refs int
 }
