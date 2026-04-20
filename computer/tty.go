@@ -1,5 +1,10 @@
 package computer
 
+// The TTY is not stored in the filesystem (no inode or /dev entry)
+// This is to ensure my system doesn't take on unnecessary complexity
+
+// The TTY is represented by a FD and is a regular I/O device managed by the kernel in RAM.
+
 import (
 	"context"
 	"encoding/json"
@@ -124,6 +129,8 @@ func (t *TTY) SetForegroundPGID(pgid int) {
 }
 
 func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
+	// TODO, change canonical buffer to a []byte instead of string.
+	// this is due to better performance
 	if proc.PGID != t.ForegroundPGID {
 		return "Err: You are not foreground program", utils.Error
 	}
