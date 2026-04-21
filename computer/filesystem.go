@@ -25,13 +25,14 @@ const (
 )
 
 const (
-	INODESIZE     = 86   // in bytes
+	INODESIZE     = 128   // in bytes
 	DATABLOCKSIZE = 4096 // in bytes
 )
 
 type inode struct {
 	size  uint32 // file-size in bytes
 	fType InodeType
+	refs uint16
 
 	owner [14]byte // the owner of the file/folder,
 	// string of the username of the creator,
@@ -123,7 +124,7 @@ func NewFileSystem(basePath string) *FileSystem {
 		panic(err)
 	}
 
-	inodeFile.Truncate(8192 * INODESIZE)
+	inodeFile.Truncate(8192 * INODESIZE) // double check this sizing TODO
 	dataFile.Truncate(16384 * DATABLOCKSIZE)
 	metaFile.Truncate(4096)
 
@@ -133,9 +134,10 @@ func NewFileSystem(basePath string) *FileSystem {
 		// do formatting work.
 	}
 
-	defer metaFile.Close()
-	defer dataFile.Close()
-	defer inodeFile.Close()
+	//defer metaFile.Close()
+	//defer dataFile.Close()
+	//defer inodeFile.Close()
+	// closing will be done when the engine shuts down. TODO
 
 
 	return &FileSystem{}

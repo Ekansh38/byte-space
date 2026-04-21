@@ -7,6 +7,7 @@ import (
 
 	"byte-space/engine"
 	"byte-space/tui"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -30,4 +31,8 @@ func main() {
 		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)
 	}
+
+	// add like a shutdown thing for all the filesystems to close nicely TODO
+	// use signal.Notify os.Interrupt
+
 }
