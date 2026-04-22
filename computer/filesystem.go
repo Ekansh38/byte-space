@@ -1,7 +1,10 @@
 package computer
 
 import (
+	"encoding/binary"
 	"errors"
+	"io"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -24,15 +27,17 @@ const (
 	S_IFDIR = 1
 )
 
+const LATEST_VERSION = 1
+
 const (
-	INODESIZE     = 128   // in bytes
+	INODESIZE     = 128  // in bytes
 	DATABLOCKSIZE = 4096 // in bytes
 )
 
 type inode struct {
 	size  uint32 // file-size in bytes
 	fType InodeType
-	refs uint16
+	refs  uint16
 
 	owner [14]byte // the owner of the file/folder,
 	// string of the username of the creator,
@@ -59,6 +64,9 @@ type inode struct {
 	find   uint32 // first-indirect
 	sind   uint32 // second-indirect
 	tind   uint32 // third-indirect
+
+	createdAt  uint64
+	modifiedAt uint64
 }
 
 type dataBlockType int
@@ -74,31 +82,60 @@ type dataBlock struct {
 }
 
 type FileSystem struct {
-	inodeFile *os.File
-	dataFile  *os.File
-	metaFile  *os.File // will store freeblocks and freeinodes bitmaps
+	disk    *os.File
+	suprBlk SuperBlock
 
-	inodeCount int
-	blockCount int
+	// maybe later cache the bitmaps for extra SPEED.
 }
 
+type SuperBlock struct {
+	magic   [8]byte // 8 // FS-BS
+	version uint32  // 4
+
+	blockSize uint32 // 4
+
+	inodeCount uint32 // 4
+	inodeSize  uint32 // 128 // 4
+
+	inodeTableStartBlock  uint32 // 4
+	inodeBitmapStartBlock uint32 // 4
+
+	dataBlockCount uint32 // 4
+
+	dataBlockStartBlock  uint32 // 4
+	dataBitmapStartBlock uint32 // 4
+
+	totalBlocks uint32 // 4
+
+	// later maybe a dirty bit
+
+	// total: 48
+}
+
+// bitmap structure: [inodeCount]uint64
+
+// disk structure
+
+// SUPER BLOCK
+// INODE BITMAP
+// INODE TABLE
+// DATA BITMAP
+// DATA BLOCKS
+
 func NewFileSystem(basePath string) *FileSystem {
+	// create all directories in basepath
+
+	os.MkdirAll(basePath, 0o755)
+
+	diskPath := filepath.Join(basePath, "disk.img")
+
 	isInitialized := true
-
-	inodeFilePath := filepath.Join(basePath, "inode_table.bin")
-	dataFilePath := filepath.Join(basePath, "data_blocks.bin")
-	metaFilePath := filepath.Join(basePath, "disk_meta.bin")
-
-	if _, err := os.Stat(inodeFilePath); errors.Is(err, os.ErrNotExist) {
-		isInitialized = false
-	} else if _, err := os.Stat(dataFilePath); errors.Is(err, os.ErrNotExist) {
-		isInitialized = false
-	} else if _, err := os.Stat(metaFilePath); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(diskPath); errors.Is(err, os.ErrNotExist) {
 		isInitialized = false
 	}
 
-	inodeFile, err := os.OpenFile(
-		inodeFilePath,
+	disk, err := os.OpenFile(
+		diskPath,
 		os.O_CREATE|os.O_RDWR,
 		0o644,
 	)
@@ -106,39 +143,77 @@ func NewFileSystem(basePath string) *FileSystem {
 		panic(err)
 	}
 
-	dataFile, err := os.OpenFile(
-		dataFilePath,
-		os.O_CREATE|os.O_RDWR,
-		0o644,
-	)
+	disk.Truncate((8192 * INODESIZE) + (16384 * DATABLOCKSIZE) + 4096) // double check this sizing TODO
+
+	// now check for the superblk header being correct and up to date.
+
+	disk.Seek(0, io.SeekStart)
+
+	headaBuf := make([]byte, 4096)
+	var hedaSupaBlOK SuperBlock
+	_, err = io.ReadFull(disk, headaBuf)
 	if err != nil {
-		panic(err)
+		panic(err) // maybe dont panic TODO
 	}
 
-	metaFile, err := os.OpenFile(
-		metaFilePath,
-		os.O_CREATE|os.O_RDWR,
-		0o644,
-	)
-	if err != nil {
-		panic(err)
+	copy(hedaSupaBlOK.magic[:], headaBuf[0:8])
+	hedaSupaBlOK.version = binary.LittleEndian.Uint32(headaBuf[8:12])
+	hedaSupaBlOK.blockSize = binary.LittleEndian.Uint32(headaBuf[12:16])
+	hedaSupaBlOK.inodeCount = binary.LittleEndian.Uint32(headaBuf[16:20])
+	hedaSupaBlOK.inodeSize = binary.LittleEndian.Uint32(headaBuf[20:24])
+	hedaSupaBlOK.inodeTableStartBlock = binary.LittleEndian.Uint32(headaBuf[24:28])
+	hedaSupaBlOK.inodeBitmapStartBlock = binary.LittleEndian.Uint32(headaBuf[28:32])
+	hedaSupaBlOK.dataBlockCount = binary.LittleEndian.Uint32(headaBuf[32:36])
+	hedaSupaBlOK.dataBlockStartBlock = binary.LittleEndian.Uint32(headaBuf[36:40])
+	hedaSupaBlOK.dataBitmapStartBlock = binary.LittleEndian.Uint32(headaBuf[40:44])
+	hedaSupaBlOK.totalBlocks = binary.LittleEndian.Uint32(headaBuf[44:48])
+
+	if string(hedaSupaBlOK.magic[:5]) != "FS-BS" {
+		log.Println("Invalid magic: expected FS-BS, got %s", hedaSupaBlOK.magic)
+		isInitialized = false
 	}
 
-	inodeFile.Truncate(8192 * INODESIZE) // double check this sizing TODO
-	dataFile.Truncate(16384 * DATABLOCKSIZE)
-	metaFile.Truncate(4096)
-
+	if hedaSupaBlOK.version != LATEST_VERSION {
+		log.Println("FS NOT ON LATEST VERIZON!")
+		isInitialized = false
+	}
 
 	if !isInitialized {
+		// format the fs
 
-		// do formatting work.
+		numInodes := uint32(8192)
+		numBlocks := uint32(16384)
+
+		suprBuf := make([]byte, 4096)
+		suprBlk := SuperBlock{
+			magic:          [8]byte{'F', 'S', '-', 'B', 'S'},
+			version:        1,
+			blockSize:      4096,
+			inodeCount:     numInodes,
+			inodeSize:      INODESIZE,
+			dataBlockCount: numBlocks,
+			// offsets TODO
+			inodeBitmapStartBlock: 1,
+			inodeTableStartBlock:  2, // (adjust based on bitmap size)
+		}
+
+		// Indexing is [inclusive]:[exclusive]
+		copy(suprBuf[0:8], suprBlk.magic[:])
+		binary.LittleEndian.PutUint32(suprBuf[8:12], suprBlk.version)
+		binary.LittleEndian.PutUint32(suprBuf[12:16], suprBlk.blockSize)
+		binary.LittleEndian.PutUint32(suprBuf[16:20], suprBlk.inodeCount)
+		binary.LittleEndian.PutUint32(suprBuf[20:24], suprBlk.inodeSize)
+		binary.LittleEndian.PutUint32(suprBuf[24:28], suprBlk.inodeTableStartBlock)
+		binary.LittleEndian.PutUint32(suprBuf[28:32], suprBlk.inodeBitmapStartBlock)
+		binary.LittleEndian.PutUint32(suprBuf[32:36], suprBlk.dataBlockCount)
+		binary.LittleEndian.PutUint32(suprBuf[36:40], suprBlk.dataBlockStartBlock)
+		binary.LittleEndian.PutUint32(suprBuf[40:44], suprBlk.dataBitmapStartBlock)
+		binary.LittleEndian.PutUint32(suprBuf[44:48], suprBlk.totalBlocks)
+
+		_, _ = disk.WriteAt(suprBuf, 0) // add error handling TODO
 	}
 
-	//defer metaFile.Close()
-	//defer dataFile.Close()
-	//defer inodeFile.Close()
 	// closing will be done when the engine shuts down. TODO
-
 
 	return &FileSystem{}
 }
