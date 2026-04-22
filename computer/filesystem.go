@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -124,6 +123,7 @@ type SuperBlock struct {
 
 func NewFileSystem(basePath string) *FileSystem {
 	// create all directories in basepath
+	var soopaStruct SuperBlock
 
 	os.MkdirAll(basePath, 0o755)
 
@@ -143,7 +143,7 @@ func NewFileSystem(basePath string) *FileSystem {
 		panic(err)
 	}
 
-	disk.Truncate((8192 * INODESIZE) + (16384 * DATABLOCKSIZE) + 4096) // double check this sizing TODO
+	disk.Truncate((8192 * INODESIZE) + (16384 * DATABLOCKSIZE) + 4096) // double check this sizing TODO add bitmaps
 
 	// now check for the superblk header being correct and up to date.
 
@@ -169,12 +169,12 @@ func NewFileSystem(basePath string) *FileSystem {
 	hedaSupaBlOK.totalBlocks = binary.LittleEndian.Uint32(headaBuf[44:48])
 
 	if string(hedaSupaBlOK.magic[:5]) != "FS-BS" {
-		log.Println("Invalid magic: expected FS-BS, got %s", hedaSupaBlOK.magic)
+		//log.Println("Invalid magic: expected FS-BS, got %s", hedaSupaBlOK.magic)
 		isInitialized = false
 	}
 
 	if hedaSupaBlOK.version != LATEST_VERSION {
-		log.Println("FS NOT ON LATEST VERIZON!")
+		//log.Println("FS NOT ON LATEST VERIZON!") // will log later, for no for debugging no need
 		isInitialized = false
 	}
 
@@ -211,9 +211,13 @@ func NewFileSystem(basePath string) *FileSystem {
 		binary.LittleEndian.PutUint32(suprBuf[44:48], suprBlk.totalBlocks)
 
 		_, _ = disk.WriteAt(suprBuf, 0) // add error handling TODO
+		soopaStruct = suprBlk
+	} else {
+		soopaStruct = hedaSupaBlOK
 	}
 
 	// closing will be done when the engine shuts down. TODO
-
-	return &FileSystem{}
+	return &FileSystem{
+		suprBlk: soopaStruct,
+	}
 }
