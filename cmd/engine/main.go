@@ -8,7 +8,7 @@ import (
 	"byte-space/engine"
 	"byte-space/tui"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "github.com/charmbracelet/bubbletea" // Migrate away from bubble tea to something like term UI TODO
 )
 
 func main() {
@@ -32,7 +32,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	// add like a shutdown thing for all the filesystems to close nicely TODO
+	// catch ctrl-c and make every filesystem shutdown nicely TODO
 	// use signal.Notify os.Interrupt
 
 }

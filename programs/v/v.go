@@ -33,15 +33,15 @@ func (p *VEdit) ID() string               { return p.id }
 
 func (p *VEdit) HandleSignal(sig computer.Signal) {
 	if sig == computer.SIGINT {
-		p.Kernel.Ioctl(p.proc, 0, computer.TIOCBUFFCLEAR, nil)
-		p.Kernel.Ioctl(p.proc, 0, computer.TIOCRAW, false)
+		p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCBUFFCLEAR, nil)
+		p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, false)
 		p.Kernel.Write(p.proc, 1, []byte("\033[H\033[2J"))
 		p.Kernel.Write(p.proc, 1, []byte("\n(SIGINT), quitting!\n"))
 		p.proc.CtxCancel()
 
 	} else if sig == computer.SIGWINCH {
 		var ws computer.Winsize
-		p.Kernel.Ioctl(p.proc, 0, computer.TIOCGWINSZ, &ws)
+		p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCGWINSZ, &ws)
 		p.termHeight = ws.Height
 		p.termWdith = ws.Width
 		p.vDraw()
@@ -57,14 +57,15 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 	}
 
 	target := params[1]
-	content, err := p.Kernel.ReadFile(p.proc, target)
+	result, err := p.Kernel.Syscall(p.proc, computer.SYS_READ, target)
 	if err != nil {
 		p.Kernel.Write(p.proc, 1, []byte(fmt.Sprintf("\nError reading file: %s\n", err)))
 		returnStatus <- utils.Error
 		return
 	}
+	content, _ := result.([]byte)
 
-	if err := p.Kernel.Ioctl(p.proc, 0, computer.TIOCRAW, true); err != nil {
+	if _, err := p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, true); err != nil {
 		p.Kernel.Write(p.proc, 1, []byte(fmt.Sprintf("\nError setting raw p.mode: %s\n", err)))
 		returnStatus <- utils.Error
 		return
@@ -82,7 +83,7 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 	p.cursorRow = 1
 
 	var ws computer.Winsize
-	p.Kernel.Ioctl(p.proc, 0, computer.TIOCGWINSZ, &ws)
+	p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCGWINSZ, &ws)
 	p.termHeight = ws.Height - 1 // for status bar
 	p.statusBar = p.termHeight + 1
 	p.termWdith = ws.Width
@@ -105,10 +106,10 @@ func (p *VEdit) Run(ctx context.Context, returnStatus chan int, params []string)
 				for i := range p.buffer {
 					actualBuffer = append(actualBuffer, []byte(string(p.buffer[i])+"\n")...)
 				}
-				err := p.Kernel.WriteFile(p.proc, target, actualBuffer) // with newlines and all
+				_, err := p.Kernel.Syscall(p.proc, computer.SYS_WRITE, target, actualBuffer) // with newlines and all
 				if err != nil {
-					p.Kernel.Ioctl(p.proc, 0, computer.TIOCBUFFCLEAR, nil)
-					p.Kernel.Ioctl(p.proc, 0, computer.TIOCRAW, false)
+					p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCBUFFCLEAR, nil)
+					p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, false)
 					p.Kernel.Write(p.proc, 1, []byte("ERROR WRITING TO FILE!"))
 					p.proc.CtxCancel()
 				}

@@ -3,7 +3,9 @@ package registry
 
 import (
 	"byte-space/computer"
+	"byte-space/programs/adduser"
 	"byte-space/programs/cmds"
+	"byte-space/programs/login"
 	"byte-space/programs/shell"
 	v "byte-space/programs/v"
 )
@@ -12,13 +14,26 @@ import (
 
 func Register(c *computer.Computer) {
 	k := c.Kernel
-	k.RegisterProgram("/bin/sh",    shell.New)
-	k.RegisterProgram("/bin/ls",    cmds.NewLs)
-	k.RegisterProgram("/bin/clear", cmds.NewClear)
-	k.RegisterProgram("/bin/cat",   cmds.NewCat)
-	k.RegisterProgram("/bin/mkdir", cmds.NewMkDir)
-	k.RegisterProgram("/bin/touch", cmds.NewTouch)
-	k.RegisterProgram("/bin/chmod", cmds.NewChmod)
-	k.RegisterProgram("/bin/rm",    cmds.NewRm)
-	k.RegisterProgram("/bin/v",     v.New)
+	k.RegisterProgram("/bin/sh",      shell.New)
+	k.RegisterProgram("/bin/ls",      cmds.NewLs)
+	k.RegisterProgram("/bin/clear",   cmds.NewClear)
+	k.RegisterProgram("/bin/cat",     cmds.NewCat)
+	k.RegisterProgram("/bin/mkdir",   cmds.NewMkDir)
+	k.RegisterProgram("/bin/touch",   cmds.NewTouch)
+	k.RegisterProgram("/bin/chmod",   cmds.NewChmod)
+	k.RegisterProgram("/bin/rm",      cmds.NewRm)
+	k.RegisterProgram("/bin/v",       v.New)
+	k.RegisterProgram("/bin/adduser", adduser.New)
+	k.RegisterProgram("/bin/login",   login.New)
+
+	// adduser and login run as root (they need to read/write /etc/passwd)
+	for _, path := range []string{"/bin/adduser", "/bin/login"} {
+		c.FsMetaData[path] = computer.FileMetadata{
+			Filepath:  path,
+			Owner:     "root",
+			Setuid:    true,
+			OwnerMode: 7,
+			OtherMode: 5,
+		}
+	}
 }

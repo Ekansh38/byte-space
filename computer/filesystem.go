@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -82,7 +83,7 @@ type dataBlock struct {
 
 type FileSystem struct {
 	disk    *os.File
-	suprBlk SuperBlock
+	suprBlk SuperBlock // cached
 
 	// maybe later cache the bitmaps for extra SPEED.
 }
@@ -93,7 +94,7 @@ type SuperBlock struct {
 
 	blockSize uint32 // 4
 
-	inodeCount uint32 // 4
+	inodeCount uint32 // 
 	inodeSize  uint32 // 128 // 4
 
 	inodeTableStartBlock  uint32 // 4
@@ -156,38 +157,32 @@ func NewFileSystem(basePath string) *FileSystem {
 		panic(err) // maybe dont panic TODO
 	}
 
+	// Only get the header data to validate.
+
 	copy(hedaSupaBlOK.magic[:], headaBuf[0:8])
 	hedaSupaBlOK.version = binary.LittleEndian.Uint32(headaBuf[8:12])
-	hedaSupaBlOK.blockSize = binary.LittleEndian.Uint32(headaBuf[12:16])
-	hedaSupaBlOK.inodeCount = binary.LittleEndian.Uint32(headaBuf[16:20])
-	hedaSupaBlOK.inodeSize = binary.LittleEndian.Uint32(headaBuf[20:24])
-	hedaSupaBlOK.inodeTableStartBlock = binary.LittleEndian.Uint32(headaBuf[24:28])
-	hedaSupaBlOK.inodeBitmapStartBlock = binary.LittleEndian.Uint32(headaBuf[28:32])
-	hedaSupaBlOK.dataBlockCount = binary.LittleEndian.Uint32(headaBuf[32:36])
-	hedaSupaBlOK.dataBlockStartBlock = binary.LittleEndian.Uint32(headaBuf[36:40])
-	hedaSupaBlOK.dataBitmapStartBlock = binary.LittleEndian.Uint32(headaBuf[40:44])
-	hedaSupaBlOK.totalBlocks = binary.LittleEndian.Uint32(headaBuf[44:48])
 
+	// check if the header is valid
 	if string(hedaSupaBlOK.magic[:5]) != "FS-BS" {
-		//log.Println("Invalid magic: expected FS-BS, got %s", hedaSupaBlOK.magic)
+		log.Println("Invalid magic: expected FS-BS, got %s", hedaSupaBlOK.magic)
 		isInitialized = false
 	}
-
 	if hedaSupaBlOK.version != LATEST_VERSION {
-		//log.Println("FS NOT ON LATEST VERIZON!") // will log later, for no for debugging no need
+		log.Println("Invalid version: expected %d, got %d", LATEST_VERSION, hedaSupaBlOK.version)
 		isInitialized = false
 	}
 
 	if !isInitialized {
 		// format the fs
 
+		// If its not valid we need to create and initialize a new disk.img
 		numInodes := uint32(8192)
 		numBlocks := uint32(16384)
 
 		suprBuf := make([]byte, 4096)
 		suprBlk := SuperBlock{
 			magic:          [8]byte{'F', 'S', '-', 'B', 'S'},
-			version:        1,
+			version:        LATEST_VERSION,
 			blockSize:      4096,
 			inodeCount:     numInodes,
 			inodeSize:      INODESIZE,
@@ -197,6 +192,56 @@ func NewFileSystem(basePath string) *FileSystem {
 			inodeTableStartBlock:  2, // (adjust based on bitmap size)
 		}
 
+		writeSuprBlktoSuprBuf(suprBuf, suprBlk)
+
+		_, _ = disk.WriteAt(suprBuf, 0) // add error handling TODO
+
+		// set the metadata to the new one we just made
+		soopaStruct = suprBlk
+
+		// next we need to format the inode bitmap and maybe cache it.
+		// replace magic numbers with constants TODO
+
+		//inodeBitmapBuf := make([]byte, (0x1000)*0b10) // two block
+
+		// figure out like disk sizes and stuff.
+
+
+
+
+
+	} else {
+		hedaSupaBlOK.blockSize = binary.LittleEndian.Uint32(headaBuf[12:16])
+		hedaSupaBlOK.inodeCount = binary.LittleEndian.Uint32(headaBuf[16:20])
+		hedaSupaBlOK.inodeSize = binary.LittleEndian.Uint32(headaBuf[20:24])
+		hedaSupaBlOK.inodeTableStartBlock = binary.LittleEndian.Uint32(headaBuf[24:28])
+		hedaSupaBlOK.inodeBitmapStartBlock = binary.LittleEndian.Uint32(headaBuf[28:32])
+		hedaSupaBlOK.dataBlockCount = binary.LittleEndian.Uint32(headaBuf[32:36])
+		hedaSupaBlOK.dataBlockStartBlock = binary.LittleEndian.Uint32(headaBuf[36:40])
+		hedaSupaBlOK.dataBitmapStartBlock = binary.LittleEndian.Uint32(headaBuf[40:44])
+		hedaSupaBlOK.totalBlocks = binary.LittleEndian.Uint32(headaBuf[44:48])
+
+		// set the meta data to the existing meta data
+
+		soopaStruct = hedaSupaBlOK
+	}
+
+	return &FileSystem{
+		suprBlk: soopaStruct,
+		disk:    disk,
+	}
+}
+
+func (fs *FileSystem) Shutdown() {
+	// close the file
+	// this function is called on engine shutdown
+
+	fs.disk.Close()
+	return
+}
+
+
+func writeSuprBlktoSuprBuf(suprBuf []byte, suprBlk SuperBlock) {
 		// Indexing is [inclusive]:[exclusive]
 		copy(suprBuf[0:8], suprBlk.magic[:])
 		binary.LittleEndian.PutUint32(suprBuf[8:12], suprBlk.version)
@@ -209,15 +254,4 @@ func NewFileSystem(basePath string) *FileSystem {
 		binary.LittleEndian.PutUint32(suprBuf[36:40], suprBlk.dataBlockStartBlock)
 		binary.LittleEndian.PutUint32(suprBuf[40:44], suprBlk.dataBitmapStartBlock)
 		binary.LittleEndian.PutUint32(suprBuf[44:48], suprBlk.totalBlocks)
-
-		_, _ = disk.WriteAt(suprBuf, 0) // add error handling TODO
-		soopaStruct = suprBlk
-	} else {
-		soopaStruct = hedaSupaBlOK
-	}
-
-	// closing will be done when the engine shuts down. TODO
-	return &FileSystem{
-		suprBlk: soopaStruct,
-	}
 }

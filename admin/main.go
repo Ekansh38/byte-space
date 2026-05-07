@@ -9,6 +9,7 @@ import (
 
 func commandLoop(c net.Conn) {
 	prompt := "admin> "
+
 	for {
 		value := getInput(prompt)
 		if value == "clear" {

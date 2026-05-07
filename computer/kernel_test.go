@@ -1,6 +1,7 @@
 package computer
 
 import (
+	"os"
 	"strings"
 	"testing"
 
@@ -263,7 +264,7 @@ func TestChangeDirectoryPermissions(t *testing.T) {
 			}
 			proc := &Process{CWD: "/", UID: tt.euid, EUID: tt.euid}
 
-			err := k.ChangeDirectory(proc, dir)
+			_, err := k.Syscall(proc, SYS_CHDIR, dir)
 
 			if tt.wantErr == "" {
 				assert.NoError(t, err)
@@ -333,7 +334,8 @@ func TestReadDirPermissions(t *testing.T) {
 			}
 			proc := &Process{CWD: "/", UID: tt.euid, EUID: tt.euid}
 
-			entries, err := k.ReadDir(proc, dir)
+			result, err := k.Syscall(proc, SYS_READDIR, dir)
+			entries, _ := result.([]os.FileInfo)
 
 			if tt.wantErr == "" {
 				assert.NoError(t, err)
@@ -405,7 +407,8 @@ func TestReadFilePermissions(t *testing.T) {
 			}
 			proc := &Process{CWD: "/", UID: tt.euid, EUID: tt.euid}
 
-			data, err := k.ReadFile(proc, file)
+			readResult, err := k.Syscall(proc, SYS_READ, file)
+			data, _ := readResult.([]byte)
 
 			if tt.wantErr == "" {
 				assert.NoError(t, err)
@@ -476,7 +479,7 @@ func TestMkDirPermissions(t *testing.T) {
 			}
 			proc := &Process{CWD: "/", UID: tt.euid, EUID: tt.euid}
 
-			err := k.MkDir(proc, newDir)
+			_, err := k.Syscall(proc, SYS_MKDIR, newDir)
 
 			if tt.wantErr == "" {
 				assert.NoError(t, err)

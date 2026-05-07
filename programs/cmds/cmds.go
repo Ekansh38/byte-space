@@ -3,6 +3,7 @@ package cmds
 import (
 	"context"
 	"fmt"
+	"os"
 	"path"
 	"strings"
 
@@ -49,19 +50,21 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 		}
 	}
 
-	files, err := p.Kernel.ReadDir(p.proc, dir)
+	result, err := p.Kernel.Syscall(p.proc, computer.SYS_READDIR, dir)
 	if err != nil {
 		p.Kernel.Write(p.proc, 1, []byte("\n"+err.Error()+"\n"))
 		returnStatus <- utils.Error
 		return
 	}
+	files, _ := result.([]os.FileInfo)
 
 	output := ""
 	longestOwnerName := -1
 
 	for _, file := range files {
 		filePath := path.Join(dir, file.Name())
-		meta, _ := p.Kernel.Stat(p.proc, filePath)
+		statResult, _ := p.Kernel.Syscall(p.proc, computer.SYS_STAT, filePath)
+		meta, _ := statResult.(computer.FileMetadata)
 		if len(meta.Owner) > longestOwnerName {
 			longestOwnerName = len(meta.Owner)
 		}
@@ -78,7 +81,8 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 		} else if flag == "-l" {
 			// LONG FORMAT
 			filePath := path.Join(dir, file.Name())
-			meta, _ := p.Kernel.Stat(p.proc, filePath)
+			statResult2, _ := p.Kernel.Syscall(p.proc, computer.SYS_STAT, filePath)
+			meta, _ := statResult2.(computer.FileMetadata)
 			perms := formatMode(meta.OwnerMode, meta.OtherMode, meta.Setuid)
 			owner := fmt.Sprintf("\033[96m%s\033[0m", meta.Owner)
 			var name string
@@ -144,7 +148,7 @@ func (p *Cat) Run(ctx context.Context, returnStatus chan int, params []string) {
 		return
 	}
 
-	content, err := p.Kernel.ReadFile(p.proc, params[1])
+	catResult, err := p.Kernel.Syscall(p.proc, computer.SYS_READ, params[1])
 	if err != nil {
 		message := "\nFailed to open file\n"
 		if strings.HasSuffix(err.Error(), "no such file or directory") {
@@ -154,6 +158,7 @@ func (p *Cat) Run(ctx context.Context, returnStatus chan int, params []string) {
 		returnStatus <- utils.Error
 		return
 	}
+	content, _ := catResult.([]byte)
 
 	p.Kernel.Write(p.proc, 1, []byte("\n"+string(content)+"\n"))
 	returnStatus <- utils.Success
@@ -178,7 +183,7 @@ func (p *MkDir) Run(ctx context.Context, returnStatus chan int, params []string)
 		return
 	}
 
-	if err := p.Kernel.MkDir(p.proc, params[1]); err != nil {
+	if _, err := p.Kernel.Syscall(p.proc, computer.SYS_MKDIR, params[1]); err != nil {
 		p.Kernel.Write(p.proc, 1, []byte(fmt.Sprintf("\nFailed to create directory %s\n", err)))
 		returnStatus <- utils.Error
 		return
@@ -207,7 +212,7 @@ func (p *Touch) Run(ctx context.Context, returnStatus chan int, params []string)
 		return
 	}
 
-	if err := p.Kernel.CreateFile(p.proc, params[1]); err != nil {
+	if _, err := p.Kernel.Syscall(p.proc, computer.SYS_CREATE, params[1]); err != nil {
 		p.Kernel.Write(p.proc, 1, []byte(fmt.Sprintf("\nFailed to create file %s\n", err)))
 		returnStatus <- utils.Error
 		return
@@ -243,7 +248,7 @@ func (p *Chmod) Run(ctx context.Context, returnStatus chan int, params []string)
 		return
 	}
 
-	if err := p.Kernel.Chmod(p.proc, params[2], newOwner, newOther); err != nil {
+	if _, err := p.Kernel.Syscall(p.proc, computer.SYS_CHMOD, params[2], newOwner, newOther); err != nil {
 		p.Kernel.Write(p.proc, 1, []byte(fmt.Sprintf("\nchmod: %s\n", err.Error())))
 		returnStatus <- utils.Error
 		return
@@ -287,10 +292,11 @@ func parseChmodMode(mode string, k *computer.Kernel, proc *computer.Process, tar
 		}
 	}
 
-	meta, ok := k.Stat(proc, target)
-	if !ok {
+	statResult, err := k.Syscall(proc, computer.SYS_STAT, target)
+	if err != nil {
 		return 0, 0, fmt.Errorf("no such file or directory")
 	}
+	meta, _ := statResult.(computer.FileMetadata)
 
 	apply := func(current uint8) uint8 {
 		switch op {
@@ -366,7 +372,7 @@ func (p *Rm) Run(ctx context.Context, returnStatus chan int, params []string) {
 		return
 	}
 
-	if err := p.Kernel.RemoveAll(p.proc, params[1]); err != nil {
+	if _, err := p.Kernel.Syscall(p.proc, computer.SYS_REMOVE, params[1]); err != nil {
 		p.Kernel.Write(p.proc, 1, []byte(fmt.Sprintf("\nFailed to delete file: %s\n", err)))
 		returnStatus <- utils.Error
 		return

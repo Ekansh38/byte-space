@@ -54,7 +54,7 @@ func parse(value string) ([]string, []string) {
 func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string) {
 	s.posInHistory = -1 // default, starting val
 	s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\n\r%s$ ", s.proc.CWD)))
-	s.Kernel.Ioctl(s.proc, 0, computer.TIOCRAW, true) // set TTY to raw mode.
+	s.Kernel.Syscall(s.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, true) // set TTY to raw mode.
 
 	for {
 		prefix := ""
@@ -74,16 +74,16 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 
 			// nice closure.
 			execFg := func(bin string) {
-				if err := s.Kernel.Exec(ctx, s.proc, bin, append(value, flags...), &computer.ExecOpts{}); err != nil {
+				if _, err := s.Kernel.Syscall(s.proc, computer.SYS_EXEC, ctx, bin, append(value, flags...), &computer.ExecOpts{}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
-				s.Kernel.Ioctl(s.proc, 0, computer.TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Syscall(s.proc, computer.SYS_IOCTL, 0, computer.TIOCSPGRP, s.proc.PGID)
 			}
 
 			switch value[0] {
 			// BUILT-IN commands, part of the shell not separate programs.
 			case "exit":
-				s.Kernel.Ioctl(s.proc, 0, computer.TIOCRAW, false) // set TTY to back to canonical mode.
+				s.Kernel.Syscall(s.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, false) // set TTY to back to canonical mode.
 				returnStatus <- utils.Success
 				return
 			case "pwd":
@@ -108,7 +108,7 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 				}
 				dir = path.Clean(dir)
 
-				if err := s.Kernel.ChangeDirectory(s.proc, dir); err != nil {
+				if _, err := s.Kernel.Syscall(s.proc, computer.SYS_CHDIR, dir); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 					break
 				}
@@ -134,7 +134,7 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 			case "rm":      execFg("/bin/rm")
 			case "v":
 				execFg("/bin/v")
-				s.Kernel.Ioctl(s.proc, 0, computer.TIOCRAW, true) // set to raw mode just in case!
+				s.Kernel.Syscall(s.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, true) // set to raw mode just in case!
 			case "":
 				prefix = "\n"
 			default:
@@ -144,7 +144,7 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 			s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("%s\r%s$ ", prefix, s.proc.CWD)))
 		case utils.Exit:
 
-			s.Kernel.Ioctl(s.proc, 0, computer.TIOCRAW, false) // set TTY to back to canonical mode.
+			s.Kernel.Syscall(s.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, false) // set TTY to back to canonical mode.
 			returnStatus <- utils.Error
 			return
 		}

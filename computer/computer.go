@@ -134,20 +134,8 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *Even
 	computer.Kernel = &Kernel{
 		computer: computer,
 		EventBus: eb,
-		programs: map[string]func(int) Program{
-			"/bin/adduser": func(pid int) Program { return &Adduser{id: fmt.Sprintf("adduser-%d", pid)} },
-			"/bin/login":   func(pid int) Program { return &LoginProgram{id: fmt.Sprintf("login-%d", pid)} },
-		},
-		procs: map[int]*Process{},
-	}
-
-	// adduser runs as root so we gotta make setuid TRUE!
-	computer.FsMetaData["/bin/adduser"] = FileMetadata{
-		Filepath:  "/bin/adduser",
-		Owner:     "root",
-		Setuid:    true,
-		OwnerMode: 7,
-		OtherMode: 5,
+		programs: map[string]func(int) Program{},
+		procs:    map[int]*Process{},
 	}
 	return computer
 }

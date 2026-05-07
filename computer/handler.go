@@ -31,7 +31,7 @@ func (c *Computer) HandleClient(conn net.Conn) {
 	go func() {
 		ttyDesc := c.Kernel.OpenTTY(tty) // pointer to that tty file FileDescription, it makes one too!
 		daddyProc := &Process{
-			PID:     0,
+			PID:     1,
 			UID:     "root",
 			EUID:    "root",
 			CWD:     "/",
@@ -41,7 +41,7 @@ func (c *Computer) HandleClient(conn net.Conn) {
 		} // BOOTSTRAPPP!!!! I learned that word yesterday from the crafting interpetters book, pull urself up from ur own bootstraps!!!
 		// all child processes so everything including the shell and everything the shell launches will inherit from this daddy proc.
 
-		if err := c.Kernel.Exec(connCtx, daddyProc, "/bin/login", []string{}, &ExecOpts{}); err != nil {
+		if _, err := c.Kernel.Syscall(daddyProc, SYS_EXEC, connCtx, "/bin/login", []string{}, &ExecOpts{}); err != nil {
 			tty.writeToClient("\nInvalid login or exit.\r\n", utils.Exit)
 			c.EventBus.Publish(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
 			conn.Close()
@@ -60,7 +60,7 @@ func (c *Computer) HandleClient(conn net.Conn) {
 			daddyProc.CWD = "/home/" + loggedInUser
 		}
 
-		if err := c.Kernel.Exec(connCtx, daddyProc, "/bin/sh", []string{}, &ExecOpts{}); err != nil {
+		if _, err := c.Kernel.Syscall(daddyProc, SYS_EXEC, connCtx, "/bin/sh", []string{}, &ExecOpts{}); err != nil {
 			tty.writeToClient("\nExiting with an error", utils.Exit)
 		} else {
 			tty.writeToClient("\nExiting...", utils.Exit)

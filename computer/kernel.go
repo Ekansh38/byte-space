@@ -17,6 +17,63 @@ import (
 	"byte-space/utils"
 )
 
+type Errno int
+
+const (
+	EPERM   Errno = 1
+	ENOENT  Errno = 2
+	EBADF   Errno = 9
+	EACCES  Errno = 13
+	EEXIST  Errno = 17
+	ENOTDIR Errno = 20
+	EISDIR  Errno = 21
+	EINVAL  Errno = 22
+	ENOSPC  Errno = 28
+)
+
+// See following function to see the meaning of each error.
+
+func (e Errno) Error() string {
+	switch e {
+	case EPERM:
+		return "operation not permitted"
+	case ENOENT:
+		return "no such file or directory"
+	case EBADF:
+		return "bad file descriptor"
+	case EACCES:
+		return "permission denied"
+	case EEXIST:
+		return "file already exists"
+	case ENOTDIR:
+		return "not a directory"
+	case EISDIR:
+		return "is a directory"
+	case EINVAL:
+		return "invalid argument"
+	case ENOSPC:
+		return "no space left on device"
+	default:
+		return fmt.Sprintf("errno %d", int(e))
+	}
+}
+
+type SyscallNum int
+
+const (
+	SYS_READ    SyscallNum = 0
+	SYS_WRITE   SyscallNum = 1
+	SYS_READDIR SyscallNum = 2
+	SYS_STAT    SyscallNum = 3
+	SYS_MKDIR   SyscallNum = 4
+	SYS_CREATE  SyscallNum = 5
+	SYS_REMOVE  SyscallNum = 6
+	SYS_CHDIR   SyscallNum = 7
+	SYS_CHMOD   SyscallNum = 8
+	SYS_IOCTL   SyscallNum = 9
+	SYS_EXEC    SyscallNum = 10
+)
+
 // FDType represents the type of a file description, rn its only TTY but latr it can be pipes and stuff
 type FDType int
 
@@ -134,7 +191,7 @@ func (k *Kernel) Write(proc *Process, fd int, data []byte) (int, error) {
 }
 
 // Ik that there are better ways to approach this in go, type safe ways, but I wanna stick with the old school unix/C style cuz its a classic!
-func (k *Kernel) Ioctl(proc *Process, fd int, req IoctlReq, arg any) error {
+func (k *Kernel) ioctl(proc *Process, fd int, req IoctlReq, arg any) error {
 	if fd < 0 || fd >= len(proc.FDs) || proc.FDs[fd] == nil {
 		return fmt.Errorf("bad file descriptor")
 	}
@@ -245,7 +302,7 @@ func (k *Kernel) ListMachinesOnNetwork(proc *Process) []Computer {
 // fork actually duplicates the process, then checks if the pid = 0, if it does that line executes on the child which calls exec.
 // I have simplifed this a lot to where exec makes a child, copys the data and runs the program
 
-func (k *Kernel) Exec(parentCtx context.Context, parentProc *Process, binPath string, args []string, opts *ExecOpts) error {
+func (k *Kernel) exec(parentProc *Process, parentCtx context.Context, binPath string, args []string, opts *ExecOpts) error {
 	factory, ok := k.programs[binPath]
 	if !ok {
 		return fmt.Errorf("%s: command not found", binPath)
@@ -425,7 +482,7 @@ func (k *Kernel) canExecute(effectiveUser string, filePath string) bool { // use
 	return meta.OtherMode&1 != 0
 }
 
-func (k *Kernel) ReadFile(proc *Process, target string) ([]byte, error) { // syscal
+func (k *Kernel) readFile(proc *Process, target string) ([]byte, error) { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
@@ -436,7 +493,7 @@ func (k *Kernel) ReadFile(proc *Process, target string) ([]byte, error) { // sys
 	return k.computer.OS.ReadFile(target)
 }
 
-func (k *Kernel) ReadDir(proc *Process, target string) ([]os.FileInfo, error) { // syscall
+func (k *Kernel) readDir(proc *Process, target string) ([]os.FileInfo, error) { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
@@ -447,7 +504,7 @@ func (k *Kernel) ReadDir(proc *Process, target string) ([]os.FileInfo, error) { 
 	return k.computer.OS.ReadDir(target)
 }
 
-func (k *Kernel) RemoveAll(proc *Process, target string) error { // syscall
+func (k *Kernel) removeAll(proc *Process, target string) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
@@ -473,7 +530,7 @@ func (k *Kernel) RemoveAll(proc *Process, target string) error { // syscall
 	return nil
 }
 
-func (k *Kernel) Stat(proc *Process, target string) (FileMetadata, bool) { // syscall
+func (k *Kernel) stat(proc *Process, target string) (FileMetadata, bool) { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
@@ -482,7 +539,7 @@ func (k *Kernel) Stat(proc *Process, target string) (FileMetadata, bool) { // sy
 	return meta, ok
 }
 
-func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
+func (k *Kernel) mkDir(proc *Process, target string) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
@@ -505,7 +562,7 @@ func (k *Kernel) MkDir(proc *Process, target string) error { // syscall
 	return nil
 }
 
-func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
+func (k *Kernel) createFile(proc *Process, target string) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
@@ -529,7 +586,7 @@ func (k *Kernel) CreateFile(proc *Process, target string) error { // syscall
 	return nil
 }
 
-func (k *Kernel) WriteFile(proc *Process, target string, content []byte) error { // syscall
+func (k *Kernel) writeFile(proc *Process, target string, content []byte) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
@@ -569,7 +626,7 @@ func (k *Kernel) WriteFile(proc *Process, target string, content []byte) error {
 	return nil
 }
 
-func (k *Kernel) ChangeDirectory(proc *Process, target string) error { // syscall
+func (k *Kernel) changeDirectory(proc *Process, target string) error { // syscall
 	target = k.resolvePath(proc, target)
 	if !k.computer.OS.HasDirectory(target) {
 		return fmt.Errorf("%s: no such file or directory", target)
@@ -584,7 +641,7 @@ func (k *Kernel) ChangeDirectory(proc *Process, target string) error { // syscal
 	return nil
 }
 
-func (k *Kernel) Chmod(proc *Process, target string, newOwnerMode uint8, newOtherMode uint8) error { // syscall
+func (k *Kernel) chmod(proc *Process, target string, newOwnerMode uint8, newOtherMode uint8) error { // syscall
 	k.fsMu.Lock()
 	target = k.resolvePath(proc, target)
 
@@ -602,6 +659,113 @@ func (k *Kernel) Chmod(proc *Process, target string, newOwnerMode uint8, newOthe
 	k.computer.saveMetaData()
 	k.fsMu.Unlock()
 	return nil
+}
+
+// Syscall is the single kernel entry point. Pass args in order, type-assert the result.
+// Example: result, err := k.Syscall(proc, SYS_READ, "/path"); data := result.([]byte)
+// Returns a Errorno if anything goes wrong.
+func (k *Kernel) Syscall(proc *Process, num SyscallNum, args ...any) (any, error) {
+	switch num {
+	case SYS_READ:
+		path, ok := args[0].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		return k.readFile(proc, path)
+	case SYS_WRITE:
+		path, ok := args[0].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		data, ok := args[1].([]byte)
+		if !ok {
+			return nil, EINVAL
+		}
+		return nil, k.writeFile(proc, path, data)
+	case SYS_READDIR:
+		path, ok := args[0].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		return k.readDir(proc, path)
+	case SYS_STAT:
+		path, ok := args[0].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		meta, ok := k.stat(proc, path)
+		if !ok {
+			return nil, ENOENT
+		}
+		return meta, nil
+	case SYS_MKDIR:
+		path, ok := args[0].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		return nil, k.mkDir(proc, path)
+	case SYS_CREATE:
+		path, ok := args[0].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		return nil, k.createFile(proc, path)
+	case SYS_REMOVE:
+		path, ok := args[0].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		return nil, k.removeAll(proc, path)
+	case SYS_CHDIR:
+		path, ok := args[0].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		return nil, k.changeDirectory(proc, path)
+	case SYS_CHMOD:
+		path, ok := args[0].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		ownerMode, ok := args[1].(uint8)
+		if !ok {
+			return nil, EINVAL
+		}
+		otherMode, ok := args[2].(uint8)
+		if !ok {
+			return nil, EINVAL
+		}
+		return nil, k.chmod(proc, path, ownerMode, otherMode)
+	case SYS_IOCTL:
+		fd, ok := args[0].(int)
+		if !ok {
+			return nil, EINVAL
+		}
+		req, ok := args[1].(IoctlReq)
+		if !ok {
+			return nil, EINVAL
+		}
+		return nil, k.ioctl(proc, fd, req, args[2])
+	case SYS_EXEC:
+		ctx, ok := args[0].(context.Context)
+		if !ok {
+			return nil, EINVAL
+		}
+		binPath, ok := args[1].(string)
+		if !ok {
+			return nil, EINVAL
+		}
+		execArgs, ok := args[2].([]string)
+		if !ok {
+			return nil, EINVAL
+		}
+		opts, ok := args[3].(*ExecOpts)
+		if !ok {
+			return nil, EINVAL
+		}
+		return nil, k.exec(proc, ctx, binPath, execArgs, opts)
+	}
+	return nil, EINVAL
 }
 
 func (k *Kernel) GetProcs() map[int]*Process {
