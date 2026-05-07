@@ -1,1 +1,3 @@
-./cmd/engine/data/networks/current/
+./cmd/engine/data/networks/
+./cmd/testing/data/networks/
+
