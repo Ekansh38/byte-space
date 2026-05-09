@@ -1,14 +1,13 @@
 package shell
 
 import (
+	"byte-space/computer"
+	"byte-space/utils"
 	"context"
 	"fmt"
 	"log"
 	"path"
 	"strings"
-
-	"byte-space/computer"
-	"byte-space/utils"
 )
 
 type Shell struct {
@@ -79,12 +78,14 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 
 			value, flags := parse(thingyMaBOB)
 
-			// nice closure.
+			// nice closure. switches to canonical before exec and restores raw after.
 			execFg := func(bin string) {
+				s.Kernel.Syscall(s.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, false)
 				if _, err := s.Kernel.Syscall(s.proc, computer.SYS_EXEC, ctx, bin, append(value, flags...), &computer.ExecOpts{}); err != nil {
 					s.Kernel.Write(s.proc, 1, []byte("\n"+err.Error()+"\n"))
 				}
 				s.Kernel.Syscall(s.proc, computer.SYS_IOCTL, 0, computer.TIOCSPGRP, s.proc.PGID)
+				s.Kernel.Syscall(s.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, true)
 			}
 
 			switch value[0] {
@@ -131,14 +132,26 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 			// error handling
 			// set foreground process
 
-			case "ls":      execFg("/bin/ls")
-			case "clear":   execFg("/bin/clear")
-			case "cat":     execFg("/bin/cat")
-			case "adduser": execFg("/bin/adduser")
-			case "mkdir":   execFg("/bin/mkdir")
-			case "touch":   execFg("/bin/touch")
-			case "chmod":   execFg("/bin/chmod")
-			case "rm":      execFg("/bin/rm")
+			// TODO: fix this into just a regular search through PATH, instead of hardcoding bin names here.
+			// maybe even support aliases and stuff. would be fun.
+			// Later when I do the BS-LANG
+
+			case "ls":
+				execFg("/bin/ls")
+			case "clear":
+				execFg("/bin/clear")
+			case "cat":
+				execFg("/bin/cat")
+			case "adduser":
+				execFg("/bin/adduser")
+			case "mkdir":
+				execFg("/bin/mkdir")
+			case "touch":
+				execFg("/bin/touch")
+			case "chmod":
+				execFg("/bin/chmod")
+			case "rm":
+				execFg("/bin/rm")
 			case "v":
 				execFg("/bin/v")
 				s.Kernel.Syscall(s.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, true) // set to raw mode just in case!

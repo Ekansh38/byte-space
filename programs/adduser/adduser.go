@@ -23,13 +23,17 @@ func (p *Adduser) ID() string                        { return p.id }
 
 func (p *Adduser) HandleSignal(sig computer.Signal) {
 	if sig == computer.SIGINT {
-		p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCBUFFCLEAR, nil)
+		p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCPASSWD, false)
+		p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCBUFFCLEAR, true)
 		p.Kernel.Write(p.proc, 1, []byte("\n(SIGINT), force quitting!\n"))
 		p.proc.CtxCancel()
 	}
 }
 
 func (p *Adduser) Run(ctx context.Context, returnStatus chan int, params []string) {
+	p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, false)
+	defer p.Kernel.Syscall(p.proc, computer.SYS_IOCTL, 0, computer.TIOCRAW, true)
+
 	if len(params) != 1 {
 		p.Kernel.Write(p.proc, 1, []byte("\nUsage: adduser\n"))
 		returnStatus <- utils.Error
