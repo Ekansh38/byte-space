@@ -28,7 +28,14 @@ func New(pid int) computer.Program {
 func (s *Shell) SetProcess(proc *computer.Process) { s.proc = proc }
 func (s *Shell) SetKernel(k *computer.Kernel)      { s.Kernel = k }
 func (s *Shell) ID() string                        { return s.id }
-func (s *Shell) HandleSignal(sig computer.Signal)  {}
+func (s *Shell) HandleSignal(sig computer.Signal) {
+	if sig == computer.SIGINT {
+		s.buffer = ""
+		s.cursorPosition = 0
+		s.posInHistory = -1
+		s.Kernel.Write(s.proc, 1, []byte(fmt.Sprintf("\n\r%s$ ", s.proc.CWD)))
+	}
+}
 
 func parse(value string) ([]string, []string) {
 	parts := strings.Fields(value)

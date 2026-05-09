@@ -86,6 +86,9 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 
 	switch keystroke {
 	case "\x03": // ctrl-c
+		if t.Echo {
+			t.writeToClient("^C", utils.Success)
+		}
 		if t.ForegroundPGID != -1 {
 			var foregroundPrograms []*Process
 
