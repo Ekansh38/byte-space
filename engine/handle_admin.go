@@ -2,14 +2,13 @@ package engine
 
 import (
 	"bufio"
+	"byte-space/computer"
+	"byte-space/utils"
 	"encoding/json"
 	"fmt"
 	"net"
 	"os"
 	"strings"
-
-	"byte-space/computer"
-	"byte-space/utils"
 )
 
 func (e *Engine) handleAdmin(conn net.Conn) {
@@ -81,7 +80,7 @@ func (e *Engine) listNodes(commandParsed []string) (string, int) {
 		message = message[:len(message)-1]
 	}
 
-	return message+"\n", utils.Success
+	return message + "\n", utils.Success
 }
 
 func (e *Engine) spawnNode(commandParsed []string) (string, int) {

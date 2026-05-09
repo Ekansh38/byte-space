@@ -1213,3 +1213,110 @@
 2026/05/07 17:18:50 HISTORY []string{"clear", "cd /", "v passwd", "ls", "cd etc", "ls", "v passwd", "cd /root", ":q"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
 2026/05/07 17:18:50 HISTORY []string{"clear", "cd /", "v passwd", "ls", "cd etc", "ls", "v passwd", "cd /root", ":q"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
 2026/05/07 17:18:50 HISTORY []string{"clear", "cd /", "v passwd", "ls", "cd etc", "ls", "v passwd", "cd /root", ":q", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:02 HISTORY []string(nil), POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/09 11:24:02 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/05/09 11:24:02 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/05/09 11:24:02 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/05/09 11:24:02 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/05/09 11:24:02 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:08 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/05/09 11:24:08 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:08 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/09 11:24:08 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/05/09 11:24:08 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/05/09 11:24:08 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/05/09 11:24:08 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/05/09 11:24:09 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/05/09 11:24:09 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/05/09 11:24:09 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/05/09 11:24:09 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/09 11:24:09 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:09 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER a, CURSORPOS 1
+2026/05/09 11:24:09 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER am, CURSORPOS 2
+2026/05/09 11:24:10 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER a, CURSORPOS 1
+2026/05/09 11:24:10 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:10 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:10 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:10 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:11 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER a, CURSORPOS 1
+2026/05/09 11:24:11 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER ad, CURSORPOS 2
+2026/05/09 11:24:11 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER add, CURSORPOS 3
+2026/05/09 11:24:11 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER addu, CURSORPOS 4
+2026/05/09 11:24:11 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER addus, CURSORPOS 5
+2026/05/09 11:24:11 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER adduse, CURSORPOS 6
+2026/05/09 11:24:11 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER adduser, CURSORPOS 7
+2026/05/09 11:24:12 HISTORY []string{"clear", "adduser"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:19 HISTORY []string{"clear", "adduser"}, POSINHISTORY: -1, BUFFER :, CURSORPOS 1
+2026/05/09 11:24:19 HISTORY []string{"clear", "adduser"}, POSINHISTORY: -1, BUFFER :q, CURSORPOS 2
+2026/05/09 11:24:19 HISTORY []string{"clear", "adduser", ":q"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:24:20 HISTORY []string{"clear", "adduser", ":q"}, POSINHISTORY: -1, BUFFER e, CURSORPOS 1
+2026/05/09 11:24:20 HISTORY []string{"clear", "adduser", ":q"}, POSINHISTORY: -1, BUFFER ex, CURSORPOS 2
+2026/05/09 11:24:20 HISTORY []string{"clear", "adduser", ":q"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
+2026/05/09 11:24:20 HISTORY []string{"clear", "adduser", ":q"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
+2026/05/09 11:24:21 HISTORY []string{"clear", "adduser", ":q", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:25:39 HISTORY []string(nil), POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/09 11:25:39 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/05/09 11:25:39 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/05/09 11:25:39 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/05/09 11:25:40 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/05/09 11:25:40 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:25:40 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/05/09 11:25:40 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/05/09 11:25:40 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:25:40 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER a, CURSORPOS 1
+2026/05/09 11:25:40 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER ad, CURSORPOS 2
+2026/05/09 11:25:40 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER add, CURSORPOS 3
+2026/05/09 11:25:41 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER addu, CURSORPOS 4
+2026/05/09 11:25:41 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER addus, CURSORPOS 5
+2026/05/09 11:25:41 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER adduse, CURSORPOS 6
+2026/05/09 11:25:41 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER adduser, CURSORPOS 7
+2026/05/09 11:25:41 HISTORY []string{"clear", "ls", "adduser"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:25:48 HISTORY []string{"clear", "ls", "adduser"}, POSINHISTORY: -1, BUFFER v, CURSORPOS 1
+2026/05/09 11:25:49 HISTORY []string{"clear", "ls", "adduser"}, POSINHISTORY: -1, BUFFER v , CURSORPOS 2
+2026/05/09 11:25:49 HISTORY []string{"clear", "ls", "adduser"}, POSINHISTORY: -1, BUFFER v ., CURSORPOS 3
+2026/05/09 11:25:49 HISTORY []string{"clear", "ls", "adduser", "v ."}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:25:54 HISTORY []string{"clear", "ls", "adduser", "v ."}, POSINHISTORY: -1, BUFFER p, CURSORPOS 1
+2026/05/09 11:25:54 HISTORY []string{"clear", "ls", "adduser", "v ."}, POSINHISTORY: -1, BUFFER pw, CURSORPOS 2
+2026/05/09 11:25:54 HISTORY []string{"clear", "ls", "adduser", "v ."}, POSINHISTORY: -1, BUFFER pwd, CURSORPOS 3
+2026/05/09 11:25:54 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:25:55 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/09 11:25:55 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd"}, POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/05/09 11:25:55 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd"}, POSINHISTORY: -1, BUFFER cd , CURSORPOS 3
+2026/05/09 11:25:55 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd"}, POSINHISTORY: -1, BUFFER cd ., CURSORPOS 4
+2026/05/09 11:25:55 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd"}, POSINHISTORY: -1, BUFFER cd .., CURSORPOS 5
+2026/05/09 11:25:55 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd .."}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:25:55 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd .."}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/05/09 11:25:56 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd .."}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/05/09 11:25:56 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:25:57 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/09 11:25:57 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/05/09 11:25:58 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/09 11:25:58 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:25:58 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER t, CURSORPOS 1
+2026/05/09 11:25:58 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER to, CURSORPOS 2
+2026/05/09 11:25:59 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER tou, CURSORPOS 3
+2026/05/09 11:25:59 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touc, CURSORPOS 4
+2026/05/09 11:25:59 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch, CURSORPOS 5
+2026/05/09 11:25:59 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch , CURSORPOS 6
+2026/05/09 11:25:59 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch d, CURSORPOS 7
+2026/05/09 11:25:59 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch di, CURSORPOS 8
+2026/05/09 11:26:00 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch dih, CURSORPOS 9
+2026/05/09 11:26:00 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:26:01 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih"}, POSINHISTORY: -1, BUFFER v, CURSORPOS 1
+2026/05/09 11:26:01 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih"}, POSINHISTORY: -1, BUFFER v , CURSORPOS 2
+2026/05/09 11:26:01 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih"}, POSINHISTORY: -1, BUFFER v d, CURSORPOS 3
+2026/05/09 11:26:01 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih"}, POSINHISTORY: -1, BUFFER v di, CURSORPOS 4
+2026/05/09 11:26:01 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih"}, POSINHISTORY: -1, BUFFER v dih, CURSORPOS 5
+2026/05/09 11:26:01 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:26:01 WIDTH: 179
+2026/05/09 11:26:01 ROW: 1 COL: 1
+2026/05/09 11:26:05 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih"}, POSINHISTORY: -1, BUFFER :, CURSORPOS 1
+2026/05/09 11:26:06 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih"}, POSINHISTORY: -1, BUFFER :q, CURSORPOS 2
+2026/05/09 11:26:06 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q"}, POSINHISTORY: -1, BUFFER x, CURSORPOS 1
+2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q"}, POSINHISTORY: -1, BUFFER e, CURSORPOS 1
+2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q"}, POSINHISTORY: -1, BUFFER ex, CURSORPOS 2
+2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
+2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
+2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0

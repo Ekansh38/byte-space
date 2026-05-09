@@ -89,7 +89,7 @@ type FileSystem struct {
 }
 
 type SuperBlock struct {
-	magic   [8]byte // 8 // FS-BS
+	magic   [8]byte // 8 // BS-EXTFS
 	version uint32  // 4
 
 	blockSize uint32 // 4
@@ -163,8 +163,8 @@ func NewFileSystem(basePath string) *FileSystem {
 	hedaSupaBlOK.version = binary.LittleEndian.Uint32(headaBuf[8:12])
 
 	// check if the header is valid
-	if string(hedaSupaBlOK.magic[:5]) != "FS-BS" {
-		log.Println("Invalid magic: expected FS-BS, got %s", hedaSupaBlOK.magic)
+	if string(hedaSupaBlOK.magic[:8]) != "BS-EXTFS" {
+		log.Println("Invalid magic: expected BS-EXTFS, got %s", hedaSupaBlOK.magic)
 		isInitialized = false
 	}
 	if hedaSupaBlOK.version != LATEST_VERSION {
@@ -181,7 +181,7 @@ func NewFileSystem(basePath string) *FileSystem {
 
 		suprBuf := make([]byte, 4096)
 		suprBlk := SuperBlock{
-			magic:          [8]byte{'F', 'S', '-', 'B', 'S'},
+			magic:          [8]byte{'B', 'S', '-', 'E', 'X', 'T', 'F', 'S'},
 			version:        LATEST_VERSION,
 			blockSize:      4096,
 			inodeCount:     numInodes,

@@ -51,7 +51,7 @@ Terminal-based internet simulator from the early internet era. Build networks, b
 - `chmod` with `u`/`o`/`a` and `+`/`-`/`=` operators
 - Filesystem and metadata (ownership, permissions) persisted per node
 
-> **Note:** An inode-based filesystem is in progress. Currently backed by afero.
+> **Note:** BS-EXTFS (Bull-Shit Extended FileSystem), an inode-based filesystem, is in progress. Currently backed by afero.
 
 **TUI Visualizer**
 - Live event log per TTY

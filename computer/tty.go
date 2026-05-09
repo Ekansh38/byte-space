@@ -6,6 +6,7 @@ package computer
 // The TTY is represented by a FD and is a regular I/O device managed by the kernel in RAM.
 
 import (
+	"byte-space/utils"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -13,10 +14,7 @@ import (
 	"log"
 	"net"
 	"strings"
-
-	"byte-space/utils"
 )
-
 
 type TTY struct {
 	io.Writer
@@ -64,7 +62,7 @@ func (t *TTY) writeToClient(data string, status int) {
 type Signal int
 
 const (
-	SIGINT   Signal = iota
+	SIGINT Signal = iota
 	SIGTSTP
 	SIGQUIT
 	SIGINFO
@@ -86,9 +84,7 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 
 	switch keystroke {
 	case "\x03": // ctrl-c
-		if t.Echo {
-			t.writeToClient("^C", utils.Success)
-		}
+		t.writeToClient("^C", utils.Success)
 		if t.ForegroundPGID != -1 {
 			var foregroundPrograms []*Process
 

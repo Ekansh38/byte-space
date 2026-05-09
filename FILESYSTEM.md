@@ -4,29 +4,26 @@ Total disk size: 64 MB (67108864 bytes)
 Block size: 0x1000 bytes (4096 bytes)
 Total blocks: 16384
 
-
 LAYOUT
 
-Component              Start Block    Blocks    Bytes
-Super Block            0              1         4,096
-Inode Bitmap           1              1         4,096
-Inode Table            2              252       1,032,192
-Data Bitmap            254            1         4,096
-Data Blocks            255            16,128    66,060,288
-Padding                16,383         1         4,096
-                                      ------    -----------
-TOTAL                                 16,384    67,108,864
+Component Start Block Blocks Bytes
+Super Block 0 1 4,096
+Inode Bitmap 1 1 4,096
+Inode Table 2 252 1,032,192
+Data Bitmap 254 1 4,096
+Data Blocks 255 16,128 66,060,288
+Padding 16,383 1 4,096
+------ -----------
+TOTAL 16,384 67,108,864
 
+## CAPACITIES
 
-CAPACITIES
-----------
 Inodes: 8,064
 Data blocks: 16,128
 Ratio: 2.0 data blocks per inode (exact)
 
+## PROOF
 
-PROOF
------
 Target ratio: 1 inode : 2 data blocks
 Inode size: 128 bytes
 Data block size: 4,096 bytes

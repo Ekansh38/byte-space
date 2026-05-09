@@ -183,7 +183,7 @@ func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
 	}
 
 	session := &Session{
-		SessionID:   sessionID,
+		SessionID:   sessionID,computer.go
 		Computer:    node,
 		CurrentUser: username,
 		TTY:         tty,

@@ -7,14 +7,13 @@ package computer
 // one day ill build an ACTUAL kernel that boots on startup and does all that jazz but, imma focus on byte-space for now...
 
 import (
+	"byte-space/utils"
 	"context"
 	"fmt"
 	"os"
 	"path"
 	"strings"
 	"sync"
-
-	"byte-space/utils"
 )
 
 type Errno int
