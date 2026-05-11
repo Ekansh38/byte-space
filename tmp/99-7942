@@ -1,0 +1,8 @@
+/Users/ekanshgoenka/Desktop/Projects/byte-space/engine/persistance.go:24:1,25,SaveNetwork function - serializes network config to JSON and writes to disk at ./data/networks/current/network.json
+/Users/ekanshgoenka/Desktop/Projects/byte-space/engine/persistance.go:51:1,26,LoadNetwork function - reads network config from disk JSON file and reconstructs computer nodes in memory
+/Users/ekanshgoenka/Desktop/Projects/byte-space/engine/persistance.go:79:1,8,resetNetwork function - clears both disk and memory by removing network data directory
+/Users/ekanshgoenka/Desktop/Projects/byte-space/computer/computer.go:147:1,6,saveMetaData function - marshals filesystem metadata to JSON and persists to disk using os.WriteFile
+/Users/ekanshgoenka/Desktop/Projects/byte-space/computer/computer.go:155:1,10,loadMetaData function - reads filesystem metadata from disk JSON file and unmarshals into memory
+/Users/ekanshgoenka/Desktop/Projects/byte-space/computer/filesystem.go:125:1,108,NewFileSystem function - creates or loads disk.img file with persistent filesystem including superblock, inodes, and data blocks
+/Users/ekanshgoenka/Desktop/Projects/byte-space/computer/filesystem.go:91:1,22,SuperBlock struct - on-disk metadata structure that persists filesystem layout and block allocation information
+/Users/ekanshgoenka/Desktop/Projects/byte-space/computer/filesystem.go:235:1,6,Shutdown function - closes the disk file handle to ensure data is flushed to persistent storage

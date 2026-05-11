@@ -1,145 +1,16 @@
-package computer
+<Context>
+You receive a selection in neovim that you need to replace with new code.
+The selection's contents may contain notes, incorporate the notes every time if there are some.
+consider the context of the selection and what you are suppose to be implementing
+<SELECTION_LOCATION>
+range(point(243,1),point(245,2))
+</SELECTION_LOCATION>
+<SELECTION_CONTENT>
+func add(a, b) {
 
-import (
-	"encoding/binary"
-	"errors"
-	"io"
-	"log"
-	"os"
-	"path/filepath"
-)
-
-// PLANNING
-// inode file: meta data (file-size, type) + block list + FIND, SIND, TIND
-// data file: raw bytes (fixed size)
-// directory data block entry (fixed size)
-// if string too short ["p", "i", "c", "s", "\0","0","0","0"] // the extra 0's are padding
-// metadata: freeBlocks + root
-// write: take free block -> store data -> update inode
-// read: inode -> blocks -> combine
-// delete: free blocks -> remove inode
-// freeBlocks empty = disk full (FAHH)
-
-type InodeType uint8
-
-const (
-	S_IFREG = 0
-	S_IFDIR = 1
-)
-
-const LATEST_VERSION = 1
-
-const (
-	INODESIZE     = 128  // in bytes
-	DATABLOCKSIZE = 4096 // in bytes
-)
-
-type inode struct {
-	size  uint32 // file-size in bytes
-	fType InodeType
-	refs  uint16
-
-	owner [14]byte // the owner of the file/folder,
-	// string of the username of the creator,
-	// for system files it is root, for other stuff /home/user it is that user.
-
-	setuid bool // true means the user who runs that program can run it in the permissions of the owner
-
-	ownerMode uint8
-	otherMode uint8
-
-	//    rwx     // read  write  execute permissions
-	// 0: 000
-	// 1: 001
-	// 2: 010
-	// 3: 011
-	// 4: 100
-	// 5: 101
-	// 6: 110
-	// 7: 111
-
-	// BLOCK LISTS
-
-	direct [12]uint32
-	find   uint32 // first-indirect
-	sind   uint32 // second-indirect
-	tind   uint32 // third-indirect
-
-	createdAt  uint64
-	modifiedAt uint64
 }
-
-type dataBlockType int
-
-const (
-	REG      = 0 // not a directory data block
-	DIRBLOCK = 1
-)
-
-type dataBlock struct {
-	blockType dataBlockType
-	data      [DATABLOCKSIZE]byte // key-value pair type data block if it's a directory data block.
-}
-
-type FileSystem struct {
-	disk    *os.File
-	suprBlk SuperBlock // cached
-
-	// maybe later cache the bitmaps for extra SPEED.
-}
-
-type SuperBlock struct {
-	magic   [8]byte // 8 // BS-EXTFS
-	version uint32  // 4
-
-	blockSize uint32 // 4
-
-	inodeCount uint32 // 
-	inodeSize  uint32 // 128 // 4
-
-	inodeTableStartBlock  uint32 // 4
-	inodeBitmapStartBlock uint32 // 4
-
-	dataBlockCount uint32 // 4
-
-	dataBlockStartBlock  uint32 // 4
-	dataBitmapStartBlock uint32 // 4
-
-	totalBlocks uint32 // 4
-
-	// later maybe a dirty bit
-
-	// total: 48
-}
-
-// bitmap structure: [inodeCount]uint64
-
-// disk structure
-
-// SUPER BLOCK
-// INODE BITMAP
-// INODE TABLE
-// DATA BITMAP
-// DATA BLOCKS
-
-func NewFileSystem(basePath string) *FileSystem {
-	// create all directories in basepath
-	var soopaStruct SuperBlock
-
-	os.MkdirAll(basePath, 0o755)
-
-	diskPath := filepath.Join(basePath, "disk.img")
-
-	isInitialized := true
-	if _, err := os.Stat(diskPath); errors.Is(err, os.ErrNotExist) {
-		isInitialized = false
-	}
-
-	disk, err := os.OpenFile(
-		diskPath,
-		os.O_CREATE|os.O_RDWR,
-		0o644,
-	)
+</SELECTION_CONTENT>
+<SURROUNDING_CONTEXT>
 	if err != nil {
 		panic(err)
 	}
@@ -240,6 +111,11 @@ func (fs *FileSystem) Shutdown() {
 	return
 }
 
+func add(a, b) {
+
+}
+
+
 func writeSuprBlktoSuprBuf(suprBuf []byte, suprBlk SuperBlock) {
 		// Indexing is [inclusive]:[exclusive]
 		copy(suprBuf[0:8], suprBlk.magic[:])
@@ -254,3 +130,26 @@ func writeSuprBlktoSuprBuf(suprBuf []byte, suprBlk SuperBlock) {
 		binary.LittleEndian.PutUint32(suprBuf[40:44], suprBlk.dataBitmapStartBlock)
 		binary.LittleEndian.PutUint32(suprBuf[44:48], suprBlk.totalBlocks)
 }
+</SURROUNDING_CONTEXT>
+
+</Context>
+<Prompt>
+write this function out
+</Prompt>
+
+<Location><File>/Users/ekanshgoenka/Desktop/Projects/byte-space/computer/filesystem.go</File><Function>range(point(243,1),point(245,2))</Function></Location>
+<FunctionText>func add(a, b) {
+
+}</FunctionText>
+<TEMP_FILE>./tmp/99-8078</TEMP_FILE>
+<MustObey>
+NEVER alter any file other than TEMP_FILE.
+never provide the requested changes as conversational output. Return only the code.
+ONLY provide requested changes by writing the change to TEMP_FILE
+
+never attempt to read TEMP_FILE.
+It is purely for output.
+Previous contents, which may not exist, can be written over without worry
+After writing TEMP_FILE once you should be done.  Be done and end the session.
+
+</MustObey>
