@@ -482,7 +482,7 @@ func (k *Kernel) readDir(proc *Process, target string) ([]os.FileInfo, error) { 
 	return k.computer.OS.ReadDir(target)
 }
 
-func (k *Kernel) removeAll(proc *Process, target string) error { // syscall
+func (k *Kernel) removeAll(proc *Process, target string) error {
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
@@ -494,11 +494,7 @@ func (k *Kernel) removeAll(proc *Process, target string) error { // syscall
 	}
 
 	if !targetStat.IsDir() {
-		before, _, ok := strings.Cut(target, "/")
-		if !ok {
-			return fmt.Errorf("error")
-		}
-		parentDir = before
+		parentDir = path.Dir(target)
 	}
 
 	if !k.canWrite(proc.EUID, parentDir) || !k.canExecute(proc.EUID, parentDir) {
