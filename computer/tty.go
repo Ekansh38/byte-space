@@ -210,7 +210,6 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 			case "\x1b[A", "\x1b[B", "\x1b\x7f", "\x1bw", "\x15", "\x02", "\x1b":
 				continue
 			default:
-
 				index := t.CursorPosition
 				data := receivedData
 				if data == "\t" {
