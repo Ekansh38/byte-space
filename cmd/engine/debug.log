@@ -1320,3 +1320,9 @@
 2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
 2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
 2026/05/09 11:26:07 HISTORY []string{"clear", "ls", "adduser", "v .", "pwd", "cd ..", "ls", "touch dih", "v dih", ":q", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:31:44 HISTORY []string(nil), POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/12 20:31:44 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/05/12 20:31:45 HISTORY []string(nil), POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/05/12 20:31:45 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/05/12 20:31:45 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/05/12 20:31:45 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
