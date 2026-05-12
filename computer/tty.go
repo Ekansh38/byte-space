@@ -115,7 +115,7 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 
 	var foregroundPrograms []*Process
 
-	procs := t.Session.Computer.Kernel.procs
+	procs := t.Session.Computer.Kernel.GetProcs()
 	for _, proc := range procs {
 		if proc.PGID == t.ForegroundPGID {
 			foregroundPrograms = append(foregroundPrograms, proc)
