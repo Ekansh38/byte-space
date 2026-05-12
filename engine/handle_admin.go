@@ -113,7 +113,7 @@ func (e *Engine) spawnNode(commandParsed []string) (string, int) {
 		}
 	}
 
-	newNode := computer.NewComputer(name, ip, nodeType, e, e.EventBus)
+	newNode := computer.NewComputer(name, ip, nodeType, e)
 	registerPrograms(newNode)
 	e.nodes[ip] = newNode
 

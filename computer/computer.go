@@ -48,7 +48,6 @@ type Computer struct {
 	Type       string
 	OS         *OS
 	Kernel     *Kernel
-	EventBus   *EventBus
 	filesystem afero.Fs
 	FsMetaData map[string]FileMetadata
 
@@ -108,7 +107,7 @@ func populateFileMetadata(filesystm afero.Fs, computer *Computer) {
 	afero.Walk(filesystm, "/", walkFunc)
 }
 
-func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *EventBus) *Computer {
+func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Computer {
 	basePath := fmt.Sprintf("./data/networks/current/nodes/%s", name) // uniqueness of name is checked in the handler.go of the engine package.
 	os.MkdirAll(basePath, 0o755)
 
@@ -120,7 +119,6 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *Even
 		IP:         ip,
 		Type:       nodeType,
 		OS:         &OS{},
-		EventBus:   eb,
 		filesystem: filesystm,
 		FsMetaData: map[string]FileMetadata{},
 		sessions:   make(map[string]*Session),
@@ -133,7 +131,6 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI, eb *Even
 	computer.OS.Network = e
 	computer.Kernel = &Kernel{
 		computer: computer,
-		EventBus: eb,
 		programs: map[string]func(int) Program{},
 		procs:    map[int]*Process{},
 	}
@@ -183,7 +180,7 @@ func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
 	}
 
 	session := &Session{
-		SessionID:   sessionID,computer.go
+		SessionID:   sessionID,
 		Computer:    node,
 		CurrentUser: username,
 		TTY:         tty,
@@ -204,14 +201,6 @@ func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
 			OtherMode: otherMode,
 		}
 	}
-
-	node.EventBus.Publish(EventSessionCreated, map[string]interface{}{
-		"session_id":  sessionID,
-		"user":        username,
-		"computer":    node.Name,
-		"working_dir": workingDir,
-		"tty_id":      tty.id,
-	})
 
 	return utils.Success, sessionID
 }

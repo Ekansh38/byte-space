@@ -10,8 +10,6 @@ import (
 type Engine struct {
 	nodes    map[string]*computer.Computer // by IP address // RACE CONDITIONS ON THIS!@!!!!!
 	nodesMu sync.RWMutex
-	
-	EventBus *computer.EventBus            // to transmit events to tui
 }
 
 // API
@@ -38,7 +36,7 @@ func (e *Engine) GetFsMetaData(computerName string) map[string]computer.FileMeta
 }
 
 func NewEngine() *Engine {
-	e := &Engine{nodes: make(map[string]*computer.Computer), EventBus: computer.NewEventBus()}
+	e := &Engine{nodes: make(map[string]*computer.Computer)}
 
 	// load network
 	err := e.LoadNetwork()

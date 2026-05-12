@@ -125,7 +125,6 @@ type Program interface {
 
 type Kernel struct {
 	computer *Computer
-	EventBus *EventBus
 	programs map[string]func(int) Program // path to the factory, which can later change if I implement a language
 	// later the factory can be just 1 function, and instead of a map, it can just read that file path and do the language stuff, check for shebang and all that.
 	// rn we still need a map.
@@ -145,10 +144,6 @@ type Kernel struct {
 
 func (k *Kernel) RegisterProgram(path string, factory func(int) Program) {
 	k.programs[path] = factory
-}
-
-func (k *Kernel) PublishEvent(proc *Process, eventType EventType, data map[string]interface{}) {
-	k.EventBus.Publish(eventType, data)
 }
 
 func (k *Kernel) GetTtyID(proc *Process) string {
@@ -354,33 +349,17 @@ func (k *Kernel) exec(parentProc *Process, parentCtx context.Context, binPath st
 
 	status := make(chan int)
 
-	k.EventBus.Publish(EventProgramStarted, map[string]interface{}{
-		"program_id": program.ID(),
-		"tty_id":     k.GetTtyID(parentProc),
-	})
-
 	go program.Run(ctx, status, args)
 
 	if opts.Background {
 		go func() {
-			exitCode := <-status
-			k.EventBus.Publish(EventProgramExited, map[string]interface{}{
-				"program_id": program.ID(),
-				"status":     exitCode,
-				"tty_id":     k.GetTtyID(parentProc),
-			})
+			<-status
 			k.cleanupProcess(pid)
 		}()
 		return nil
 	}
 
 	exitCode := <-status
-
-	k.EventBus.Publish(EventProgramExited, map[string]interface{}{
-		"program_id": program.ID(),
-		"status":     exitCode,
-		"tty_id":     k.GetTtyID(parentProc),
-	})
 	k.cleanupProcess(pid)
 
 	if exitCode != utils.Success {

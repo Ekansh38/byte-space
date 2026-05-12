@@ -19,7 +19,6 @@
 
 Terminal-based internet simulator from the early internet era. Build networks, browse websites in terminals, send email, and watch packets travel in real-time with the visualizer.
 
-> **Note:** The TUI (`tui/`) is the only vibe coded element of this project. Everything else is handcrafted.
 
 ## Features
 
@@ -53,10 +52,6 @@ Terminal-based internet simulator from the early internet era. Build networks, b
 
 > **Note:** BS-EXTFS (Bull-Shit Extended FileSystem), an inode-based filesystem, is in progress. Currently backed by afero.
 
-**TUI Visualizer**
-- Live event log per TTY
-- Shows TTY mode, echo state, input buffer, foreground program, session info
-
 ## Installation
 
 ```bash
@@ -68,7 +63,7 @@ cd byte-space
 
 ## Quick Start
 
-Start the engine + TUI:
+Start the engine:
 ```bash
 cd cmd/engine && go run .
 ```

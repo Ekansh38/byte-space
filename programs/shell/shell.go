@@ -121,10 +121,6 @@ func (s *Shell) Run(ctx context.Context, returnStatus chan int, params []string)
 					break
 				}
 
-				s.Kernel.PublishEvent(s.proc, computer.EventWorkingDirChanged, map[string]interface{}{
-					"dir":    dir,
-					"tty_id": s.Kernel.GetTtyID(s.proc),
-				})
 				s.Kernel.Write(s.proc, 1, []byte("\n"))
 
 			// PROGRAM LAUNCH PROCESS

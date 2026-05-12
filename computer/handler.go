@@ -14,11 +14,7 @@ import (
 func (c *Computer) HandleClient(conn net.Conn) {
 	ttyID := fmt.Sprintf("tty-%d", len(c.ttys))
 
-	c.EventBus.Publish(EventTTYCreated, map[string]interface{}{
-		"tty_id": ttyID,
-	})
-
-	tty := NewTTY(conn, c.EventBus, ttyID)
+	tty := NewTTY(conn, ttyID)
 
 	// tmep session for tty.read
 	tty.Session = &Session{
@@ -43,7 +39,6 @@ func (c *Computer) HandleClient(conn net.Conn) {
 
 		if _, err := c.Kernel.Syscall(daddyProc, SYS_EXEC, connCtx, "/bin/login", []string{}, &ExecOpts{}); err != nil {
 			tty.writeToClient("\nInvalid login or exit.\r\n", utils.Exit)
-			c.EventBus.Publish(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
 			conn.Close()
 			return
 		}
@@ -66,7 +61,6 @@ func (c *Computer) HandleClient(conn net.Conn) {
 			tty.writeToClient("\nExiting...", utils.Exit)
 		}
 
-		c.EventBus.Publish(EventTTYClosed, map[string]interface{}{"tty_id": tty.id})
 		conn.Close()
 	}()
 

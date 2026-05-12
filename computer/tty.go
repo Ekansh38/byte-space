@@ -30,11 +30,10 @@ type TTY struct {
 	dataChannel    chan string
 	Session        *Session
 	Connection     net.Conn
-	EventBus       *EventBus
 	// Echo & Canonical false is RAW mode
 }
 
-func NewTTY(c net.Conn, eb *EventBus, id string) *TTY {
+func NewTTY(c net.Conn, id string) *TTY {
 	handsomeNewTTY := &TTY{
 		ForegroundPGID: -1,
 		Canonical:      true,
@@ -44,7 +43,6 @@ func NewTTY(c net.Conn, eb *EventBus, id string) *TTY {
 		Session:        nil,
 		Connection:     c,
 		id:             id,
-		EventBus:       eb,
 	}
 
 	return handsomeNewTTY
@@ -70,18 +68,6 @@ const (
 )
 
 func (t *TTY) HandleKeystroke(keystroke string) {
-	t.EventBus.Publish(EventClientToEngine, map[string]interface{}{
-		"key": keystroke,
-		"tty": t.id,
-	})
-
-	t.EventBus.Publish(EventEngineToTTY, map[string]interface{}{
-		"key":       keystroke,
-		"canonical": t.Canonical,
-		"echo":      t.Echo,
-		"tty":       t.id,
-	})
-
 	switch keystroke {
 	case "\x03": // ctrl-c
 		t.writeToClient("^C", utils.Success)
@@ -122,9 +108,6 @@ func (t *TTY) SetWinsize(width, height int) {
 
 func (t *TTY) SetForegroundPGID(pgid int) {
 	t.ForegroundPGID = pgid
-	t.EventBus.Publish(EventForegroundChanged, map[string]interface{}{
-		"tty_id": t.id,
-	})
 }
 
 func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
@@ -184,13 +167,6 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 			}
 
 			if !t.Canonical {
-				for _, proc := range foregroundPrograms {
-					t.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
-						"key":    receivedData,
-						"prog":   proc.Program.ID(),
-						"tty_id": t.id,
-					})
-				}
 				return receivedData, utils.Success
 			}
 
@@ -198,23 +174,8 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 
 			case "\r": // enter
 				data := t.Buffer
-
-				for _, proc := range foregroundPrograms {
-					t.EventBus.Publish(EventTTYToProgram, map[string]interface{}{
-						"cmd":    t.Buffer,
-						"prog":   proc.Program.ID(),
-						"tty_id": t.id,
-					})
-				}
-
 				t.CursorPosition = 0
 				t.Buffer = ""
-				t.EventBus.Publish(EventBufferChanged, map[string]interface{}{
-					"buffer": t.Buffer,
-					"cursor": t.CursorPosition,
-					"tty":    t.id,
-				})
-
 				return data, utils.Success
 			case "\x7f": // delete
 				runes := []rune(t.Buffer)
@@ -278,12 +239,6 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 
 			}
 
-			t.EventBus.Publish(EventBufferChanged, map[string]interface{}{
-				"buffer": t.Buffer,
-				"cursor": t.CursorPosition,
-				"tty":    t.id,
-			})
-
 		case <-ctx.Done():
 			return "SIGINT", utils.Exit
 		}
@@ -291,11 +246,6 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 }
 
 func (t *TTY) Write(str []byte) (int, error) {
-	t.EventBus.Publish(EventTTYToClient, map[string]interface{}{
-		"output": string(str),
-		"tty":    t.id,
-	})
-
 	t.writeToClient(string(str), utils.Success)
 	return len(str), nil
 }
@@ -303,9 +253,4 @@ func (t *TTY) Write(str []byte) (int, error) {
 func (t *TTY) BuffClear() {
 	t.Buffer = ""
 	t.CursorPosition = 0
-	t.EventBus.Publish(EventBufferChanged, map[string]interface{}{
-		"buffer": t.Buffer,
-		"cursor": t.CursorPosition,
-		"tty":    t.id,
-	})
 }
