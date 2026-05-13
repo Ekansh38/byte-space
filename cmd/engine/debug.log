@@ -1326,3 +1326,78 @@
 2026/05/12 20:31:45 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
 2026/05/12 20:31:45 HISTORY []string(nil), POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
 2026/05/12 20:31:45 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:32:42 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER s, CURSORPOS 1
+2026/05/12 20:32:42 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER sl, CURSORPOS 2
+2026/05/12 20:32:42 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER s, CURSORPOS 1
+2026/05/12 20:32:42 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:32:42 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/05/12 20:32:42 HISTORY []string{"clear"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/05/12 20:32:43 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:32:43 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/12 20:32:43 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/05/12 20:32:44 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER cd , CURSORPOS 3
+2026/05/12 20:32:45 HISTORY []string{"clear", "ls"}, POSINHISTORY: -1, BUFFER cd /, CURSORPOS 4
+2026/05/12 20:32:45 HISTORY []string{"clear", "ls", "cd /"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:32:45 HISTORY []string{"clear", "ls", "cd /"}, POSINHISTORY: -1, BUFFER s, CURSORPOS 1
+2026/05/12 20:32:46 HISTORY []string{"clear", "ls", "cd /"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:32:46 HISTORY []string{"clear", "ls", "cd /"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/05/12 20:32:46 HISTORY []string{"clear", "ls", "cd /"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/05/12 20:32:46 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:33:14 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/05/12 20:33:14 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/05/12 20:33:14 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:33:15 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER v, CURSORPOS 1
+2026/05/12 20:33:16 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:33:16 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:33:16 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/12 20:33:17 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:33:17 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER v, CURSORPOS 1
+2026/05/12 20:33:17 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER v , CURSORPOS 2
+2026/05/12 20:33:17 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER v d, CURSORPOS 3
+2026/05/12 20:33:17 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER v di, CURSORPOS 4
+2026/05/12 20:33:18 HISTORY []string{"clear", "ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER v dih, CURSORPOS 5
+2026/05/12 20:33:18 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:33:18 WIDTH: 93
+2026/05/12 20:33:18 ROW: 1 COL: 1
+2026/05/12 20:33:19 ROW: 1 COL: 1
+2026/05/12 20:33:20 ROW: 1 COL: 2
+2026/05/12 20:33:20 ROW: 1 COL: 3
+2026/05/12 20:33:21 ROW: 1 COL: 4
+2026/05/12 20:33:22 ROW: 1 COL: 5
+2026/05/12 20:33:22 ROW: 1 COL: 6
+2026/05/12 20:33:22 ROW: 1 COL: 7
+2026/05/12 20:33:22 ROW: 1 COL: 8
+2026/05/12 20:33:22 ROW: 1 COL: 9
+2026/05/12 20:33:22 ROW: 1 COL: 10
+2026/05/12 20:33:22 ROW: 1 COL: 11
+2026/05/12 20:33:22 ROW: 1 COL: 12
+2026/05/12 20:33:22 ROW: 1 COL: 13
+2026/05/12 20:33:22 ROW: 1 COL: 14
+2026/05/12 20:33:23 ROW: 1 COL: 15
+2026/05/12 20:33:23 ROW: 1 COL: 15
+2026/05/12 20:33:24 ROW: 1 COL: 15
+2026/05/12 20:33:24 ROW: 1 COL: 15
+2026/05/12 20:33:24 ROW: 1 COL: 15
+2026/05/12 20:33:24 ROW: 1 COL: 15
+2026/05/12 20:33:25 ROW: 1 COL: 15
+2026/05/12 20:33:26 ROW: 1 COL: 15
+2026/05/12 20:33:26 ROW: 1 COL: 15
+2026/05/12 20:33:29 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/12 20:33:29 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih"}, POSINHISTORY: -1, BUFFER ca, CURSORPOS 2
+2026/05/12 20:33:30 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih"}, POSINHISTORY: -1, BUFFER cat, CURSORPOS 3
+2026/05/12 20:33:30 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih"}, POSINHISTORY: -1, BUFFER cat , CURSORPOS 4
+2026/05/12 20:33:30 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih"}, POSINHISTORY: -1, BUFFER cat d, CURSORPOS 5
+2026/05/12 20:33:30 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih"}, POSINHISTORY: -1, BUFFER cat di, CURSORPOS 6
+2026/05/12 20:33:30 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih"}, POSINHISTORY: -1, BUFFER cat dih, CURSORPOS 7
+2026/05/12 20:33:30 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:33:33 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/05/12 20:33:33 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih"}, POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/05/12 20:33:33 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih"}, POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/05/12 20:33:33 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih"}, POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/05/12 20:33:33 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih"}, POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/05/12 20:33:34 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih", "clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/05/12 20:33:35 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih", "clear"}, POSINHISTORY: -1, BUFFER e, CURSORPOS 1
+2026/05/12 20:33:35 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih", "clear"}, POSINHISTORY: -1, BUFFER ex, CURSORPOS 2
+2026/05/12 20:33:35 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih", "clear"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
+2026/05/12 20:33:35 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih", "clear"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
+2026/05/12 20:33:35 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih", "clear", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
