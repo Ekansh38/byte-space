@@ -1,20 +1,17 @@
-
-
 ## Overview
 
-Disk size         :   64 MB        :   0x400_0000    (bytes)
-Block size        :   4096 bytes   :   0x1000        (bytes)
-Total blocks      :   16_384       :   0x4000        (count)
+Disk size : 64 MB : 0x400_0000 (bytes)
+Block size : 4096 bytes : 0x1000 (bytes)
+Total blocks : 16_384 : 0x4000 (count)
 
-Inode count       :   8_064        :   0x1F80        (count)
-Data block count  :   16_128       :   0x3F00        (count)
-Ratio             :   2:1          :   N/A           (ratio)
-
+Inode count : 8_064 : 0x1F80 (count)
+Data block count : 16_128 : 0x3F00 (count)
+Ratio : 2:1 : N/A (ratio)
 
 ## Layout
 
 ```text
-          64MB                   
+          64MB
 +----------------------+
 | Super Block          |
 +----------------------+
@@ -38,6 +35,7 @@ Ratio             :   2:1          :   N/A           (ratio)
 ```
 
 ```text
++--------------------------------------------------+
 | Component    | Start Block | Blocks | Bytes      |
 |--------------|-------------|--------|------------|
 | Super Block  | 0           | 1      | 4096       |
@@ -46,9 +44,10 @@ Ratio             :   2:1          :   N/A           (ratio)
 | Data Bitmap  | 254         | 1      | 4096       |
 | Data Blocks  | 255         | 16128  | 66060288   |
 | Padding      | 16383       | 1      | 4096       |
++--------------+-------------+--------+------------+
 | TOTAL        | N/A         | 16384  | 67,108,864 |
++--------------+-------------+--------+------------+
 ```
-
 
 ## Reasoning/Proof
 
@@ -58,7 +57,7 @@ Inode size: 128 bytes
 
 Data block size: 4096 bytes
 
-Cost per inode: 128 + 2(4096)  = 8,320 bytes
+Cost per inode: 128 + 2(4096) = 8,320 bytes
 
 Total blocks: 16,384
 Reserve for super + bitmaps: 1 + 1 + 1 = 3 blocks
