@@ -30,8 +30,13 @@ const (
 const LATEST_VERSION = 1
 
 const (
-	INODESIZE     = 128  // in bytes
-	DATABLOCKSIZE = 4096 // in bytes
+	INODESIZE     = 0x80   // 128 in bytes
+	DATABLOCKSIZE = 0x1000 // 4096 in bytes
+	DISKSIZE      = 67_108_864
+	INODES        = 8192
+	BLOCKS        = 16384
+	MAGICLEN      = 8
+	TOTALBLOCKS = 16384
 )
 
 type inode struct {
@@ -39,7 +44,7 @@ type inode struct {
 	fType InodeType
 	refs  uint16
 
-	owner [14]byte // the owner of the file/folder,
+	owner [14]byte // the owner of the file/folder, // TODO cap the username len to 13 in the kernel
 	// string of the username of the creator,
 	// for system files it is root, for other stuff /home/user it is that user.
 
@@ -60,10 +65,10 @@ type inode struct {
 
 	// BLOCK LISTS
 
-	direct [12]uint32
-	find   uint32 // first-indirect
-	sind   uint32 // second-indirect
-	tind   uint32 // third-indirect
+	direct [12]uint32 // 12 x4 = 48
+	find   uint32     // first-indirect
+	sind   uint32     // second-indirect
+	tind   uint32     // third-indirect
 
 	createdAt  uint64
 	modifiedAt uint64
@@ -82,30 +87,30 @@ type dataBlock struct {
 }
 
 type FileSystem struct {
-	disk    *os.File
-	suprBlk SuperBlock // cached
+	disk     *os.File
+	superBlk SuperBlock // cached
 
 	// maybe later cache the bitmaps for extra SPEED.
 }
 
 type SuperBlock struct {
-	magic   [8]byte // 8 // BS-EXTFS
-	version uint32  // 4
+	magic   [8]byte // BS-EXTFS
+	version uint32  // 1
 
-	blockSize uint32 // 4
+	blockSize uint32 // 4096
 
-	inodeCount uint32 // 
-	inodeSize  uint32 // 128 // 4
+	inodeCount uint32 // ~8192
+	inodeSize  uint32 // 128
 
-	inodeTableStartBlock  uint32 // 4
-	inodeBitmapStartBlock uint32 // 4
+	inodeBitmapStartBlock uint32 // 1
+	inodeTableStartBlock  uint32 // 2
 
-	dataBlockCount uint32 // 4
+	dataBlockCount uint32 // 16384
 
-	dataBlockStartBlock  uint32 // 4
-	dataBitmapStartBlock uint32 // 4
+	dataBlocksStartBlock uint32 // 255
+	dataBitmapStartBlock uint32 // 254
 
-	totalBlocks uint32 // 4
+	totalBlocks uint32 // 16384
 
 	// later maybe a dirty bit
 
@@ -123,18 +128,16 @@ type SuperBlock struct {
 // DATA BLOCKS
 
 func NewFileSystem(basePath string) *FileSystem {
-	// create all directories in basepath
-	var soopaStruct SuperBlock
+	var cachedSuperBlock SuperBlock
 
 	os.MkdirAll(basePath, 0o755)
-
 	diskPath := filepath.Join(basePath, "disk.img")
 
+	// Check formatting
 	isInitialized := true
 	if _, err := os.Stat(diskPath); errors.Is(err, os.ErrNotExist) {
 		isInitialized = false
 	}
-
 	disk, err := os.OpenFile(
 		diskPath,
 		os.O_CREATE|os.O_RDWR,
@@ -144,31 +147,31 @@ func NewFileSystem(basePath string) *FileSystem {
 		panic(err)
 	}
 
-	disk.Truncate((8192 * INODESIZE) + (16384 * DATABLOCKSIZE) + 4096) // double check this sizing TODO add bitmaps
+	disk.Truncate(DISKSIZE)
 
 	// now check for the superblk header being correct and up to date.
 
 	disk.Seek(0, io.SeekStart)
 
-	headaBuf := make([]byte, 4096)
-	var hedaSupaBlOK SuperBlock
-	_, err = io.ReadFull(disk, headaBuf)
+	headerBuf := make([]byte, DATABLOCKSIZE)
+	var headerSuperBlk SuperBlock
+	_, err = io.ReadFull(disk, headerBuf)
 	if err != nil {
-		panic(err) // maybe dont panic TODO
+		panic(err)
 	}
 
 	// Only get the header data to validate.
 
-	copy(hedaSupaBlOK.magic[:], headaBuf[0:8])
-	hedaSupaBlOK.version = binary.LittleEndian.Uint32(headaBuf[8:12])
+	copy(headerSuperBlk.magic[:], headerBuf[0:MAGICLEN])
+	headerSuperBlk.version = binary.LittleEndian.Uint32(headerBuf[8:12])
 
 	// check if the header is valid
-	if string(hedaSupaBlOK.magic[:8]) != "BS-EXTFS" {
-		log.Println("Invalid magic: expected BS-EXTFS, got %s", hedaSupaBlOK.magic)
+	if string(headerSuperBlk.magic[:MAGICLEN]) != "BS-EXTFS" {
+		log.Println("Invalid magic: expected BS-EXTFS, got %s", headerSuperBlk.magic)
 		isInitialized = false
 	}
-	if hedaSupaBlOK.version != LATEST_VERSION {
-		log.Println("Invalid version: expected %d, got %d", LATEST_VERSION, hedaSupaBlOK.version)
+	if headerSuperBlk.version != LATEST_VERSION {
+		log.Println("Invalid version: expected %d, got %d", LATEST_VERSION, headerSuperBlk.version)
 		isInitialized = false
 	}
 
@@ -176,59 +179,60 @@ func NewFileSystem(basePath string) *FileSystem {
 		// format the fs
 
 		// If its not valid we need to create and initialize a new disk.img
-		numInodes := uint32(8192)
-		numBlocks := uint32(16384)
 
-		suprBuf := make([]byte, 4096)
-		suprBlk := SuperBlock{
-			magic:          [8]byte{'B', 'S', '-', 'E', 'X', 'T', 'F', 'S'},
-			version:        LATEST_VERSION,
-			blockSize:      4096,
-			inodeCount:     numInodes,
-			inodeSize:      INODESIZE,
-			dataBlockCount: numBlocks,
-			// offsets TODO
+		superBuf := make([]byte, DATABLOCKSIZE)
+		superBlk := SuperBlock{
+			magic:                 [MAGICLEN]byte{'B', 'S', '-', 'E', 'X', 'T', 'F', 'S'},
+			version:               LATEST_VERSION,
+
+			blockSize:             DATABLOCKSIZE,
+			inodeSize:             INODESIZE,
+
+			inodeCount:            uint32(INODES),
+			dataBlockCount:        uint32(BLOCKS),
+
 			inodeBitmapStartBlock: 1,
-			inodeTableStartBlock:  2, // (adjust based on bitmap size)
+			inodeTableStartBlock:  2,
+
+			dataBitmapStartBlock:  254,
+			dataBlocksStartBlock:  255,
+
+			totalBlocks:           TOTALBLOCKS,
 		}
 
-		writeSuprBlktoSuprBuf(suprBuf, suprBlk)
+		writeSuprBlktoSuprBuf(superBuf, superBlk)
 
-		_, _ = disk.WriteAt(suprBuf, 0) // add error handling TODO
+		_, _ = disk.WriteAt(superBuf, 0)
 
-		// set the metadata to the new one we just made
-		soopaStruct = suprBlk
+		cachedSuperBlock = superBlk
 
 		// next we need to format the inode bitmap and maybe cache it.
-		// replace magic numbers with constants TODO
 
-		//inodeBitmapBuf := make([]byte, (0x1000)*0b10) // two block
+		inodeBitmapBuf := make([]byte, DATABLOCKSIZE)
 
-		// figure out like disk sizes and stuff.
-
-
+		inodeBitmapBuf[0] = 0b00000111 // the 0 1 2 inodes are taken, 2 is root.
 
 
 
 	} else {
-		hedaSupaBlOK.blockSize = binary.LittleEndian.Uint32(headaBuf[12:16])
-		hedaSupaBlOK.inodeCount = binary.LittleEndian.Uint32(headaBuf[16:20])
-		hedaSupaBlOK.inodeSize = binary.LittleEndian.Uint32(headaBuf[20:24])
-		hedaSupaBlOK.inodeTableStartBlock = binary.LittleEndian.Uint32(headaBuf[24:28])
-		hedaSupaBlOK.inodeBitmapStartBlock = binary.LittleEndian.Uint32(headaBuf[28:32])
-		hedaSupaBlOK.dataBlockCount = binary.LittleEndian.Uint32(headaBuf[32:36])
-		hedaSupaBlOK.dataBlockStartBlock = binary.LittleEndian.Uint32(headaBuf[36:40])
-		hedaSupaBlOK.dataBitmapStartBlock = binary.LittleEndian.Uint32(headaBuf[40:44])
-		hedaSupaBlOK.totalBlocks = binary.LittleEndian.Uint32(headaBuf[44:48])
+		// Copy from buffer into go struct data structure
 
-		// set the meta data to the existing meta data
+		headerSuperBlk.blockSize = binary.LittleEndian.Uint32(headerBuf[12:16])
+		headerSuperBlk.inodeCount = binary.LittleEndian.Uint32(headerBuf[16:20])
+		headerSuperBlk.inodeSize = binary.LittleEndian.Uint32(headerBuf[20:24])
+		headerSuperBlk.inodeTableStartBlock = binary.LittleEndian.Uint32(headerBuf[24:28])
+		headerSuperBlk.inodeBitmapStartBlock = binary.LittleEndian.Uint32(headerBuf[28:32])
+		headerSuperBlk.dataBlockCount = binary.LittleEndian.Uint32(headerBuf[32:36])
+		headerSuperBlk.dataBlocksStartBlock = binary.LittleEndian.Uint32(headerBuf[36:40])
+		headerSuperBlk.dataBitmapStartBlock = binary.LittleEndian.Uint32(headerBuf[40:44])
+		headerSuperBlk.totalBlocks = binary.LittleEndian.Uint32(headerBuf[44:48])
 
-		soopaStruct = hedaSupaBlOK
+		cachedSuperBlock = headerSuperBlk
 	}
 
 	return &FileSystem{
-		suprBlk: soopaStruct,
-		disk:    disk,
+		superBlk: cachedSuperBlock,
+		disk:     disk,
 	}
 }
 
@@ -241,16 +245,16 @@ func (fs *FileSystem) Shutdown() {
 }
 
 func writeSuprBlktoSuprBuf(suprBuf []byte, suprBlk SuperBlock) {
-		// Indexing is [inclusive]:[exclusive]
-		copy(suprBuf[0:8], suprBlk.magic[:])
-		binary.LittleEndian.PutUint32(suprBuf[8:12], suprBlk.version)
-		binary.LittleEndian.PutUint32(suprBuf[12:16], suprBlk.blockSize)
-		binary.LittleEndian.PutUint32(suprBuf[16:20], suprBlk.inodeCount)
-		binary.LittleEndian.PutUint32(suprBuf[20:24], suprBlk.inodeSize)
-		binary.LittleEndian.PutUint32(suprBuf[24:28], suprBlk.inodeTableStartBlock)
-		binary.LittleEndian.PutUint32(suprBuf[28:32], suprBlk.inodeBitmapStartBlock)
-		binary.LittleEndian.PutUint32(suprBuf[32:36], suprBlk.dataBlockCount)
-		binary.LittleEndian.PutUint32(suprBuf[36:40], suprBlk.dataBlockStartBlock)
-		binary.LittleEndian.PutUint32(suprBuf[40:44], suprBlk.dataBitmapStartBlock)
-		binary.LittleEndian.PutUint32(suprBuf[44:48], suprBlk.totalBlocks)
+	// Indexing is [inclusive]:[exclusive]
+	copy(suprBuf[0:8], suprBlk.magic[:])
+	binary.LittleEndian.PutUint32(suprBuf[8:12], suprBlk.version)
+	binary.LittleEndian.PutUint32(suprBuf[12:16], suprBlk.blockSize)
+	binary.LittleEndian.PutUint32(suprBuf[16:20], suprBlk.inodeCount)
+	binary.LittleEndian.PutUint32(suprBuf[20:24], suprBlk.inodeSize)
+	binary.LittleEndian.PutUint32(suprBuf[24:28], suprBlk.inodeTableStartBlock)
+	binary.LittleEndian.PutUint32(suprBuf[28:32], suprBlk.inodeBitmapStartBlock)
+	binary.LittleEndian.PutUint32(suprBuf[32:36], suprBlk.dataBlockCount)
+	binary.LittleEndian.PutUint32(suprBuf[36:40], suprBlk.dataBlocksStartBlock)
+	binary.LittleEndian.PutUint32(suprBuf[40:44], suprBlk.dataBitmapStartBlock)
+	binary.LittleEndian.PutUint32(suprBuf[44:48], suprBlk.totalBlocks)
 }

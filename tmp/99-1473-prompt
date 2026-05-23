@@ -1,6 +1,14 @@
-## Overview
-
-Disk size         :   64 MB        :   0x400_0000    (bytes)
+<Context>
+You receive a selection in neovim that you need to replace with new code.
+The selection's contents may contain notes, incorporate the notes every time if there are some.
+consider the context of the selection and what you are suppose to be implementing
+<SELECTION_LOCATION>
+range(point(104,1),point(104,57))
+</SELECTION_LOCATION>
+<SELECTION_CONTENT>
+Inodes 3–8063    : disk inodes (allocated from bitmap)
+</SELECTION_CONTENT>
+<SURROUNDING_CONTEXT>
 Block size        :   4096 bytes   :   0x1000        (bytes)
 Total blocks      :   16_384       :   0x4000        (count)
 
@@ -101,7 +109,7 @@ This gives us O(1) lookup.
 Inode 0          : invalid (zero means "no inode")
 Inode 1          : reserved
 Inode 2          : root directory (/)
-Inodes 3–8063    : disk inodes
+Inodes 3–8063    : disk inodes (allocated from bitmap)
 Inodes 10000+    : virtual inodes (constants or computed)
 Inodes 20000+    : per-pid virtual inodes (20000 + pid)
 
@@ -111,15 +119,18 @@ Inodes 20000+    : per-pid virtual inodes (20000 + pid)
 Fixed-size entries, 64 bytes each. 64 entries per data block (4096 / 64).
 
 ```text
-| Field   | Offset | Size     | Description                           |
-|---------|--------|----------|---------------------------------------|
-| inum    | 0      | 4 bytes  | Inode number (0 = entry is free)      |
+| Field   | Offset | Size     | Description                          |
+|---------|--------|----------|--------------------------------------|
+| inum    | 0      | 4 bytes  | Inode number (0 = entry is free)     |
 | nameLen | 4      | 1 byte   | Length of name in bytes (O(1) extract)|
-| pad     | 5      | 3 bytes  | Padding                               |
-| name    | 8      | 56 bytes | Filename (null-padded, max 55 chars)  |
+| _pad    | 5      | 3 bytes  | Reserved / alignment                 |
+| name    | 8      | 56 bytes | Filename (null-padded, max 55 chars) |
 ```
 
 Max filename length: 55 bytes (56 bytes storage, last byte always null).
+
+nameLen exists purely for O(1) name extraction — read nameLen bytes
+from offset 8 instead of scanning for a null terminator.
 
 Every directory contains at minimum:
 - Entry 0: "."  → own inode number
@@ -144,7 +155,7 @@ Every directory contains at minimum:
 | tind       | 4     | 84            |
 | createdAt  | 8     | 92            |
 | modifiedAt | 8     | 100           |
-| paddding   | 28    | 128           |
+| _reserved  | 28    | 128           |
 ```
 
 28 bytes reserved for future use (capabilities, extended attrs, etc).
@@ -163,3 +174,24 @@ They exist purely in memory with synthetic inode numbers
 The uint8 fType field IS the ops discriminator — no string encoding
 or registry needed. On inode load, the kernel maps fType to the
 correct InodeOperations implementation.
+</SURROUNDING_CONTEXT>
+
+</Context>
+<Prompt>
+i have 8064 inodes, so why not up till 8064 idk. explain in a () also explain if its inclusive/exclusive.
+</Prompt>
+
+<Location><File>/Users/ekanshgoenka/Desktop/Projects/byte-space/FILESYSTEM.md</File><Function>range(point(104,1),point(104,57))</Function></Location>
+<FunctionText>Inodes 3–8063    : disk inodes (allocated from bitmap)</FunctionText>
+<TEMP_FILE>./tmp/99-1473</TEMP_FILE>
+<MustObey>
+NEVER alter any file other than TEMP_FILE.
+never provide the requested changes as conversational output. Return only the code.
+ONLY provide requested changes by writing the change to TEMP_FILE
+
+never attempt to read TEMP_FILE.
+It is purely for output.
+Previous contents, which may not exist, can be written over without worry
+After writing TEMP_FILE once you should be done.  Be done and end the session.
+
+</MustObey>
