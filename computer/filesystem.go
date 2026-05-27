@@ -27,14 +27,14 @@ const (
 	S_IFDIR = 1
 )
 
-const LATEST_VERSION = 1
+const LATEST_VERSION = 4
 
 const (
 	INODESIZE     = 0x80   // 128 in bytes
 	DATABLOCKSIZE = 0x1000 // 4096 in bytes
 	DISKSIZE      = 67_108_864
-	INODES        = 8192
-	BLOCKS        = 16384
+	INODES        = 8064
+	BLOCKS        = 8064*2
 	MAGICLEN      = 8
 	TOTALBLOCKS = 16384
 )
@@ -136,6 +136,7 @@ func NewFileSystem(basePath string) *FileSystem {
 	// Check formatting
 	isInitialized := true
 	if _, err := os.Stat(diskPath); errors.Is(err, os.ErrNotExist) {
+		log.Println("Disk not created yet.")
 		isInitialized = false
 	}
 	disk, err := os.OpenFile(
@@ -166,11 +167,11 @@ func NewFileSystem(basePath string) *FileSystem {
 	headerSuperBlk.version = binary.LittleEndian.Uint32(headerBuf[8:12])
 
 	// check if the header is valid
-	if string(headerSuperBlk.magic[:MAGICLEN]) != "BS-EXTFS" {
+	if string(headerSuperBlk.magic[:MAGICLEN]) != "BS-EXTFS" && isInitialized == true{
 		log.Println("Invalid magic: expected BS-EXTFS, got %s", headerSuperBlk.magic)
 		isInitialized = false
 	}
-	if headerSuperBlk.version != LATEST_VERSION {
+	if headerSuperBlk.version != LATEST_VERSION && isInitialized == true {
 		log.Println("Invalid version: expected %d, got %d", LATEST_VERSION, headerSuperBlk.version)
 		isInitialized = false
 	}
@@ -200,6 +201,7 @@ func NewFileSystem(basePath string) *FileSystem {
 			totalBlocks:           TOTALBLOCKS,
 		}
 
+
 		writeSuprBlktoSuprBuf(superBuf, superBlk)
 
 		_, _ = disk.WriteAt(superBuf, 0)
@@ -211,6 +213,21 @@ func NewFileSystem(basePath string) *FileSystem {
 		inodeBitmapBuf := make([]byte, DATABLOCKSIZE)
 
 		inodeBitmapBuf[0] = 0b00000111 // the 0 1 2 inodes are taken, 2 is root.
+
+		// so the bytes are left to right, but in a byte its right to left. odd ik but yea.
+
+		// write to disk
+
+		_, _ = disk.WriteAt(inodeBitmapBuf, DATABLOCKSIZE * int64(superBlk.inodeBitmapStartBlock))
+
+		// inodes into disk
+
+		inodeTableBuf := make([]byte, DATABLOCKSIZE * 252)
+		inodeTableBuf[0] = 0b11111111
+		inodeTableBuf[252*DATABLOCKSIZE-1] = 0b11111111
+
+		_, _ = disk.WriteAt(inodeTableBuf, DATABLOCKSIZE * int64(superBlk.inodeTableStartBlock))
+
 
 
 
