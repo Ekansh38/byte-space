@@ -3,6 +3,7 @@ package computer
 import (
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -27,16 +28,16 @@ const (
 	S_IFDIR = 1
 )
 
-const LATEST_VERSION = 4
+const LATEST_VERSION = 10
 
 const (
 	INODESIZE     = 0x80   // 128 in bytes
 	DATABLOCKSIZE = 0x1000 // 4096 in bytes
 	DISKSIZE      = 67_108_864
 	INODES        = 8064
-	BLOCKS        = 8064*2
+	BLOCKS        = 8064 * 2
 	MAGICLEN      = 8
-	TOTALBLOCKS = 16384
+	TOTALBLOCKS   = 16384
 )
 
 type inode struct {
@@ -167,7 +168,7 @@ func NewFileSystem(basePath string) *FileSystem {
 	headerSuperBlk.version = binary.LittleEndian.Uint32(headerBuf[8:12])
 
 	// check if the header is valid
-	if string(headerSuperBlk.magic[:MAGICLEN]) != "BS-EXTFS" && isInitialized == true{
+	if string(headerSuperBlk.magic[:MAGICLEN]) != "BS-EXTFS" && isInitialized == true {
 		log.Println("Invalid magic: expected BS-EXTFS, got %s", headerSuperBlk.magic)
 		isInitialized = false
 	}
@@ -183,24 +184,23 @@ func NewFileSystem(basePath string) *FileSystem {
 
 		superBuf := make([]byte, DATABLOCKSIZE)
 		superBlk := SuperBlock{
-			magic:                 [MAGICLEN]byte{'B', 'S', '-', 'E', 'X', 'T', 'F', 'S'},
-			version:               LATEST_VERSION,
+			magic:   [MAGICLEN]byte{'B', 'S', '-', 'E', 'X', 'T', 'F', 'S'},
+			version: LATEST_VERSION,
 
-			blockSize:             DATABLOCKSIZE,
-			inodeSize:             INODESIZE,
+			blockSize: DATABLOCKSIZE,
+			inodeSize: INODESIZE,
 
-			inodeCount:            uint32(INODES),
-			dataBlockCount:        uint32(BLOCKS),
+			inodeCount:     uint32(INODES),
+			dataBlockCount: uint32(BLOCKS),
 
 			inodeBitmapStartBlock: 1,
 			inodeTableStartBlock:  2,
 
-			dataBitmapStartBlock:  254,
-			dataBlocksStartBlock:  255,
+			dataBitmapStartBlock: 254,
+			dataBlocksStartBlock: 255,
 
-			totalBlocks:           TOTALBLOCKS,
+			totalBlocks: TOTALBLOCKS,
 		}
-
 
 		writeSuprBlktoSuprBuf(superBuf, superBlk)
 
@@ -218,18 +218,36 @@ func NewFileSystem(basePath string) *FileSystem {
 
 		// write to disk
 
-		_, _ = disk.WriteAt(inodeBitmapBuf, DATABLOCKSIZE * int64(superBlk.inodeBitmapStartBlock))
+		_, _ = disk.WriteAt(inodeBitmapBuf, DATABLOCKSIZE*int64(superBlk.inodeBitmapStartBlock))
 
 		// inodes into disk
 
-		inodeTableBuf := make([]byte, DATABLOCKSIZE * 252)
-		inodeTableBuf[0] = 0b11111111
-		inodeTableBuf[252*DATABLOCKSIZE-1] = 0b11111111
+		inodeTableBuf := make([]byte, DATABLOCKSIZE*252)
+		// inodeTableBuf[0] = 0b11111111
+		// inodeTableBuf[252*DATABLOCKSIZE-1] = 0b11111111
 
-		_, _ = disk.WriteAt(inodeTableBuf, DATABLOCKSIZE * int64(superBlk.inodeTableStartBlock))
+		_, _ = disk.WriteAt(inodeTableBuf, DATABLOCKSIZE*int64(superBlk.inodeTableStartBlock))
 
+		// data bitmap
 
+		dataBitmapBuf := make([]byte, DATABLOCKSIZE)
+		// dataBitmapBuf[0] = 0b10101010
+		dataBitmapBuf[DATABLOCKSIZE-1] = 0b10101010
+		disk.WriteAt(dataBitmapBuf, int64(superBlk.dataBitmapStartBlock)*DATABLOCKSIZE)
 
+		// data blocks
+		dataBlocksBuf := make([]byte, DATABLOCKSIZE*superBlk.dataBlockCount)
+		// dataBlocksBuf[0] = 0b10101010
+		// dataBlocksBuf[(DATABLOCKSIZE*superBlk.dataBlockCount)-1] = 0b10101010
+		disk.WriteAt(dataBlocksBuf, int64(superBlk.dataBlocksStartBlock)*DATABLOCKSIZE)
+
+		// padding
+
+		paddingBuf := make([]byte, DATABLOCKSIZE)
+		for idx := range paddingBuf {
+			paddingBuf[idx] = 67
+		}
+		disk.WriteAt(paddingBuf, int64(superBlk.dataBlocksStartBlock+BLOCKS)*DATABLOCKSIZE)
 
 	} else {
 		// Copy from buffer into go struct data structure
@@ -247,10 +265,86 @@ func NewFileSystem(basePath string) *FileSystem {
 		cachedSuperBlock = headerSuperBlk
 	}
 
-	return &FileSystem{
+	fs := &FileSystem{
 		superBlk: cachedSuperBlock,
 		disk:     disk,
+
 	}
+
+	// passing a pointer cuz less memory, ik it doesnt need to mutate.
+	fs.writeInode(&inode{
+		size: 52,
+		fType: S_IFDIR,
+		refs: 0,
+		owner: [14]byte{'r', 'o', 'o', 't'},
+
+		setuid: false,
+		ownerMode: 7,
+		otherMode: 7,
+		direct: [12]uint32{1},
+		find: 0,
+		sind: 0,
+		tind: 0,
+		createdAt: 903,
+		modifiedAt: 1293,
+
+	}, 2)
+
+	return fs
+}
+
+func (fs *FileSystem) writeInode(inode *inode, idx int) error {
+	// doesnt care about the free bitmap shit.
+	// is a pure savage peak at binary serlaiztion
+
+	inodeTableOffset := int(fs.superBlk.inodeTableStartBlock) * DATABLOCKSIZE
+	startIdx := inodeTableOffset + idx*INODESIZE
+	inodeBuf := make([]byte, INODESIZE) // 128
+
+	binary.LittleEndian.PutUint32(inodeBuf[0:4], inode.size)
+	inodeBuf[4] = byte(inode.fType)
+	binary.LittleEndian.PutUint16(inodeBuf[5:7], inode.refs)
+
+	for idx, val := range inode.owner {
+		inodeBuf[7+idx] = val
+	}
+
+	if inode.setuid {
+		inodeBuf[21] = 1
+	} else {
+		inodeBuf[21] = 0
+	}
+
+	inodeBuf[22] = byte(inode.ownerMode)
+	inodeBuf[23] = byte(inode.otherMode)
+
+	for idx, val := range inode.direct {
+		off := idx * 4
+		binary.LittleEndian.PutUint32(inodeBuf[24+off:28+off], val)
+	}
+
+	binary.LittleEndian.PutUint32(inodeBuf[72:76], inode.find)
+	binary.LittleEndian.PutUint32(inodeBuf[76:80], inode.sind)
+	binary.LittleEndian.PutUint32(inodeBuf[80:84], inode.tind)
+
+	binary.LittleEndian.PutUint64(inodeBuf[84:92], inode.createdAt)
+	binary.LittleEndian.PutUint64(inodeBuf[92:100], inode.modifiedAt)
+
+	// ik the buffer is already zero'd but im simulating C kinda. Just keeping tidy and verbose.
+	for i := 0; i < 28; i++ {
+		inodeBuf[100+i] = 0
+	}
+
+	n, err := fs.disk.WriteAt(inodeBuf, int64(startIdx))
+	if err != nil {
+		return err
+	}
+	if n != INODESIZE {
+		fmt.Println("WTF HAPPENED!!!! GRR")
+		return io.ErrShortWrite
+	}
+
+	return nil
 }
 
 func (fs *FileSystem) Shutdown() {
