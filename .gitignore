@@ -2,3 +2,4 @@ cmd/engine/data/networks/
 cmd/testing/data/networks/
 planning.md
 *.img
+tmp/

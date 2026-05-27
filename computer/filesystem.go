@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 // PLANNING
@@ -28,16 +29,20 @@ const (
 	S_IFDIR = 1
 )
 
+type InodeOperations interface {
+	CreateFD()
+}
+
 const LATEST_VERSION = 10
 
 const (
-	INODESIZE     = 0x80   // 128 in bytes
-	DATABLOCKSIZE = 0x1000 // 4096 in bytes
-	DISKSIZE      = 67_108_864
-	INODES        = 8064
-	BLOCKS        = 8064 * 2
-	MAGICLEN      = 8
-	TOTALBLOCKS   = 16384
+	INODESIZE   = 0x80   // 128 in bytes
+	BLOCKSIZE   = 0x1000 // 4096 in bytes
+	DISKSIZE    = 67_108_864
+	INODES      = 8064
+	BLOCKS      = 8064 * 2
+	MAGICLEN    = 8
+	TOTALBLOCKS = 16384
 )
 
 type inode struct {
@@ -73,6 +78,10 @@ type inode struct {
 
 	createdAt  uint64
 	modifiedAt uint64
+
+	// runtime only
+	num int
+	ops InodeOperations
 }
 
 type dataBlockType int
@@ -84,7 +93,7 @@ const (
 
 type dataBlock struct {
 	blockType dataBlockType
-	data      [DATABLOCKSIZE]byte // key-value pair type data block if it's a directory data block.
+	data      [BLOCKSIZE]byte // key-value pair type data block if it's a directory data block.
 }
 
 type FileSystem struct {
@@ -155,7 +164,7 @@ func NewFileSystem(basePath string) *FileSystem {
 
 	disk.Seek(0, io.SeekStart)
 
-	headerBuf := make([]byte, DATABLOCKSIZE)
+	headerBuf := make([]byte, BLOCKSIZE)
 	var headerSuperBlk SuperBlock
 	_, err = io.ReadFull(disk, headerBuf)
 	if err != nil {
@@ -182,12 +191,12 @@ func NewFileSystem(basePath string) *FileSystem {
 
 		// If its not valid we need to create and initialize a new disk.img
 
-		superBuf := make([]byte, DATABLOCKSIZE)
+		superBuf := make([]byte, BLOCKSIZE)
 		superBlk := SuperBlock{
 			magic:   [MAGICLEN]byte{'B', 'S', '-', 'E', 'X', 'T', 'F', 'S'},
 			version: LATEST_VERSION,
 
-			blockSize: DATABLOCKSIZE,
+			blockSize: BLOCKSIZE,
 			inodeSize: INODESIZE,
 
 			inodeCount:     uint32(INODES),
@@ -210,7 +219,7 @@ func NewFileSystem(basePath string) *FileSystem {
 
 		// next we need to format the inode bitmap and maybe cache it.
 
-		inodeBitmapBuf := make([]byte, DATABLOCKSIZE)
+		inodeBitmapBuf := make([]byte, BLOCKSIZE)
 
 		inodeBitmapBuf[0] = 0b00000111 // the 0 1 2 inodes are taken, 2 is root.
 
@@ -218,36 +227,36 @@ func NewFileSystem(basePath string) *FileSystem {
 
 		// write to disk
 
-		_, _ = disk.WriteAt(inodeBitmapBuf, DATABLOCKSIZE*int64(superBlk.inodeBitmapStartBlock))
+		_, _ = disk.WriteAt(inodeBitmapBuf, BLOCKSIZE*int64(superBlk.inodeBitmapStartBlock))
 
 		// inodes into disk
 
-		inodeTableBuf := make([]byte, DATABLOCKSIZE*252)
+		inodeTableBuf := make([]byte, BLOCKSIZE*252)
 		// inodeTableBuf[0] = 0b11111111
 		// inodeTableBuf[252*DATABLOCKSIZE-1] = 0b11111111
 
-		_, _ = disk.WriteAt(inodeTableBuf, DATABLOCKSIZE*int64(superBlk.inodeTableStartBlock))
+		_, _ = disk.WriteAt(inodeTableBuf, BLOCKSIZE*int64(superBlk.inodeTableStartBlock))
 
 		// data bitmap
 
-		dataBitmapBuf := make([]byte, DATABLOCKSIZE)
+		dataBitmapBuf := make([]byte, BLOCKSIZE)
 		// dataBitmapBuf[0] = 0b10101010
-		dataBitmapBuf[DATABLOCKSIZE-1] = 0b10101010
-		disk.WriteAt(dataBitmapBuf, int64(superBlk.dataBitmapStartBlock)*DATABLOCKSIZE)
+		dataBitmapBuf[BLOCKSIZE-1] = 0b10101010
+		disk.WriteAt(dataBitmapBuf, int64(superBlk.dataBitmapStartBlock)*BLOCKSIZE)
 
 		// data blocks
-		dataBlocksBuf := make([]byte, DATABLOCKSIZE*superBlk.dataBlockCount)
+		dataBlocksBuf := make([]byte, BLOCKSIZE*superBlk.dataBlockCount)
 		// dataBlocksBuf[0] = 0b10101010
 		// dataBlocksBuf[(DATABLOCKSIZE*superBlk.dataBlockCount)-1] = 0b10101010
-		disk.WriteAt(dataBlocksBuf, int64(superBlk.dataBlocksStartBlock)*DATABLOCKSIZE)
+		disk.WriteAt(dataBlocksBuf, int64(superBlk.dataBlocksStartBlock)*BLOCKSIZE)
 
 		// padding
 
-		paddingBuf := make([]byte, DATABLOCKSIZE)
+		paddingBuf := make([]byte, BLOCKSIZE)
 		for idx := range paddingBuf {
 			paddingBuf[idx] = 67
 		}
-		disk.WriteAt(paddingBuf, int64(superBlk.dataBlocksStartBlock+BLOCKS)*DATABLOCKSIZE)
+		disk.WriteAt(paddingBuf, int64(superBlk.dataBlocksStartBlock+BLOCKS)*BLOCKSIZE)
 
 	} else {
 		// Copy from buffer into go struct data structure
@@ -268,36 +277,116 @@ func NewFileSystem(basePath string) *FileSystem {
 	fs := &FileSystem{
 		superBlk: cachedSuperBlock,
 		disk:     disk,
-
 	}
 
-	// passing a pointer cuz less memory, ik it doesnt need to mutate.
-	fs.writeInode(&inode{
-		size: 52,
-		fType: S_IFDIR,
-		refs: 0,
-		owner: [14]byte{'r', 'o', 'o', 't'},
+	if !isInitialized {
+		// create the root inode
 
-		setuid: false,
-		ownerMode: 7,
-		otherMode: 7,
-		direct: [12]uint32{1},
-		find: 0,
-		sind: 0,
-		tind: 0,
-		createdAt: 903,
-		modifiedAt: 1293,
+		// passing a pointer cuz less memory, ik it doesnt need to mutate.
+		fs.writeInode(&inode{
+			size:  0,
+			fType: S_IFDIR,
+			refs:  0,
+			owner: [14]byte{'r', 'o', 'o', 't'},
 
-	}, 2)
+			setuid:     false,
+			ownerMode:  0b111, // 7
+			otherMode:  0b101, // 5
+			direct:     [12]uint32{},
+			find:       0,
+			sind:       0,
+			tind:       0,
+			createdAt:  uint64(time.Now().Unix()),
+			modifiedAt: uint64(time.Now().Unix()),
+		}, 2)
+	}
 
 	return fs
+
+	// falloc and write to inode
+}
+
+func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
+
+	// keep in mind this function does assume everything is perfect and correct about the inode.
+	// its a very low level function, it does not perform any checks. 
+	// that is for higher level kernel/filesystem commands to enforce and perform on programs making syscalls.
+
+
+	blocksNeeded := (newSize + BLOCKSIZE - 1) / BLOCKSIZE
+	numOCurrentBlocks := (inode.size + BLOCKSIZE - 1) / BLOCKSIZE
+
+	// if they have enough blocks, even if the size is higher. Eg. size = 10, falloc(20). WE DONT GOTTA DO ANY WORK!!
+	// they already have a 4096 block.
+
+	if blocksNeeded > numOCurrentBlocks {
+
+	} else if blocksNeeded < numOCurrentBlocks {
+		// shrink
+	} 
+
+	return nil
+}
+
+func (fs *FileSystem) readInode(inode *inode, idx int) error {
+	// offset
+	inode.num = idx
+	inodeTableOffset := int(fs.superBlk.inodeTableStartBlock) * BLOCKSIZE
+	startIdx := inodeTableOffset + idx*INODESIZE
+	inodeBuf := make([]byte, INODESIZE) // 128
+
+	// Read from disk
+	n, err := fs.disk.ReadAt(inodeBuf, int64(startIdx))
+	if err != nil {
+		return err
+	}
+	if n != INODESIZE {
+		return io.ErrUnexpectedEOF
+	}
+
+	// Deserialize from buffer into inode struct
+	inode.size = binary.LittleEndian.Uint32(inodeBuf[0:4])
+	inode.fType = InodeType(inodeBuf[4])
+	inode.refs = binary.LittleEndian.Uint16(inodeBuf[5:7])
+
+	//if inode.fType == S_IFREG {
+	//	inode.ops = RegOps
+	//}
+	// TODO
+
+	for idx, val := range inodeBuf[7:21] {
+		inode.owner[idx] = val
+	}
+
+	if inodeBuf[21] == 1 {
+		inode.setuid = true
+	} else {
+		inode.setuid = false
+	}
+
+	inode.ownerMode = inodeBuf[22]
+	inode.otherMode = inodeBuf[23]
+
+	for idx := range inode.direct {
+		off := idx * 4
+		inode.direct[idx] = binary.LittleEndian.Uint32(inodeBuf[24+off : 28+off])
+	}
+
+	inode.find = binary.LittleEndian.Uint32(inodeBuf[72:76])
+	inode.sind = binary.LittleEndian.Uint32(inodeBuf[76:80])
+	inode.tind = binary.LittleEndian.Uint32(inodeBuf[80:84])
+
+	inode.createdAt = binary.LittleEndian.Uint64(inodeBuf[84:92])
+	inode.modifiedAt = binary.LittleEndian.Uint64(inodeBuf[92:100])
+
+	return nil
 }
 
 func (fs *FileSystem) writeInode(inode *inode, idx int) error {
 	// doesnt care about the free bitmap shit.
 	// is a pure savage peak at binary serlaiztion
 
-	inodeTableOffset := int(fs.superBlk.inodeTableStartBlock) * DATABLOCKSIZE
+	inodeTableOffset := int(fs.superBlk.inodeTableStartBlock) * BLOCKSIZE
 	startIdx := inodeTableOffset + idx*INODESIZE
 	inodeBuf := make([]byte, INODESIZE) // 128
 

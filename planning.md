@@ -177,7 +177,6 @@ type Inode struct {
     tind       uint32      // third-indirect
     createdAt  uint64
     modifiedAt uint64
-    _reserved  [28]byte
     
     // --- runtime only (never touches disk) ---
     num   uint32           // position in inode table, or synthetic
