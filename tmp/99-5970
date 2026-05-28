@@ -1,3 +1,0 @@
-func (fs *FileSystem) writeInode(inode inode, idx int) {
-
-}
