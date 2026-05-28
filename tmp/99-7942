@@ -1,1 +1,68 @@
-		owner: [14]byte{'r', 'o', 'o', 't'},
+			if place == 0 {
+				inode.direct[physicalAddress] = 0
+				// free that too
+
+			} else if place == 1 {
+				// find - single indirect
+				indirectBuf := make([]byte, BLOCKSIZE)
+				fs.disk.ReadAt(indirectBuf, int64(inode.find)*BLOCKSIZE)
+
+				// Get the block address at physicalAddress index
+				blockAddr := binary.LittleEndian.Uint32(indirectBuf[physicalAddress*4 : physicalAddress*4+4])
+				// free blockAddr
+
+				// Zero it out
+				binary.LittleEndian.PutUint32(indirectBuf[physicalAddress*4:physicalAddress*4+4], 0)
+
+				// Write back
+				fs.disk.WriteAt(indirectBuf, int64(inode.find)*BLOCKSIZE)
+
+			} else if place == 2 {
+				// sind - double indirect
+				firstIndirectBuf := make([]byte, BLOCKSIZE)
+				fs.disk.ReadAt(firstIndirectBuf, int64(inode.sind)*BLOCKSIZE)
+
+				// Get the second level indirect block address
+				secondIndirectAddr := binary.LittleEndian.Uint32(firstIndirectBuf[physicalAddress*4 : physicalAddress*4+4])
+
+				secondIndirectBuf := make([]byte, BLOCKSIZE)
+				fs.disk.ReadAt(secondIndirectBuf, int64(secondIndirectAddr)*BLOCKSIZE)
+
+				// Get the actual data block address
+				blockAddr := binary.LittleEndian.Uint32(secondIndirectBuf[0:4])
+				// free blockAddr
+
+				// Zero it out
+				binary.LittleEndian.PutUint32(secondIndirectBuf[0:4], 0)
+
+				// Write back
+				fs.disk.WriteAt(secondIndirectBuf, int64(secondIndirectAddr)*BLOCKSIZE)
+
+			} else if place == 3 {
+				// tind - triple indirect
+				firstIndirectBuf := make([]byte, BLOCKSIZE)
+				fs.disk.ReadAt(firstIndirectBuf, int64(inode.tind)*BLOCKSIZE)
+
+				// Get second level indirect block address
+				secondIndirectAddr := binary.LittleEndian.Uint32(firstIndirectBuf[0:4])
+
+				secondIndirectBuf := make([]byte, BLOCKSIZE)
+				fs.disk.ReadAt(secondIndirectBuf, int64(secondIndirectAddr)*BLOCKSIZE)
+
+				// Get third level indirect block address
+				thirdIndirectAddr := binary.LittleEndian.Uint32(secondIndirectBuf[physicalAddress*4 : physicalAddress*4+4])
+
+				thirdIndirectBuf := make([]byte, BLOCKSIZE)
+				fs.disk.ReadAt(thirdIndirectBuf, int64(thirdIndirectAddr)*BLOCKSIZE)
+
+				// Get the actual data block address
+				blockAddr := binary.LittleEndian.Uint32(thirdIndirectBuf[0:4])
+				// free blockAddr
+
+				// Zero it out
+				binary.LittleEndian.PutUint32(thirdIndirectBuf[0:4], 0)
+
+				// Write back
+				fs.disk.WriteAt(thirdIndirectBuf, int64(thirdIndirectAddr)*BLOCKSIZE)
+
+			}

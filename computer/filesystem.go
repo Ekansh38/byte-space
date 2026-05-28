@@ -12,15 +12,7 @@ import (
 )
 
 // PLANNING
-// inode file: meta data (file-size, type) + block list + FIND, SIND, TIND
-// data file: raw bytes (fixed size)
-// directory data block entry (fixed size)
 // if string too short ["p", "i", "c", "s", "\0","0","0","0"] // the extra 0's are padding
-// metadata: freeBlocks + root
-// write: take free block -> store data -> update inode
-// read: inode -> blocks -> combine
-// delete: free blocks -> remove inode
-// freeBlocks empty = disk full (FAHH)
 
 type InodeType uint8
 
@@ -75,6 +67,8 @@ type inode struct {
 	find   uint32     // first-indirect
 	sind   uint32     // second-indirect
 	tind   uint32     // third-indirect
+
+	// sind and tind are not unix style recurisve indirection just 1024 + 1024 + 1024. simple
 
 	createdAt  uint64
 	modifiedAt uint64
@@ -307,23 +301,76 @@ func NewFileSystem(basePath string) *FileSystem {
 }
 
 func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
-
 	// keep in mind this function does assume everything is perfect and correct about the inode.
-	// its a very low level function, it does not perform any checks. 
+	// its a very low level function, it does not perform any checks.
 	// that is for higher level kernel/filesystem commands to enforce and perform on programs making syscalls.
 
-
 	blocksNeeded := (newSize + BLOCKSIZE - 1) / BLOCKSIZE
+	// same: ceil(float(newSize) / float(BLOCKSIZE))
+
 	numOCurrentBlocks := (inode.size + BLOCKSIZE - 1) / BLOCKSIZE
+	// same: ceil(float(inode.size) / float(BLOCKSIZE))
 
 	// if they have enough blocks, even if the size is higher. Eg. size = 10, falloc(20). WE DONT GOTTA DO ANY WORK!!
 	// they already have a 4096 block.
 
 	if blocksNeeded > numOCurrentBlocks {
-
+		// alloc more blocks.
 	} else if blocksNeeded < numOCurrentBlocks {
 		// shrink
-	} 
+
+		for i := blocksNeeded; i < numOCurrentBlocks; i++ {
+			// i = just the virtual block number
+			// we need to free all these blocks.
+
+			// convert i to either. direct[x], find[x], sind[x], tind[x]. get that uint32, free it. and 0 the value.
+
+			physicalAddress := i
+			place := 0 // 0 = direct, 1 = find, 2 = sind, 3 = tind
+
+			if i > 11 && i < 1036{
+				physicalAddress = i-12
+				place = 1
+			} else if i >= 1036 && i < 2_060{
+				physicalAddress = i-1036
+				place = 2
+			} else if i >= 2_060 {
+				physicalAddress = i-2_060
+				place = 3
+			}
+
+			if place == 0 {
+				inode.direct[physicalAddress] = 0
+				// free that too
+
+			} else if place == 1 {
+				// put it in there
+				// Get the block address at physicalAddress index
+				// free blockAddr
+				// Zero it out
+				// Write back
+
+			} else if place == 2 {
+				// Get the second level indirect block address
+				// Get the actual data block address
+				// free blockAddr
+				// Zero it out
+				// Write back
+
+			} else if place == 3 {
+				// Get second level indirect block address
+				// Get third level indirect block address
+				// Get the actual data block address
+				// free blockAddr
+				// Zero it out
+				// Write back
+
+			}
+
+		}
+
+
+	}
 
 	return nil
 }
