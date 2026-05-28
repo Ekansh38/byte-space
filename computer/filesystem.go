@@ -347,14 +347,12 @@ func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
 				// put it in there
 				// Get the block address at physicalAddress index
 				// free blockAddr
-				// Zero it out
 				// Write back
 
 			} else if place == 2 {
 				// Get the second level indirect block address
 				// Get the actual data block address
 				// free blockAddr
-				// Zero it out
 				// Write back
 
 			} else if place == 3 {
@@ -362,7 +360,6 @@ func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
 				// Get third level indirect block address
 				// Get the actual data block address
 				// free blockAddr
-				// Zero it out
 				// Write back
 
 			}
