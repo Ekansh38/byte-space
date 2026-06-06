@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -38,6 +39,7 @@ const (
 )
 
 type inode struct {
+	dirty bool
 	size  uint32 // file-size in bytes
 	fType InodeType
 	refs  uint16
@@ -93,6 +95,7 @@ type dataBlock struct {
 type FileSystem struct {
 	disk     *os.File
 	superBlk SuperBlock // cached
+	mu       sync.Mutex
 
 	// maybe later cache the bitmaps for extra SPEED.
 }
@@ -235,7 +238,7 @@ func NewFileSystem(basePath string) *FileSystem {
 
 		dataBitmapBuf := make([]byte, BLOCKSIZE)
 		// dataBitmapBuf[0] = 0b10101010
-		dataBitmapBuf[BLOCKSIZE-1] = 0b10101010
+		// dataBitmapBuf[BLOCKSIZE-1] = 0b10101010
 		disk.WriteAt(dataBitmapBuf, int64(superBlk.dataBitmapStartBlock)*BLOCKSIZE)
 
 		// data blocks
@@ -301,6 +304,7 @@ func NewFileSystem(basePath string) *FileSystem {
 }
 
 func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
+	inode.dirty = true
 	// keep in mind this function does assume everything is perfect and correct about the inode.
 	// its a very low level function, it does not perform any checks.
 	// that is for higher level kernel/filesystem commands to enforce and perform on programs making syscalls.
@@ -313,6 +317,11 @@ func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
 
 	// if they have enough blocks, even if the size is higher. Eg. size = 10, falloc(20). WE DONT GOTTA DO ANY WORK!!
 	// they already have a 4096 block.
+
+	fs.mu.Lock()
+
+	dataBitmapBuf := make([]byte, 4096)
+	fs.disk.ReadAt(dataBitmapBuf, int64(fs.superBlk.dataBitmapStartBlock)*BLOCKSIZE)
 
 	if blocksNeeded > numOCurrentBlocks {
 		// alloc more blocks.
@@ -328,47 +337,49 @@ func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
 			physicalAddress := i
 			place := 0 // 0 = direct, 1 = find, 2 = sind, 3 = tind
 
-			if i > 11 && i < 1036{
-				physicalAddress = i-12
+			if i > 11 && i < 1036 {
+				physicalAddress = i - 12
 				place = 1
-			} else if i >= 1036 && i < 2_060{
-				physicalAddress = i-1036
+			} else if i >= 1036 && i < 2_060 {
+				physicalAddress = i - 1036
 				place = 2
 			} else if i >= 2_060 {
-				physicalAddress = i-2_060
+				physicalAddress = i - 2_060
 				place = 3
 			}
 
 			if place == 0 {
-				inode.direct[physicalAddress] = 0
-				// free that too
+				blkAddress := inode.direct[physicalAddress]
 
+				// free that block address
+				offst := blkAddress % 8
+				var mask byte = ^(1 << offst)
+				dataBitmapBuf[blkAddress/8] &= mask
+
+				inode.direct[physicalAddress] = 0 // for visuals in the hex editor, still a valid block number tho, u get it?
 			} else if place == 1 {
-				// put it in there
 				// Get the block address at physicalAddress index
 				// free blockAddr
 				// Write back
-
+				// do cacheing too
 			} else if place == 2 {
 				// Get the second level indirect block address
 				// Get the actual data block address
 				// free blockAddr
 				// Write back
-
 			} else if place == 3 {
 				// Get second level indirect block address
 				// Get third level indirect block address
 				// Get the actual data block address
 				// free blockAddr
 				// Write back
-
 			}
 
 		}
-
-
 	}
 
+	fs.disk.WriteAt(dataBitmapBuf, int64(fs.superBlk.dataBitmapStartBlock)*BLOCKSIZE)
+	fs.mu.Unlock()
 	return nil
 }
 
