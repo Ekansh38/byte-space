@@ -303,8 +303,13 @@ func NewFileSystem(basePath string) *FileSystem {
 	// falloc and write to inode
 }
 
+func clearBit(bitmap []byte, idx uint32) {
+	bitmap[idx/8] &= ^(1 << (idx % 8))
+}
+
 func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
 	inode.dirty = true
+
 	// keep in mind this function does assume everything is perfect and correct about the inode.
 	// its a very low level function, it does not perform any checks.
 	// that is for higher level kernel/filesystem commands to enforce and perform on programs making syscalls.
@@ -318,13 +323,24 @@ func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
 	// if they have enough blocks, even if the size is higher. Eg. size = 10, falloc(20). WE DONT GOTTA DO ANY WORK!!
 	// they already have a 4096 block.
 
-	fs.mu.Lock()
+
+	var findBuf []byte = nil
+	var sindBuf []byte = nil
+	var tindBuf []byte = nil
 
 	dataBitmapBuf := make([]byte, 4096)
+
+	fs.mu.Lock()
+
 	fs.disk.ReadAt(dataBitmapBuf, int64(fs.superBlk.dataBitmapStartBlock)*BLOCKSIZE)
 
 	if blocksNeeded > numOCurrentBlocks {
-		// alloc more blocks.
+		// catch is blocks needed is greater than the max number of blocks
+
+		if blocksNeeded > 12+1024+1024+1024 {
+			return errors.New("Not enough space to store all that fatass!")
+		}
+
 	} else if blocksNeeded < numOCurrentBlocks {
 		// shrink
 
@@ -352,30 +368,67 @@ func (fs *FileSystem) falloc(inode *inode, newSize uint32) error {
 				blkAddress := inode.direct[physicalAddress]
 
 				// free that block address
-				offst := blkAddress % 8
-				var mask byte = ^(1 << offst)
-				dataBitmapBuf[blkAddress/8] &= mask
+				clearBit(dataBitmapBuf, blkAddress)
 
 				inode.direct[physicalAddress] = 0 // for visuals in the hex editor, still a valid block number tho, u get it?
+
 			} else if place == 1 {
-				// Get the block address at physicalAddress index
-				// free blockAddr
-				// Write back
-				// do cacheing too
+
+				if findBuf == nil {
+					findBuf = make([]byte, BLOCKSIZE)
+					_, _ = fs.disk.ReadAt(findBuf, (int64(inode.find)*BLOCKSIZE)+int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+				}
+
+				blkAddress := binary.LittleEndian.Uint32(findBuf[physicalAddress*4 : physicalAddress*4+4])
+
+				// free that block address
+				clearBit(dataBitmapBuf, blkAddress)
+
 			} else if place == 2 {
-				// Get the second level indirect block address
-				// Get the actual data block address
-				// free blockAddr
-				// Write back
+				if sindBuf == nil {
+					sindBuf = make([]byte, BLOCKSIZE)
+					_, _ = fs.disk.ReadAt(sindBuf, (int64(inode.sind)*BLOCKSIZE)+int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+				}
+
+				blkAddress := binary.LittleEndian.Uint32(sindBuf[physicalAddress*4 : physicalAddress*4+4])
+
+				// free that block address
+				clearBit(dataBitmapBuf, blkAddress)
 			} else if place == 3 {
-				// Get second level indirect block address
-				// Get third level indirect block address
-				// Get the actual data block address
-				// free blockAddr
-				// Write back
+				if tindBuf == nil {
+					tindBuf = make([]byte, BLOCKSIZE)
+					_, _ = fs.disk.ReadAt(tindBuf, (int64(inode.sind)*BLOCKSIZE)+int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+				}
+
+				blkAddress := binary.LittleEndian.Uint32(tindBuf[physicalAddress*4 : physicalAddress*4+4])
+
+				// free that block address
+				clearBit(dataBitmapBuf, blkAddress)
 			}
 
 		}
+
+		// clear the blocks themselves if needed
+		if numOCurrentBlocks > 2060 && blocksNeeded <= 2060 {
+			clearBit(dataBitmapBuf, inode.tind)
+		}
+		if numOCurrentBlocks > 1036 && blocksNeeded <= 1036 {
+			clearBit(dataBitmapBuf, inode.sind)
+		}
+		if numOCurrentBlocks > 12 && blocksNeeded <= 12 {
+			clearBit(dataBitmapBuf, inode.find)
+		}
+	}
+
+	// write to disk
+	if findBuf != nil {
+		fs.disk.WriteAt(findBuf, int64(inode.find)*BLOCKSIZE+int64(fs.superBlk.dataBlocksStartBlock)*BLOCKSIZE)
+	}
+	if sindBuf != nil {
+		fs.disk.WriteAt(sindBuf, int64(inode.sind)*BLOCKSIZE+int64(fs.superBlk.dataBlocksStartBlock)*BLOCKSIZE)
+	}
+	if tindBuf != nil {
+		fs.disk.WriteAt(tindBuf, int64(inode.tind)*BLOCKSIZE+int64(fs.superBlk.dataBlocksStartBlock)*BLOCKSIZE)
 	}
 
 	fs.disk.WriteAt(dataBitmapBuf, int64(fs.superBlk.dataBitmapStartBlock)*BLOCKSIZE)
