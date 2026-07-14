@@ -14,6 +14,23 @@ func setBit(bitmap []byte, idx uint32) {
 	bitmap[idx/8] |= 1 << (idx % 8)
 }
 
+func virtualToPhysical(v uint32) (uint32, int) {
+	var physicalAddress uint32 = 0
+	place := 0
+	if v > 11 && v < 1036 {
+		physicalAddress = v - 12
+		place = 1
+	} else if v >= 1036 && v < 2_060 {
+		physicalAddress = v - 1036
+		place = 2
+	} else if v >= 2_060 {
+		physicalAddress = v - 2_060
+		place = 3
+	}
+
+	return physicalAddress, place
+}
+
 // learn about how this works one day since fable wrote it.
 func findFreeBit(bitmap []byte) (uint32, bool) {
 	i := 0
@@ -84,56 +101,34 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 			return errors.New("not enough space to store all that fatass! please just store text and stuff, what are u tryna doo")
 		}
 
-		numOfNeededBlocks := totalBlocksNeeded - numOfCurrentBlocks
+		getDataBlock := func() uint32 {
+			idx, status := findFreeBit(dataBitmapBuf)
+
+			if status != true {
+				panic("faahhhhh") // TODO
+			}
+			setBit(dataBitmapBuf, idx)
+
+			return idx
+		}
 
 		if totalBlocksNeeded > 2060 && numOfCurrentBlocks <= 2060 {
-			idx, status := findFreeBit(dataBitmapBuf)
-
-			if status != true {
-				panic("faahhhhh") // TODO
-			}
-			setBit(dataBitmapBuf, idx)
-
-			inode.tind = idx
+			inode.tind = getDataBlock()
 		}
 		if totalBlocksNeeded > 1036 && numOfCurrentBlocks <= 1036 {
-			idx, status := findFreeBit(dataBitmapBuf)
-
-			if status != true {
-				panic("faahhhhh") // TODO
-			}
-			setBit(dataBitmapBuf, idx)
-
-			inode.sind = idx
+			inode.sind = getDataBlock()
 		}
 		if totalBlocksNeeded > 12 && numOfCurrentBlocks <= 12 {
-			idx, status := findFreeBit(dataBitmapBuf)
-
-			if status != true {
-				panic("faahhhhh") // TODO
-			}
-
-			setBit(dataBitmapBuf, idx)
-
-			inode.find = idx
+			inode.find = getDataBlock()
 		}
 
-		for i := 1; i <= int(numOfNeededBlocks); i++ {
+		for i := numOfCurrentBlocks; i < totalBlocksNeeded; i++ {
 			place := 0 // 0 = direct, 1 = find, 2 = sind, 3 = tind
 
-			v := i + int(numOfCurrentBlocks) - 1
+			v := i
 			physicalAddress := v
 
-			if v > 11 && v < 1036 {
-				physicalAddress = v - 12
-				place = 1
-			} else if v >= 1036 && v < 2_060 {
-				physicalAddress = v - 1036
-				place = 2
-			} else if v >= 2_060 {
-				physicalAddress = v - 2_060
-				place = 3
-			}
+			physicalAddress, place = virtualToPhysical(v)
 
 			if place == 0 {
 				idx, status := findFreeBit(dataBitmapBuf)
@@ -200,16 +195,8 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 			physicalAddress := i
 			place := 0 // 0 = direct, 1 = find, 2 = sind, 3 = tind
 
-			if i > 11 && i < 1036 {
-				physicalAddress = i - 12
-				place = 1
-			} else if i >= 1036 && i < 2_060 {
-				physicalAddress = i - 1036
-				place = 2
-			} else if i >= 2_060 {
-				physicalAddress = i - 2_060
-				place = 3
-			}
+			physicalAddress, place = virtualToPhysical(i)
+
 
 			if place == 0 {
 				blkAddress := inode.direct[physicalAddress]
