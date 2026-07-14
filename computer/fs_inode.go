@@ -46,8 +46,9 @@ type inode struct {
 
 	direct [12]uint32 // 12 x4 = 48
 	find   uint32     // first-indirect
-	sind   uint32     // second-indirect
-	tind   uint32     // third-indirect
+	sind   uint32     // second first-indirect
+	tind   uint32     // third first-indirect
+	// since its a small fs we dont need second and third indirect
 
 	// sind and tind are not unix style recurisve indirection just 1024 + 1024 + 1024. simple
 

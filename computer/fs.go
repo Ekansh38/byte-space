@@ -62,11 +62,15 @@ func (m *MemDisk) Truncate(size int64) error {
 	return nil
 }
 
+func (m *MemDisk) Close() error {
+	return nil
+}
 
 type Disk interface {
 	ReadAt(p []byte, off int64) (n int, err error)
 	WriteAt(b []byte, off int64) (n int, err error)
 	Truncate(size int64) error
+	Close() error
 }
 
 // PLANNING
@@ -97,7 +101,7 @@ type dataBlock struct {
 }
 
 type FileSystem struct {
-	disk     *os.File
+	disk     Disk
 	superBlk SuperBlock // cached
 	mu       sync.Mutex
 
@@ -231,7 +235,7 @@ func NewFileSystem(basePath string) *FileSystem {
 
 		paddingBuf := make([]byte, BLOCKSIZE)
 		for idx := range paddingBuf {
-			paddingBuf[idx] = 67
+			paddingBuf[idx] = 103 // 0x67
 		}
 		disk.WriteAt(paddingBuf, int64(superBlk.dataBlocksStartBlock+BLOCKS)*BLOCKSIZE)
 
