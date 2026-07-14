@@ -61,6 +61,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 	// they already have a 4096 block.
 
 	if totalBlocksNeeded == numOfCurrentBlocks {
+		inode.size = newSize
 		return nil
 	}
 
