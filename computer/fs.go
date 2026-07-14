@@ -221,14 +221,16 @@ func NewFileSystem(basePath string) *FileSystem {
 		// data bitmap
 
 		dataBitmapBuf := make([]byte, BLOCKSIZE)
-		// dataBitmapBuf[0] = 0b10101010
-		// dataBitmapBuf[BLOCKSIZE-1] = 0b10101010
+		// We have fewer data blocks than the bitmap can hold (16128 vs 32768 bits).
+		dataBitmapUsedBytes := int(superBlk.dataBlockCount) / 8
+		for idx := dataBitmapUsedBytes; idx < BLOCKSIZE; idx++ {
+			dataBitmapBuf[idx] = 0xFF
+		}
+		disk.WriteAt(dataBitmapBuf, int64(superBlk.dataBitmapStartBlock)*BLOCKSIZE)
 		disk.WriteAt(dataBitmapBuf, int64(superBlk.dataBitmapStartBlock)*BLOCKSIZE)
 
 		// data blocks
 		dataBlocksBuf := make([]byte, BLOCKSIZE*superBlk.dataBlockCount)
-		// dataBlocksBuf[0] = 0b10101010
-		// dataBlocksBuf[(DATABLOCKSIZE*superBlk.dataBlockCount)-1] = 0b10101010
 		disk.WriteAt(dataBlocksBuf, int64(superBlk.dataBlocksStartBlock)*BLOCKSIZE)
 
 		// padding
