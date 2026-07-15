@@ -1,5 +1,12 @@
 package computer
 
+// next stuff to do.
+
+// make like directory traversal from root
+
+// work on the goal of being able to call open to a path and create a inode and file and stuff and
+// return a fd with the ops and all
+
 import (
 	"encoding/binary"
 	"errors"
@@ -94,6 +101,7 @@ const (
 	REG      = 0 // not a directory data block
 	DIRBLOCK = 1
 )
+
 
 type dataBlock struct {
 	blockType dataBlockType

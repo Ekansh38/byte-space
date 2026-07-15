@@ -13,8 +13,38 @@ const (
 	S_IFDIR = 1
 )
 
+type FD interface {
+    Open() error
+    Read(buf []byte) (int, error)
+    Write(data []byte) (int, error)
+    Close() error
+    
+    InodeNum() uint32
+    Offset() uint64
+    SetOffset(uint64)
+    Flags() int
+}
+
+
+type DirectoryOps struct {
+}
+
+func (d *DirectoryOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD {
+	// TODO
+}
+
+func (d *DirectoryOps) ReadEntries(kernel *Kernel) []DirEntry {
+	// TODO
+}
+
 type InodeOperations interface {
-	CreateFD()
+    CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD
+    ReadEntries(kernel *Kernel) []DirEntry
+}
+
+type DirEntry struct {
+    Inum int
+    Name string
 }
 
 type inode struct {
@@ -80,11 +110,6 @@ func (fs *FileSystem) readInode(inode *inode, idx int) error {
 	inode.size = binary.LittleEndian.Uint32(inodeBuf[0:4])
 	inode.fType = InodeType(inodeBuf[4])
 	inode.refs = binary.LittleEndian.Uint16(inodeBuf[5:7])
-
-	//if inode.fType == S_IFREG {
-	//	inode.ops = RegOps
-	//}
-	// TODO
 
 	for idx, val := range inodeBuf[7:21] {
 		inode.owner[idx] = val

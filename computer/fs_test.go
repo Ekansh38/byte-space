@@ -407,7 +407,7 @@ func TestFalloc(t *testing.T) {
 			fs := NewTestFileSystem()
 			in := tt.setup(fs)
 
-			err := fs.falloc(in, tt.newSize)
+			err := fs.Falloc(in, tt.newSize)
 			if (err != nil) != tt.wantErr {
 				t.Fatalf("expected err=%v, got %v", tt.wantErr, err)
 			}

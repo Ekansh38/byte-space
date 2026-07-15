@@ -7,13 +7,14 @@ package computer
 // one day ill build an ACTUAL kernel that boots on startup and does all that jazz but, imma focus on byte-space for now...
 
 import (
-	"byte-space/utils"
 	"context"
 	"fmt"
 	"os"
 	"path"
 	"strings"
 	"sync"
+
+	"byte-space/utils"
 )
 
 type Errno int
@@ -113,7 +114,7 @@ type Winsize struct {
 }
 
 // any nerds curious what TIOC means?
-// it means TTY I/O Control (pretty cool if I do say so myself!)
+// it means TTY I/O Control (pretty cool if I do say so meeself!)
 
 type Program interface {
 	SetProcess(proc *Process)
@@ -124,8 +125,9 @@ type Program interface {
 }
 
 type Kernel struct {
-	computer *Computer
-	programs map[string]func(int) Program // path to the factory, which can later change if I implement a language
+	computer   *Computer
+	inodeCache []*inode                     // indexed by inode number
+	programs   map[string]func(int) Program // path to the factory, which can later change if I implement a language
 	// later the factory can be just 1 function, and instead of a map, it can just read that file path and do the language stuff, check for shebang and all that.
 	// rn we still need a map.
 
@@ -144,6 +146,56 @@ type Kernel struct {
 
 func (k *Kernel) RegisterProgram(path string, factory func(int) Program) {
 	k.programs[path] = factory
+}
+
+func (k *Kernel) ResolvePath(path string) int { // full of bugs rn like im not deleting from dirs and stuff TODO
+	// FULL OF BUGS
+	// we need to parse the path into different directories
+
+	dirs := strings.Split(path, "/")
+
+	// first get that root inode from the cache
+	root := k.inodeCache[2]
+
+	if root == nil {
+		root = &inode{}
+		k.computer.filesystem.readInode(root, 2)
+
+		// runtime fields
+		root.num = 2
+		root.ops = DirectoryOps{}
+
+		k.inodeCache[2] = root
+	}
+
+	mostRecentInode := root
+
+	for {
+		if len(dirs) == 0 {
+			return mostRecentInode.num
+		}
+
+		entries := mostRecentInode.ops.ReadEntries(k)
+		if entries == nil {
+			return -1 // thats a file, its like somebody giving a path /game.py/test
+		}
+		for i := range entries {
+			if entries[i].Name == dirs[0] {
+				mostRecentInode = k.inodeCache[entries[i].Inum]
+				if mostRecentInode == nil {
+					k.computer.filesystem.readInode(mostRecentInode, int(entries[i].Inum))
+
+					// mostRecentInode.ops = //bla bla todo
+					mostRecentInode.num = entries[i].Inum
+
+					k.inodeCache[entries[i].Inum] = mostRecentInode
+				}
+
+			}
+		}
+
+
+	}
 }
 
 func (k *Kernel) GetTtyID(proc *Process) string {
