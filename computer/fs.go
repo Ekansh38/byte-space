@@ -1,17 +1,5 @@
 package computer
 
-// 1. UNBRICK THE BUILD  (do this first, gets the feedback loop back)
-//    - DirEntry.Inum is int in fs_inode.go, kernel.go treats it as uint32.
-//      change it to uint32.
-//    - DirectoryOps methods have pointer receivers but kernel.go:166 does
-//      DirectoryOps{} (value). use &DirectoryOps{} instead.
-//    - the two // TODO stubs in DirectoryOps need bodies so the pkg compiles,
-//      just `return nil` / `return nil, nil` is fine for now.
-//    - os.go + half of kernel.go still call afero methods (Mkdir, Create,
-//      Stat, WriteFile...) on computer.filesystem which is now our new
-//      FileSystem struct. keep afero as a SECOND field on Computer for now
-//      so I can migrate the syscalls one at a time instead of a big bang.
-//
 // 2. DIRECTORY BLOCKS  (encode/decode the 64-byte entry format)
 //    - format is in FILESYSTEM.md "Directory Entry Format"
 //    - encodeDirEntry(name, inum) []byte and decodeDirEntries(block) []DirEntry

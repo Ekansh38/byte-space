@@ -48,7 +48,8 @@ type Computer struct {
 	Type       string
 	OS         *OS
 	Kernel     *Kernel
-	filesystem FileSystem
+	filesystem afero.Fs
+	fs FileSystem
 	FsMetaData map[string]FileMetadata
 
 	sessions map[string]*Session
@@ -135,7 +136,7 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Compute
 		procs:    map[int]*Process{},
 	}
 
-	computer.Kernel.inodeCache = make([]*inode, computer.filesystem.superBlk.inodeCount) // init the inode cache
+	//computer.Kernel.inodeCache = make([]*inode, computer.filesystem.superBlk.inodeCount) // init the inode cache
 	return computer
 }
 

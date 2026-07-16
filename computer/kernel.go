@@ -159,11 +159,11 @@ func (k *Kernel) ResolvePath(path string) int { // full of bugs rn like im not d
 
 	if root == nil {
 		root = &inode{}
-		k.computer.filesystem.readInode(root, 2)
+		k.computer.fs.readInode(root, 2)
 
 		// runtime fields
 		root.num = 2
-		root.ops = DirectoryOps{}
+		//root.ops = DirectoryOps{}
 
 		k.inodeCache[2] = root
 	}
@@ -183,7 +183,7 @@ func (k *Kernel) ResolvePath(path string) int { // full of bugs rn like im not d
 			if entries[i].Name == dirs[0] {
 				mostRecentInode = k.inodeCache[entries[i].Inum]
 				if mostRecentInode == nil {
-					k.computer.filesystem.readInode(mostRecentInode, int(entries[i].Inum))
+					k.computer.fs.readInode(mostRecentInode, int(entries[i].Inum))
 
 					// mostRecentInode.ops = //bla bla todo
 					mostRecentInode.num = entries[i].Inum

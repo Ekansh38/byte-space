@@ -119,7 +119,7 @@ Fixed-size entries, 64 bytes each. 64 entries per data block (4096 / 64).
 | name    | 8      | 56 bytes | Filename (null-padded, max 55 chars)  |
 ```
 
-Max filename length: 55 bytes (56 bytes storage, last byte always null).
+Max file/dir name length: 55 bytes (56 bytes storage, last byte always null).
 
 Every directory contains at minimum:
 - Entry 0: "."  → own inode number
