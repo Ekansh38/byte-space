@@ -1,16 +1,12 @@
 package computer
 
-// 2. DIRECTORY BLOCKS  (encode/decode the 64-byte entry format)
-//    - format is in FILESYSTEM.md "Directory Entry Format"
-//    - encodeDirEntry(name, inum) []byte and decodeDirEntries(block) []DirEntry
-//    - fill in DirectoryOps.ReadEntries: walk inode.direct[], decode each block
-//    - unit test with MemDisk
-
 // 3. INODE ALLOCATOR  (AllocInode / FreeInode on the inode bitmap)
 //    - basically the same pattern as the data bitmap logic in Falloc
 //    - already have findFreeBit / setBit / clearBit, just reuse them
 //    - read inode bitmap block, findFreeBit, setBit, write back
 //    - Free is the reverse
+
+// 4. Directory Entry adder which finds free space and adds in a entry.
 //
 // after these three: kernel Create/Mkdir/Delete become easy, then FD types,
 // then finally rip out afero. procfs / virtual inodes come way later.
