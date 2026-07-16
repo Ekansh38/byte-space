@@ -6,13 +6,6 @@ package computer
 //    - fill in DirectoryOps.ReadEntries: walk inode.direct[], decode each block
 //    - unit test with MemDisk
 
-// 2: add ReadBlock(blockNum uint32) []byte and WriteBlock(blockNum uint32, data []byte) error
-// helpers on *FileSystem here. They translate a data-block index into a physical
-// disk offset: dataBlocksStartBlock*BLOCKSIZE + blockNum*BLOCKSIZE, then ReadAt/WriteAt
-// a full BLOCKSIZE buffer. DirectoryOps.ReadEntries, Create/Mkdir and the FD types
-// all need raw block IO, so these belong on *FileSystem (not inlined in callers).
-// Keep them in this file since they're general block-level IO, not dir-format specific.
-//
 // 3. INODE ALLOCATOR  (AllocInode / FreeInode on the inode bitmap)
 //    - basically the same pattern as the data bitmap logic in Falloc
 //    - already have findFreeBit / setBit / clearBit, just reuse them
@@ -320,3 +313,23 @@ func (fs *FileSystem) Shutdown() {
 	return
 }
 
+func (fs *FileSystem) ReadBlock(blockNum uint32) ([]byte, error) {
+
+	offset := int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE) + int64(blockNum*BLOCKSIZE) //inclusive
+
+
+	block := make([]byte, BLOCKSIZE)
+	_, err := fs.disk.ReadAt(block, offset)
+
+	return block, err
+}
+
+func (fs *FileSystem) WriteBlock(blockNum uint32, data []byte) error {
+
+	offset := int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE) + int64(blockNum*BLOCKSIZE) //inclusive
+
+
+	_, err := fs.disk.WriteAt(data, offset)
+
+	return err
+}
