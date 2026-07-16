@@ -310,13 +310,18 @@ func (fs *FileSystem) Shutdown() {
 	// this function is called on engine shutdown
 
 	fs.disk.Close()
-	return
 }
 
-func (fs *FileSystem) ReadBlock(blockNum uint32) ([]byte, error) {
+// TODO: think about concurrency with these things in the future.
 
-	offset := int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE) + int64(blockNum*BLOCKSIZE) //inclusive
 
+func (fs *FileSystem) ReadBlock(blockNum uint32) ([]byte, error) { // NOT DATA BLOCK! ANY BLOCK
+
+	if blockNum >= fs.superBlk.totalBlocks {
+		return nil, errors.New("invalid blockNum")
+	}
+
+	offset := int64(blockNum)*int64(BLOCKSIZE)
 
 	block := make([]byte, BLOCKSIZE)
 	_, err := fs.disk.ReadAt(block, offset)
@@ -324,10 +329,17 @@ func (fs *FileSystem) ReadBlock(blockNum uint32) ([]byte, error) {
 	return block, err
 }
 
-func (fs *FileSystem) WriteBlock(blockNum uint32, data []byte) error {
+func (fs *FileSystem) WriteBlock(blockNum uint32, data []byte) error { // NOT DATA BLOCK! ANY BLOCK
 
-	offset := int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE) + int64(blockNum*BLOCKSIZE) //inclusive
+	if blockNum >= fs.superBlk.totalBlocks {
+		return errors.New("invalid blockNum")
+	}
 
+	if len(data) != BLOCKSIZE {
+		return errors.New("len(data) != BLOCKSIZE")
+	}
+
+	offset := int64(blockNum)*int64(BLOCKSIZE)
 
 	_, err := fs.disk.WriteAt(data, offset)
 
