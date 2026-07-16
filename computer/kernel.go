@@ -89,7 +89,7 @@ type FileDescription struct {
 	Type FDType
 	TTY  *TTY // valid when Type == FDTTY else its NIL
 
-	InodeIndex int
+	InodeIndex uint32
 	Offset     int64
 
 	refs int
@@ -126,7 +126,7 @@ type Program interface {
 
 type Kernel struct {
 	computer   *Computer
-	inodeCache []*inode                     // indexed by inode number
+	inodeCache map[uint32]*inode               // indexed by inode number
 	programs   map[string]func(int) Program // path to the factory, which can later change if I implement a language
 	// later the factory can be just 1 function, and instead of a map, it can just read that file path and do the language stuff, check for shebang and all that.
 	// rn we still need a map.
@@ -148,11 +148,38 @@ func (k *Kernel) RegisterProgram(path string, factory func(int) Program) {
 	k.programs[path] = factory
 }
 
-func (k *Kernel) ResolvePath(path string) int { // full of bugs rn like im not deleting from dirs and stuff TODO
+func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of bugs rn like im not deleting from dirs and stuff TODO
 	// FULL OF BUGS
 	// we need to parse the path into different directories
 
-	dirs := strings.Split(path, "/")
+	// --- normalize the path string (used to be the old resolvePath) ---
+	if target == "" {
+		target = proc.CWD
+	}
+
+	home := "/home/" + proc.UID
+	if proc.UID == "root" {
+		home = "/root"
+	}
+
+	if target == "~" {
+		target = home
+	} else if strings.HasPrefix(target, "~/") {
+		target = path.Join(home, target[2:])
+	}
+
+	if !strings.HasPrefix(target, "/") {
+		target = path.Join(proc.CWD, target)
+	}
+	target = path.Clean(target)
+
+	if !strings.HasPrefix(target, "/") {
+		target = "/"
+	}
+	target = path.Clean(target)
+
+	// --- walk the directory tree to find the inode number ---
+	dirs := strings.Split(target, "/")
 
 	// first get that root inode from the cache
 	root := k.inodeCache[2]
@@ -177,13 +204,13 @@ func (k *Kernel) ResolvePath(path string) int { // full of bugs rn like im not d
 
 		entries := mostRecentInode.ops.ReadEntries(k)
 		if entries == nil {
-			return -1 // thats a file, its like somebody giving a path /game.py/test
+			return 0 // thats a file, its like somebody giving a path /game.py/test
 		}
 		for i := range entries {
 			if entries[i].Name == dirs[0] {
 				mostRecentInode = k.inodeCache[entries[i].Inum]
 				if mostRecentInode == nil {
-					k.computer.fs.readInode(mostRecentInode, int(entries[i].Inum))
+					k.computer.fs.readInode(mostRecentInode, entries[i].Inum)
 
 					// mostRecentInode.ops = //bla bla todo
 					mostRecentInode.num = entries[i].Inum
@@ -426,34 +453,6 @@ func (k *Kernel) cleanupProcess(pid int) {
 	k.procsMu.Unlock()
 }
 
-func (k *Kernel) resolvePath(proc *Process, target string) string {
-	if target == "" {
-		target = proc.CWD
-	}
-
-	home := "/home/" + proc.UID
-	if proc.UID == "root" {
-		home = "/root"
-	}
-
-	if target == "~" {
-		target = home
-	} else if strings.HasPrefix(target, "~/") {
-		target = path.Join(home, target[2:])
-	}
-
-	if !strings.HasPrefix(target, "/") {
-		target = path.Join(proc.CWD, target)
-	}
-	target = path.Clean(target)
-
-	if !strings.HasPrefix(target, "/") {
-		return "/"
-	}
-
-	return path.Clean(target)
-}
-
 func (k *Kernel) getMetaData(filePath string) (FileMetadata, bool) {
 	k.fsMu.RLock()
 	meta, ok := k.computer.FsMetaData[filePath]
@@ -516,7 +515,7 @@ func (k *Kernel) readFile(proc *Process, target string) ([]byte, error) { // sys
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	target = k.resolvePath(proc, target)
+	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
 	if !k.canRead(proc.EUID, target) {
 		return nil, fmt.Errorf("permission denied")
 	}
@@ -527,7 +526,7 @@ func (k *Kernel) readDir(proc *Process, target string) ([]os.FileInfo, error) { 
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	target = k.resolvePath(proc, target)
+	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
 	if !k.canRead(proc.EUID, target) {
 		return nil, fmt.Errorf("permission denied")
 	}
@@ -538,7 +537,7 @@ func (k *Kernel) removeAll(proc *Process, target string) error {
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	target = k.resolvePath(proc, target)
+	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
 	parentDir := target
 	targetStat, err := k.computer.filesystem.Stat(target)
 	if err != nil {
@@ -560,7 +559,7 @@ func (k *Kernel) stat(proc *Process, target string) (FileMetadata, bool) { // sy
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	target = k.resolvePath(proc, target)
+	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
 	meta, ok := k.computer.FsMetaData[target]
 	return meta, ok
 }
@@ -569,7 +568,7 @@ func (k *Kernel) mkDir(proc *Process, target string) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	target = k.resolvePath(proc, target)
+	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
 	parent := path.Dir(target)
 	if !k.canWrite(proc.EUID, parent) {
 		return fmt.Errorf("permission denied")
@@ -592,7 +591,7 @@ func (k *Kernel) createFile(proc *Process, target string) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	target = k.resolvePath(proc, target)
+	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
 	parent := path.Dir(target)
 	// TOCTOU racing // no more toctou racing
 	if !k.canWrite(proc.EUID, parent) {
@@ -616,7 +615,7 @@ func (k *Kernel) writeFile(proc *Process, target string, content []byte) error {
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	target = k.resolvePath(proc, target)
+	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
 	// later will use i-node stuff.
 	var parents []string
 	current := path.Dir(target)
@@ -653,7 +652,7 @@ func (k *Kernel) writeFile(proc *Process, target string, content []byte) error {
 }
 
 func (k *Kernel) changeDirectory(proc *Process, target string) error { // syscall
-	target = k.resolvePath(proc, target)
+	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
 	if !k.computer.OS.HasDirectory(target) {
 		return fmt.Errorf("%s: no such file or directory", target)
 	}
@@ -669,7 +668,7 @@ func (k *Kernel) changeDirectory(proc *Process, target string) error { // syscal
 
 func (k *Kernel) chmod(proc *Process, target string, newOwnerMode uint8, newOtherMode uint8) error { // syscall
 	k.fsMu.Lock()
-	target = k.resolvePath(proc, target)
+	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
 
 	meta, ok := k.getMetaDataLocked(target)
 

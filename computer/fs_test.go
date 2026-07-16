@@ -94,7 +94,7 @@ func TestReadInode(t *testing.T) {
 	tests := []struct {
 		name    string
 		setup   func() *inode
-		idx     int
+		idx     uint32
 		want    *inode
 		wantErr bool
 	}{
@@ -185,7 +185,7 @@ func TestWriteInode(t *testing.T) {
 	tests := []struct {
 		name    string
 		in      *inode
-		idx     int
+		idx     uint32
 		wantErr bool
 	}{
 		{

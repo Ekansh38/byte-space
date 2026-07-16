@@ -45,7 +45,7 @@ type InodeOperations interface {
 }
 
 type DirEntry struct {
-    Inum int
+    Inum uint32
     Name string
 }
 
@@ -88,15 +88,15 @@ type inode struct {
 	modifiedAt uint64
 
 	// runtime only
-	num int
+	num uint32
 	ops InodeOperations
 }
 
-func (fs *FileSystem) readInode(inode *inode, idx int) error {
+func (fs *FileSystem) readInode(inode *inode, idx uint32) error {
 	// offset
 	inode.num = idx
 	inodeTableOffset := int(fs.superBlk.inodeTableStartBlock) * BLOCKSIZE
-	startIdx := inodeTableOffset + idx*INODESIZE
+	startIdx := inodeTableOffset + int(idx)*INODESIZE
 	inodeBuf := make([]byte, INODESIZE) // 128
 
 	// Read from disk
@@ -141,12 +141,12 @@ func (fs *FileSystem) readInode(inode *inode, idx int) error {
 	return nil
 }
 
-func (fs *FileSystem) writeInode(inode *inode, idx int) error {
+func (fs *FileSystem) writeInode(inode *inode, idx uint32) error {
 	// doesnt care about the free bitmap shit.
 	// is a pure savage peak at binary serlaiztion
 
 	inodeTableOffset := int(fs.superBlk.inodeTableStartBlock) * BLOCKSIZE
-	startIdx := inodeTableOffset + idx*INODESIZE
+	startIdx := inodeTableOffset + int(idx)*INODESIZE
 	inodeBuf := make([]byte, INODESIZE) // 128
 
 	binary.LittleEndian.PutUint32(inodeBuf[0:4], inode.size)

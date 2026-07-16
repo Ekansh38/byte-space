@@ -5,6 +5,13 @@ package computer
 //    - encodeDirEntry(name, inum) []byte and decodeDirEntries(block) []DirEntry
 //    - fill in DirectoryOps.ReadEntries: walk inode.direct[], decode each block
 //    - unit test with MemDisk
+
+// 2: add ReadBlock(blockNum uint32) []byte and WriteBlock(blockNum uint32, data []byte) error
+// helpers on *FileSystem here. They translate a data-block index into a physical
+// disk offset: dataBlocksStartBlock*BLOCKSIZE + blockNum*BLOCKSIZE, then ReadAt/WriteAt
+// a full BLOCKSIZE buffer. DirectoryOps.ReadEntries, Create/Mkdir and the FD types
+// all need raw block IO, so these belong on *FileSystem (not inlined in callers).
+// Keep them in this file since they're general block-level IO, not dir-format specific.
 //
 // 3. INODE ALLOCATOR  (AllocInode / FreeInode on the inode bitmap)
 //    - basically the same pattern as the data bitmap logic in Falloc
@@ -175,11 +182,11 @@ func NewFileSystem(basePath string) *FileSystem {
 
 	// check if the header is valid
 	if string(headerSuperBlk.magic[:MAGICLEN]) != "BS-EXTFS" && isInitialized == true {
-		log.Println("Invalid magic: expected BS-EXTFS, got %s", headerSuperBlk.magic)
+		log.Printf("Invalid magic: expected BS-EXTFS, got %s", headerSuperBlk.magic)
 		isInitialized = false
 	}
 	if headerSuperBlk.version != LATEST_VERSION && isInitialized == true {
-		log.Println("Invalid version: expected %d, got %d", LATEST_VERSION, headerSuperBlk.version)
+		log.Printf("Invalid version: expected %d, got %d", LATEST_VERSION, headerSuperBlk.version)
 		isInitialized = false
 	}
 
@@ -312,3 +319,4 @@ func (fs *FileSystem) Shutdown() {
 	fs.disk.Close()
 	return
 }
+

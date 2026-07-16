@@ -131,12 +131,12 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Compute
 	computer.OS = &OS{Computer: computer}
 	computer.OS.Network = e
 	computer.Kernel = &Kernel{
-		computer: computer,
-		programs: map[string]func(int) Program{},
-		procs:    map[int]*Process{},
+		computer:   computer,
+		inodeCache: make(map[uint32]*inode),
+		programs:   map[string]func(int) Program{},
+		procs:      map[int]*Process{},
 	}
 
-	//computer.Kernel.inodeCache = make([]*inode, computer.filesystem.superBlk.inodeCount) // init the inode cache
 	return computer
 }
 
