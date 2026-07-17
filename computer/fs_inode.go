@@ -2,6 +2,7 @@ package computer
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 )
@@ -14,17 +15,16 @@ const (
 )
 
 type FD interface {
-    Open() error
-    Read(buf []byte) (int, error)
-    Write(data []byte) (int, error)
-    Close() error
-    
-    InodeNum() uint32
-    Offset() uint64
-    SetOffset(uint64)
-    Flags() int
-}
+	Open() error
+	Read(buf []byte) (int, error)
+	Write(data []byte) (int, error)
+	Close() error
 
+	InodeNum() uint32
+	Offset() uint64
+	SetOffset(uint64)
+	Flags() int
+}
 
 //type DirectoryOps struct {
 //}
@@ -40,13 +40,13 @@ type FD interface {
 //
 
 type InodeOperations interface {
-    CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD
-    ReadEntries(kernel *Kernel) []DirEntry
+	CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD
+	ReadEntries(kernel *Kernel) []DirEntry
 }
 
 type DirEntry struct {
-    Inum uint32
-    Name string
+	Inum uint32
+	Name string
 }
 
 type inode struct {
@@ -193,4 +193,62 @@ func (fs *FileSystem) writeInode(inode *inode, idx uint32) error {
 	}
 
 	return nil
+}
+
+// think about concurreny later TODO
+// maybe we aquire locks at a higher kernel level rather than these low level function calls
+
+func (fs *FileSystem) AllocInode() (uint32, error) {
+	inodeBitmapBuf := make([]byte, INODES/8) // number of inodes in bytes
+	inodeBitmapByteOffset := fs.superBlk.inodeBitmapStartBlock * BLOCKSIZE
+
+	fs.inodeBitmapMu.Lock()
+	defer fs.inodeBitmapMu.Unlock()
+
+	_, err := fs.disk.ReadAt(inodeBitmapBuf, int64(inodeBitmapByteOffset))
+	if err != nil {
+		return 0, err
+	}
+
+	idx, status := findFreeBit(inodeBitmapBuf)
+
+	if !status {
+		return 0, errors.New("no space left bro")
+	}
+
+	setBit(inodeBitmapBuf, idx)
+	_, err = fs.disk.WriteAt(inodeBitmapBuf, int64(inodeBitmapByteOffset))
+	if err != nil { // verbose but idgaf
+		return 0, err
+	}
+
+	return idx, nil
+}
+
+func (fs *FileSystem) FreeInodeFromBitmap(inum uint32) error {
+	if inum >= INODES {
+		return fmt.Errorf("FreeInodeFromBitmap: inum %d out of range", inum)
+	}
+
+
+	inodeBitmapBuf := make([]byte, INODES/8) // number of inodes in bytes
+	inodeBitmapByteOffset := fs.superBlk.inodeBitmapStartBlock * BLOCKSIZE
+
+	fs.inodeBitmapMu.Lock()
+	defer fs.inodeBitmapMu.Unlock()
+
+	_, err := fs.disk.ReadAt(inodeBitmapBuf, int64(inodeBitmapByteOffset))
+	if err != nil {
+		return err
+	}
+
+	if inodeBitmapBuf[inum/8]&(1<<(inum%8)) == 0 {
+		return fmt.Errorf("FreeInodeFromBitmap: inum %d already free", inum)
+	}
+
+	clearBit(inodeBitmapBuf, inum)
+
+	_, err = fs.disk.WriteAt(inodeBitmapBuf, int64(inodeBitmapByteOffset))
+
+	return err
 }

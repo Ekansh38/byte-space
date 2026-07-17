@@ -152,7 +152,7 @@ func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of b
 	// FULL OF BUGS
 	// we need to parse the path into different directories
 
-	// --- normalize the path string (used to be the old resolvePath) ---
+	// fix da stringy
 	if target == "" {
 		target = proc.CWD
 	}

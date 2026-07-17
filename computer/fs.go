@@ -1,15 +1,83 @@
 package computer
 
-// 3. INODE ALLOCATOR  (AllocInode / FreeInode on the inode bitmap)
-//    - basically the same pattern as the data bitmap logic in Falloc
-//    - already have findFreeBit / setBit / clearBit, just reuse them
-//    - read inode bitmap block, findFreeBit, setBit, write back
-//    - Free is the reverse
+// 3. DATA BLOCK HELPERS  (fs.go, alongside ReadBlock/WriteBlock)
+//    - readDataBlock(dataBlkIdx uint32) []byte — takes a *data-region-relative*
+//      index (the values stored in inode.direct / find / sind / tind),
+//      converts to absolute (dataBlkIdx + dataBlocksStartBlock), returns buf.
+//    - writeDataBlock(dataBlkIdx uint32, data []byte).
+//    - lots of stuff below needs these: dir ops, dir adder, FileFD, etc.
 
-// 4. Directory Entry adder which finds free space and adds in a entry.
+//DONE
+
 //
-// after these three: kernel Create/Mkdir/Delete become easy, then FD types,
-// then finally rip out afero. procfs / virtual inodes come way later.
+// 4. DIRECTORYOPS + InodeOperations impl  (fs_inode.go / fs_dir.go)
+//    - resurrect the commented-out DirectoryOps struct in fs_inode.go.
+//    - ReadEntries(k *Kernel): walk inode.direct[] (later find/sind/tind too),
+//      readDataBlock each, decodeDirEntries, concat the slices.
+//    - CreateFD(...): returns a DirFD (see step 7). ok to stub for now.
+//    - central place: whenever an inode is loaded, if fType==S_IFDIR set
+//      ops = &DirectoryOps{}, else &FileOps{} (once that exists). do this in
+//      a getInode(inum) helper so it's in ONE place.
+//
+// 5. DIR ENTRY ADD / REMOVE  (fs_dir.go)
+//    - addDirEntry(dir *inode, name string, inum uint32) error:
+//      walk dir's blocks, find the first 64-byte slot with inum==0, encode,
+//      writeDataBlock. if no slot, Falloc(dir, dir.size + BLOCKSIZE), grab
+//      the new block, retry.
+//    - removeDirEntry(dir *inode, name string) error: walk, match by name,
+//      zero the 64 bytes, writeDataBlock. leave block allocated for now —
+//      shrinking on empty tail block is a later optimization.
+//
+// 6. FIX ResolvePath  (kernel.go:151 — currently marked "FULL OF BUGS")
+//    - strings.Split("/a/b", "/") gives ["", "a", "b"] — filter empties.
+//    - dirs[0] never advances in the loop today, so infinite loop.
+//    - on cache miss `mostRecentInode` is nil BEFORE readInode is called —
+//      allocate an &inode{} first, then read into it.
+//    - loaded inodes never get their .ops set — do it right after readInode
+//      based on fType (dir vs regular).
+//    - if a non-dir shows up mid-path, return 0 / ENOTDIR.
+//    - factor getInode(inum) *inode so cache lookup + load + ops-assign is
+//      in one place, then the walk loop is a lot shorter.
+//
+// 7. FD TYPES  (new fs_fd.go)
+//    - FileFD{inum, offset, flags}:
+//        Read: which virtual block does offset land in? virtualToPhysical
+//        to jump into direct/find/sind/tind, readDataBlock, slice, advance.
+//        Write: mirror. if past end, Falloc first, then writeDataBlock.
+//    - DirFD{inum, cursor}: Read returns raw 64-byte entries, or expose
+//      ReadEntries directly and skip byte-level Read.
+//    - the existing kernel FileDescription struct will get replaced by
+//      these FD implementations — but keep both alive during migration.
+//
+// 8. ROOT DIR + INITIAL FS TREE
+//    - after a fresh format, root inode has zero entries. add "." and ".."
+//      pointing to inode 2 (both point at itself for root).
+//    - port initFileSystem from computer.go into a first-boot routine that
+//      uses the new syscalls: mkdir /etc /bin /home /var /var/log /tmp,
+//      create /etc/passwd, /etc/hostname, /etc/issue, /etc/motd, /bin/*.
+//    - only run when isInitialized == false in NewFileSystem.
+//
+// 9. MIGRATE SYSCALLS OFF AFERO  (kernel.go, os.go)
+//    - readFile / writeFile / mkDir / createFile / removeAll / stat / chmod /
+//      changeDirectory all currently call k.computer.OS.* (afero). switch
+//      them one at a time: ResolvePath -> getInode -> do the thing.
+//    - canRead/canWrite/canExecute currently look up FsMetaData by path —
+//      switch them to look at the inode's owner + ownerMode + otherMode.
+//      once nothing references FsMetaData, delete the JSON file + loaders.
+//    - once nothing calls k.computer.filesystem or k.computer.OS.*, delete
+//      the afero field, os.go, populateFileMetadata, initFileSystem.
+//
+// 10. INODE CACHE WRITE-BACK
+//    - inode.dirty is set (e.g. in Falloc) but nobody ever flushes it.
+//    - add fs.SyncInode(*inode) and fs.SyncAll() that walks the kernel
+//      inodeCache and writeInode's any dirty ones. call from Shutdown, and
+//      later maybe from a periodic goroutine.
+//
+// LATER (not blocking anything above):
+//   - procfs / virtual inodes (10000+, 20000+ ranges — see FILESYSTEM.md)
+//   - shrinking dir blocks when trailing block is empty
+//   - concurrency audit of fs.mu vs kernel.fsMu (currently overlapping)
+//   - inodeCache eviction (grows forever right now)
 
 import (
 	"encoding/binary"
@@ -106,16 +174,16 @@ const (
 	DIRBLOCK = 1
 )
 
-
 type dataBlock struct {
 	blockType dataBlockType
 	data      [BLOCKSIZE]byte // key-value pair type data block if it's a directory data block.
 }
 
 type FileSystem struct {
-	disk     Disk
-	superBlk SuperBlock // cached
-	mu       sync.Mutex
+	disk          Disk
+	superBlk      SuperBlock // cached
+	inodeBitmapMu sync.Mutex
+	mu            sync.Mutex
 
 	// maybe later cache the bitmaps for extra SPEED.
 }
@@ -310,14 +378,13 @@ func (fs *FileSystem) Shutdown() {
 
 // TODO: think about concurrency with these things in the future.
 
-
 func (fs *FileSystem) ReadBlock(blockNum uint32) ([]byte, error) { // NOT DATA BLOCK! ANY BLOCK
 
 	if blockNum >= fs.superBlk.totalBlocks {
 		return nil, errors.New("invalid blockNum")
 	}
 
-	offset := int64(blockNum)*int64(BLOCKSIZE)
+	offset := int64(blockNum) * int64(BLOCKSIZE)
 
 	block := make([]byte, BLOCKSIZE)
 	_, err := fs.disk.ReadAt(block, offset)
@@ -335,7 +402,7 @@ func (fs *FileSystem) WriteBlock(blockNum uint32, data []byte) error { // NOT DA
 		return errors.New("len(data) != BLOCKSIZE")
 	}
 
-	offset := int64(blockNum)*int64(BLOCKSIZE)
+	offset := int64(blockNum) * int64(BLOCKSIZE)
 
 	_, err := fs.disk.WriteAt(data, offset)
 
