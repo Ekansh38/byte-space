@@ -458,7 +458,7 @@ func (k *Kernel) getInode(num uint32) *Inode {
     case S_IFREG:
         inode.ops = &RegularFileOps{}
     case S_IFDIR:
-        inode.ops = &DirectoryOps{}
+        inode.ops = &DirectoryOps{inodeNum: inode.num}
     }
     k.inodeCache[num] = inode
     return inode

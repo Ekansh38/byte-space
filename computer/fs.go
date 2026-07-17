@@ -17,7 +17,8 @@ package computer
 //    - CreateFD(...): returns a DirFD (see step 7). ok to stub for now.
 //    - central place: whenever an inode is loaded, if fType==S_IFDIR set
 //      ops = &DirectoryOps{}, else &FileOps{} (once that exists). do this in
-//      a getInode(inum) helper so it's in ONE place.
+//      a getInode(inum) helper so it's in ONE place in the kernel btw.
+//
 //
 // 5. DIR ENTRY ADD / REMOVE  (fs_dir.go)
 //    - addDirEntry(dir *inode, name string, inum uint32) error:

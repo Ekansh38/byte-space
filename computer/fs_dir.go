@@ -57,3 +57,71 @@ func decodeDirEntries(block [BLOCKSIZE]byte) []DirEntry {
 
 	return dirEntries
 }
+
+type DirectoryOps struct {
+	inodeNum uint32
+}
+
+func (d *DirectoryOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD {
+	return &DirectoryFD{
+		kernel: kernel,
+		offset: 0,
+		ops: d,
+		inodeNum: inodeNum,
+		flags: flags,
+	}
+}
+
+
+func (d *DirectoryOps) ReadEntries(kernel *Kernel) []DirEntry {
+	return nil
+	// todo for tomorrow,
+
+	// read the direct, find and tind and sind based on the inode.size and then use the helpers to
+	// return the []DirEntry's needed 
+}
+
+
+type DirectoryFD struct {
+    kernel   *Kernel
+    inodeNum uint32
+    offset   uint64
+    flags    int // flags are like READONLY_O and stuff
+    ops      InodeOperations
+    cached   []byte
+}
+
+func (d *DirectoryFD) Open() error {
+	return nil
+}
+
+func (d *DirectoryFD) Read(buf []byte) (int, error) {
+	return 0, nil
+	// lowkey just copy from the plan and maybe write in a more verbose manner
+}
+
+func (d *DirectoryFD) Write(data []byte) (int, error) {
+	return 0, nil
+}
+
+func (d *DirectoryFD) Close() error {
+	return nil
+}
+
+func (d *DirectoryFD) InodeNum() uint32 {
+	return d.inodeNum
+}
+
+func (d *DirectoryFD) Offset() uint64 {
+	return d.offset
+}
+
+func (d *DirectoryFD) SetOffset(offset uint64) {
+	d.offset = offset
+}
+
+func (d *DirectoryFD) Flags() int {
+	return d.flags
+}
+
+
