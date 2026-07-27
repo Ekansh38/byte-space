@@ -35,20 +35,20 @@ func decodeDirEntries(block [BLOCKSIZE]byte) []DirEntry {
 	var dirEntries []DirEntry
 
 	for i := 0; i < BLOCKSIZE; i += 64 {
-		entry := block[i:i+64] // inclusive:exclusive
+		entry := block[i : i+64] // inclusive:exclusive
 
-		// check if the inum is 0 
+		// check if the inum is 0
 
 		inum := binary.LittleEndian.Uint32(entry[0:4])
 
 		if inum == 0 {
-			continue // skit that entry, its blank!
+			continue // skip that entry, its blank!
 		}
 
 		nameLen := entry[4]
-		name := string(entry[8:nameLen+8]) // go strings dont need no null terminator, they store 
-										   // the length unlike C, this took a while for me to wrap
-										   // my head around! I just realized!!!!!! BRR
+		name := string(entry[8 : nameLen+8]) // go strings dont need no null terminator, they store
+		// the length unlike C, this took a while for me to wrap
+		// my head around! I just realized!!!!!! BRR
 
 		dirEntry := DirEntry{Inum: inum, Name: name}
 
@@ -64,31 +64,67 @@ type DirectoryOps struct {
 
 func (d *DirectoryOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD {
 	return &DirectoryFD{
-		kernel: kernel,
-		offset: 0,
-		ops: d,
+		kernel:   kernel,
+		offset:   0,
+		ops:      d,
 		inodeNum: inodeNum,
-		flags: flags,
+		flags:    flags,
 	}
 }
 
+func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
+	dirInode := &inode{}
+	err := kernel.computer.fs.readInode(dirInode, d.inodeNum)
+	if err != nil {
+		return nil, err
+	}
 
-func (d *DirectoryOps) ReadEntries(kernel *Kernel) []DirEntry {
-	return nil
-	// todo for tomorrow,
+	// based on .size lets figure out how many blocks we need to read.
 
-	// read the direct, find and tind and sind based on the inode.size and then use the helpers to
-	// return the []DirEntry's needed 
+	blocksToRead := (dirInode.size + BLOCKSIZE - 1) / BLOCKSIZE
+	// same: ceil(float(dirInode.size) / float(BLOCKSIZE))
+
+	var findBuf []byte = nil
+	var sindBuf []byte = nil
+	var tindBuf []byte = nil
+
+	var placeRelativeAddress uint32
+	var place int
+
+	resolve := func(indirectPtr uint32, dindBuf *[]byte) uint32 {
+		if *dindBuf == nil {
+			*dindBuf = make([]byte, BLOCKSIZE)
+			_, _ = kernel.computer.fs.disk.ReadAt(*dindBuf, (int64(indirectPtr)*BLOCKSIZE)+int64(kernel.computer.fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+		}
+
+		return binary.LittleEndian.Uint32((*dindBuf)[placeRelativeAddress*4 : placeRelativeAddress*4+4])
+	}
+
+	var i uint32
+	for i = 0; i < blocksToRead; i++ {
+		var blockNumber uint32
+		placeRelativeAddress, place = virtualToPlaceRelative(i)
+
+		if place == 0 {
+			blockNumber = dirInode.direct[placeRelativeAddress] // the actual datablock number
+		} else if place == 1 {
+			blockNumber = resolve(dirInode.find, &findBuf)
+		} else if place == 2 {
+			blockNumber = resolve(dirInode.sind, &sindBuf)
+		} else if place == 3 {
+			blockNumber = resolve(dirInode.tind, &tindBuf)
+		}
+
+	}
 }
 
-
 type DirectoryFD struct {
-    kernel   *Kernel
-    inodeNum uint32
-    offset   uint64
-    flags    int // flags are like READONLY_O and stuff
-    ops      InodeOperations
-    cached   []byte
+	kernel   *Kernel
+	inodeNum uint32
+	offset   uint64
+	flags    int // flags are like READONLY_O and stuff
+	ops      InodeOperations
+	cached   []byte
 }
 
 func (d *DirectoryFD) Open() error {
@@ -123,5 +159,3 @@ func (d *DirectoryFD) SetOffset(offset uint64) {
 func (d *DirectoryFD) Flags() int {
 	return d.flags
 }
-
-

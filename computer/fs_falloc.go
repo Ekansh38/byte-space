@@ -14,24 +14,23 @@ func setBit(bitmap []byte, idx uint32) {
 	bitmap[idx/8] |= 1 << (idx % 8)
 }
 
-func virtualToPhysical(v uint32) (uint32, int) {
-	var physicalAddress uint32 = 0
+func virtualToPlaceRelative(v uint32) (uint32, int) {
+	var placeRelativeAddress uint32 = 0
 	place := 0
 	if v > 11 && v < 1036 {
-		physicalAddress = v - 12
+		placeRelativeAddress = v - 12
 		place = 1
 	} else if v >= 1036 && v < 2_060 {
-		physicalAddress = v - 1036
+		placeRelativeAddress = v - 1036
 		place = 2
 	} else if v >= 2_060 {
-		physicalAddress = v - 2_060
+		placeRelativeAddress = v - 2_060
 		place = 3
 	}
 
-	return physicalAddress, place
+	return placeRelativeAddress, place
 }
 
-// learn about how this works one day since fable wrote it.
 func findFreeBit(bitmap []byte) (uint32, bool) {
 	i := 0
 	n := len(bitmap)
@@ -123,12 +122,9 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 		}
 
 		for i := numOfCurrentBlocks; i < totalBlocksNeeded; i++ {
-			place := 0 // 0 = direct, 1 = find, 2 = sind, 3 = tind
+			//place := 0 = direct, 1 = find, 2 = sind, 3 = tind
 
-			v := i
-			physicalAddress := v
-
-			physicalAddress, place = virtualToPhysical(v)
+			placeRelativeAddress, place := virtualToPlaceRelative(i)
 
 			if place == 0 {
 				idx, status := findFreeBit(dataBitmapBuf)
@@ -137,7 +133,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 				}
 				setBit(dataBitmapBuf, idx)
 
-				inode.direct[physicalAddress] = idx
+				inode.direct[placeRelativeAddress] = idx
 
 			} else if place == 1 {
 				if findBuf == nil {
@@ -151,7 +147,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 				}
 				setBit(dataBitmapBuf, idx)
 
-				binary.LittleEndian.PutUint32(findBuf[physicalAddress*4:physicalAddress*4+4], idx)
+				binary.LittleEndian.PutUint32(findBuf[placeRelativeAddress*4:placeRelativeAddress*4+4], idx)
 
 			} else if place == 2 {
 				if sindBuf == nil {
@@ -165,7 +161,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 				}
 				setBit(dataBitmapBuf, idx)
 
-				binary.LittleEndian.PutUint32(sindBuf[physicalAddress*4:physicalAddress*4+4], idx)
+				binary.LittleEndian.PutUint32(sindBuf[placeRelativeAddress*4:placeRelativeAddress*4+4], idx)
 			} else if place == 3 {
 				if tindBuf == nil {
 					tindBuf = make([]byte, BLOCKSIZE)
@@ -177,7 +173,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 				}
 				setBit(dataBitmapBuf, idx)
 
-				binary.LittleEndian.PutUint32(tindBuf[physicalAddress*4:physicalAddress*4+4], idx)
+				binary.LittleEndian.PutUint32(tindBuf[placeRelativeAddress*4:placeRelativeAddress*4+4], idx)
 			}
 
 		}
@@ -192,10 +188,8 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 			// convert i to either. direct[x], find[x], sind[x], tind[x]. get that uint32, free it.
 			// and 0 the value.
 
-			physicalAddress := i
-			place := 0 // 0 = direct, 1 = find, 2 = sind, 3 = tind
 
-			physicalAddress, place = virtualToPhysical(i)
+			physicalAddress, place := virtualToPlaceRelative(i)
 
 
 			if place == 0 {

@@ -301,44 +301,16 @@ same table, dispatched polymorphically.
 
 ### How It All Fits Together
 
-```go
-func (k *Kernel) Open(proc *Process, path string, flags int) (int, error) {
-    // 1. Walk directory entries to find the inode number.
-    //    This is uniform — same code for /etc/passwd and /proc/processes.
-    //    (Linux: VFS namei/path_walk, calling i_op->lookup at each step)
-    inodeNum := k.resolvePath(path)
-    
-    // 2. Get the inode. If it's a disk inode not yet in cache, load it
-    //    from disk and attach ops based on fType. If it's virtual, it's
-    //    already in the cache with ops set.
-    //    (Linux: iget/iget_locked, calls s_op->read_inode for disk inodes)
-    inode := k.getInode(inodeNum)
-    
-    // 3. Check permissions.
-    //    (Linux: inode_permission, checks i_mode against credentials)
-    if !k.canAccess(proc, inode, flags) {
-        return -1, ErrPermissionDenied
-    }
-    
-    // 4. Ask the inode's ops to build the right FD type.
-    //    This is just a constructor — sets fields, no validation.
-    //    (Linux: alloc_file + copy f_op from inode->i_fop)
-    fd := inode.ops.CreateFD(k, inodeNum, path, flags)
-    
-    // 5. Let the FD validate and initialize itself.
-    //    Can fail (e.g. process doesn't exist for /proc/[pid]).
-    //    (Linux: file->f_op->open(inode, file))
-    if err := fd.Open(); err != nil {
-        return -1, err
-    }
-    
-    // 6. Store in process FD table.
-    //    (Linux: fd_install(fd_number, file))
-    fdNum := k.allocateFD(proc)
-    proc.FDs[fdNum] = fd
-    
-    return fdNum, nil
-}
+```
+Kernel.Open(proc, path, flags):
+  1. resolvePath(path) → inodeNum          (Linux: namei / i_op->lookup)
+  2. getInode(inodeNum) → inode            (Linux: iget_locked)
+     - disk inode: load 128 bytes, attach ops by fType
+     - virtual: already in cache with ops set
+  3. canAccess(proc, inode, flags)         (Linux: inode_permission)
+  4. inode.ops.CreateFD(...) → fd          (Linux: alloc_file + copy i_fop)
+  5. fd.Open() — validate; may fail        (Linux: f_op->open)
+  6. allocate fdNum, install in proc.FDs   (Linux: fd_install)
 ```
 
 ### After Open: Read, Write, Close
@@ -346,32 +318,13 @@ func (k *Kernel) Open(proc *Process, path string, flags int) (int, error) {
 The kernel just dispatches to the FD. No type checking, no switch
 statements. The FD knows what to do because it's the right concrete type.
 
-```go
-func (k *Kernel) Read(proc *Process, fdNum int, buf []byte) (int, error) {
-    fd := proc.FDs[fdNum]
-    if fd == nil {
-        return 0, ErrBadFD
-    }
-    return fd.Read(buf)  // RegularFileFD reads disk. ProcInfoFD generates data.
-}
+```
+Kernel.Read/Write(proc, fdNum, ...):
+  fd = proc.FDs[fdNum]  (nil → ErrBadFD)
+  dispatch to fd.Read(buf) / fd.Write(data)
 
-func (k *Kernel) Write(proc *Process, fdNum int, data []byte) (int, error) {
-    fd := proc.FDs[fdNum]
-    if fd == nil {
-        return 0, ErrBadFD
-    }
-    return fd.Write(data)
-}
-
-func (k *Kernel) Close(proc *Process, fdNum int) error {
-    fd := proc.FDs[fdNum]
-    if fd == nil {
-        return ErrBadFD
-    }
-    fd.Close()
-    delete(proc.FDs, fdNum)
-    return nil
-}
+Kernel.Close(proc, fdNum):
+  same lookup, call fd.Close(), then delete(proc.FDs, fdNum)
 ```
 
 **In Linux this is identical:**
@@ -433,36 +386,15 @@ type Kernel struct {
 
 ### getInode: The Single Entry Point
 
-```go
-func (k *Kernel) getInode(num uint32) *Inode {
-    // 1. Check cache (covers everything already loaded)
-    if inode, ok := k.inodeCache[num]; ok {
-        return inode
-    }
-    
-    // 2. Virtual per-pid inode? Create on the fly.
-    if num >= PROC_PID_BASE {
-        pid := num - PROC_PID_BASE
-        inode := &Inode{
-            num: num,
-            ops: &ProcPidOps{pidType: PROC_PID_STATUS},
-        }
-        k.inodeCache[num] = inode
-        return inode
-    }
-    
-    // 3. Disk inode. Load from disk, attach ops by fType.
-    inode := k.fs.readInodeFromDisk(num)
-    inode.num = num
-    switch inode.fType {
-    case S_IFREG:
-        inode.ops = &RegularFileOps{}
-    case S_IFDIR:
-        inode.ops = &DirectoryOps{inodeNum: inode.num}
-    }
-    k.inodeCache[num] = inode
-    return inode
-}
+```
+Kernel.getInode(num):
+  1. cache hit → return
+  2. num >= PROC_PID_BASE → build virtual per-pid inode
+     ops = ProcPidOps{PROC_PID_STATUS}, cache, return
+  3. else disk inode → read 128 bytes, attach ops by fType:
+       S_IFREG → RegularFileOps
+       S_IFDIR → DirectoryOps
+     cache, return
 ```
 
 **Comparison to Linux:** Linux's `iget_locked()` does the same thing —
@@ -490,27 +422,17 @@ is fine.
 
 ## Part 5: Boot Sequence
 
-```go
-func (k *Kernel) initProcFS() {
-    // Root dir already has "proc" → 10000 on disk from mkfs.
-    // Just register the virtual inodes.
-    
-    k.inodeCache[PROC_ROOT_VNODE] = &Inode{
-        num: PROC_ROOT_VNODE,
-        ops: &ProcDirOps{},
-    }
-    
-    k.inodeCache[PROC_PROCESSES_VNODE] = &Inode{
-        num: PROC_PROCESSES_VNODE,
-        ops: &ProcInfoOps{infoType: PROC_PROCESSES},
-    }
-    
-    k.inodeCache[PROC_MEMINFO_VNODE] = &Inode{
-        num: PROC_MEMINFO_VNODE,
-        ops: &ProcInfoOps{infoType: PROC_MEMINFO},
-    }
-}
+Root dir already has "proc" → 10000 on disk from mkfs. `initProcFS`
+just registers the virtual inodes in the cache:
 
+```
+Kernel.initProcFS():
+  cache[PROC_ROOT_VNODE]      = Inode{ops: ProcDirOps{}}
+  cache[PROC_PROCESSES_VNODE] = Inode{ops: ProcInfoOps{PROC_PROCESSES}}
+  cache[PROC_MEMINFO_VNODE]   = Inode{ops: ProcInfoOps{PROC_MEMINFO}}
+```
+
+```go
 const (
     MAX_DISK_INODES      = 8064
     PROC_ROOT_VNODE      = 10000
@@ -636,42 +558,23 @@ READ
 ```go
 type RegularFileOps struct{}  // stateless — same for every regular file
 
-func (r *RegularFileOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD {
-    return &RegularFileFD{
-        kernel:   kernel,
-        inodeNum: inodeNum,
-        offset:   0,
-        flags:    flags,
-    }
-}
-
 type RegularFileFD struct {
     kernel   *Kernel
     inodeNum uint32
     offset   uint64
     flags    int
 }
+```
 
-func (r *RegularFileFD) Open() error  { return nil }
-
-func (r *RegularFileFD) Read(buf []byte) (int, error) {
-    inode := r.kernel.getInode(r.inodeNum)
-    blockIndex := r.offset / BLOCKSIZE
-    blockOffset := r.offset % BLOCKSIZE
-    blockNum := inode.direct[blockIndex]
-    blockData := r.kernel.fs.ReadBlock(blockNum)
-    n := copy(buf, blockData[blockOffset:])
-    r.offset += uint64(n)
-    return n, nil
-}
-
-func (r *RegularFileFD) Write(data []byte) (int, error) {
-    // Write to disk blocks, allocate new blocks if needed
-    // Update inode.size, update offset
-    return 0, nil // TODO
-}
-
-func (r *RegularFileFD) Close() error { return nil }
+```
+CreateFD: build RegularFileFD{inodeNum, offset:0, flags}
+Open():   nothing to validate
+Read(buf):
+  - block = inode.direct[offset / BLOCKSIZE]
+  - copy from block[offset % BLOCKSIZE:] into buf
+  - advance offset, return n
+Write(data): TODO — write to blocks, allocate as needed, update inode.size
+Close(): nothing to clean up
 ```
 
 ### ProcInfoFD (system-wide proc files)
@@ -679,17 +582,6 @@ func (r *RegularFileFD) Close() error { return nil }
 ```go
 type ProcInfoOps struct {
     infoType ProcInfoType  // PROC_PROCESSES, PROC_MEMINFO
-}
-
-func (ops *ProcInfoOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD {
-    return &ProcInfoFD{
-        kernel:   kernel,
-        inodeNum: inodeNum,
-        offset:   0,
-        flags:    flags,
-        infoType: ops.infoType,
-        cached:   nil,
-    }
 }
 
 type ProcInfoFD struct {
@@ -700,36 +592,17 @@ type ProcInfoFD struct {
     infoType ProcInfoType
     cached   []byte          // generated once per open, then served from cache
 }
+```
 
-func (p *ProcInfoFD) Open() error { return nil }
-
-func (p *ProcInfoFD) Read(buf []byte) (int, error) {
-    if p.cached == nil {
-        switch p.infoType {
-        case PROC_PROCESSES:
-            var b strings.Builder
-            b.WriteString("PID\tNAME\tSTATE\n")
-            for _, proc := range p.kernel.processes {
-                fmt.Fprintf(&b, "%d\t%s\t%s\n", proc.PID, proc.Name, proc.State)
-            }
-            p.cached = []byte(b.String())
-        case PROC_MEMINFO:
-            p.cached = []byte(fmt.Sprintf("MemTotal: %d\nMemFree: %d\n",
-                p.kernel.totalMemory, p.kernel.freeMemory))
-        }
-    }
-    if p.offset >= uint64(len(p.cached)) {
-        return 0, io.EOF
-    }
-    n := copy(buf, p.cached[p.offset:])
-    p.offset += uint64(n)
-    return n, nil
-}
-
-func (p *ProcInfoFD) Close() error {
-    p.cached = nil
-    return nil
-}
+```
+CreateFD: build ProcInfoFD{infoType: ops.infoType, cached: nil}
+Open():   nothing to validate
+Read(buf):
+  - if cached == nil, generate from kernel state per infoType:
+      PROC_PROCESSES: "PID\tNAME\tSTATE\n" header + one row per kernel.processes
+      PROC_MEMINFO:   "MemTotal: X\nMemFree: Y\n"
+  - copy from cached[offset:] into buf, advance offset (EOF when done)
+Close(): clear cached
 ```
 
 ### ProcPidFD (per-process proc files)
@@ -737,19 +610,6 @@ func (p *ProcInfoFD) Close() error {
 ```go
 type ProcPidOps struct {
     pidType ProcPidType  // STATUS, CMDLINE
-}
-
-func (ops *ProcPidOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD {
-    pid := extractPidFromPath(path)
-    return &ProcPidFD{
-        kernel:   kernel,
-        inodeNum: inodeNum,
-        offset:   0,
-        flags:    flags,
-        pid:      pid,
-        pidType:  ops.pidType,
-        cached:   nil,
-    }
 }
 
 type ProcPidFD struct {
@@ -761,38 +621,17 @@ type ProcPidFD struct {
     pidType  ProcPidType
     cached   []byte
 }
+```
 
-func (p *ProcPidFD) Open() error {
-    // This is where validation happens — can fail
-    if p.kernel.processes[p.pid] == nil {
-        return ErrNoSuchProcess
-    }
-    return nil
-}
-
-func (p *ProcPidFD) Read(buf []byte) (int, error) {
-    if p.cached == nil {
-        proc := p.kernel.processes[p.pid]
-        switch p.pidType {
-        case PROC_PID_STATUS:
-            p.cached = []byte(fmt.Sprintf("Name: %s\nPid: %d\nState: %s\n",
-                proc.Name, proc.PID, proc.State))
-        case PROC_PID_CMDLINE:
-            p.cached = []byte(strings.Join(proc.Args, "\x00"))
-        }
-    }
-    if p.offset >= uint64(len(p.cached)) {
-        return 0, io.EOF
-    }
-    n := copy(buf, p.cached[p.offset:])
-    p.offset += uint64(n)
-    return n, nil
-}
-
-func (p *ProcPidFD) Close() error {
-    p.cached = nil
-    return nil
-}
+```
+CreateFD: extractPidFromPath(path) → pid; build ProcPidFD{pid, pidType, cached: nil}
+Open():   kernel.processes[pid] == nil → ErrNoSuchProcess
+Read(buf):
+  - if cached == nil, generate per pidType:
+      PROC_PID_STATUS:  "Name: X\nPid: N\nState: Y\n"
+      PROC_PID_CMDLINE: proc.Args joined with '\x00'
+  - copy from cached[offset:], advance offset (EOF when done)
+Close(): clear cached
 ```
 
 ### SocketFD
@@ -804,30 +643,15 @@ type SocketFD struct {
     flags    int
     socket   *Socket
 }
+```
 
-func (s *SocketFD) Open() error {
-    if s.socket.state == CLOSED {
-        return ErrSocketClosed
-    }
-    if s.socket.recvBuf == nil {
-        s.socket.recvBuf = make(chan []byte, 100)
-    }
-    return nil
-}
-
-func (s *SocketFD) Read(buf []byte) (int, error) {
-    data := <-s.socket.recvBuf
-    n := copy(buf, data)
-    return n, nil
-}
-
-func (s *SocketFD) Write(data []byte) (int, error) {
-    s.socket.sendBuf <- data
-    return len(data), nil
-}
-
-func (s *SocketFD) Offset() uint64      { return 0 }
-func (s *SocketFD) SetOffset(o uint64)  {}
+```
+Open():
+  - socket.state == CLOSED → ErrSocketClosed
+  - lazy-init recvBuf channel (cap 100)
+Read(buf):  pull from socket.recvBuf, copy into buf
+Write(data): push to socket.sendBuf, return len(data)
+Offset()/SetOffset(): no-op (streaming, no seek)
 ```
 
 
@@ -939,17 +763,13 @@ Reads actual data blocks and parses the fixed-size 64-byte entries
 type DiskDirOps struct {
     inodeNum uint32
 }
+```
 
-func (d *DiskDirOps) ReadEntries(kernel *Kernel) []DirEntry {
-    inode := kernel.getInode(d.inodeNum)
-    var entries []DirEntry
-    for _, blockNum := range inode.direct {
-        if blockNum == 0 { break }
-        blockData := kernel.fs.ReadBlock(blockNum)
-        entries = append(entries, decodeDirEntries(blockData)...)
-    }
-    return entries
-}
+```
+ReadEntries:
+  - walk inode.direct, stop at first zero blockNum
+  - for each block: ReadBlock → decodeDirEntries → append
+  - return entries
 ```
 
 ### Virtual Directory ReadEntries (ProcDirOps)
@@ -959,34 +779,19 @@ kernel state.
 
 ```go
 type ProcDirOps struct{}
+```
 
-func (d *ProcDirOps) ReadEntries(kernel *Kernel) []DirEntry {
-    entries := []DirEntry{
-        {PROC_ROOT_VNODE, "."},
-        {2, ".."},
-        {PROC_PROCESSES_VNODE, "processes"},   // hardcoded: 10001
-        {PROC_MEMINFO_VNODE, "meminfo"},       // hardcoded: 10002
-    }
-    // Dynamic: one entry per running process
-    for _, proc := range kernel.processes {
-        entries = append(entries, DirEntry{
-            Inum: PROC_PID_BASE + uint32(proc.PID),  // 20000 + pid
-            Name: strconv.Itoa(proc.PID),
-        })
-    }
-    return entries
-}
+```
+ReadEntries:
+  - hardcoded: ".", "..", "processes" (10001), "meminfo" (10002)
+  - dynamic: for each proc in kernel.processes,
+      append DirEntry{Inum: 20000+pid, Name: itoa(pid)}
 ```
 
 ### Non-Directory Ops
 
-Simply return nil:
-
-```go
-func (r *RegularFileOps) ReadEntries(kernel *Kernel) []DirEntry { return nil }
-func (p *ProcInfoOps) ReadEntries(kernel *Kernel) []DirEntry    { return nil }
-func (p *ProcPidOps) ReadEntries(kernel *Kernel) []DirEntry     { return nil }
-```
+`RegularFileOps`, `ProcInfoOps`, `ProcPidOps` all return `nil` from
+`ReadEntries` — they aren't directories.
 
 ### ReadEntries vs CreateFD — Why Both?
 
@@ -1030,32 +835,14 @@ type DirectoryFD struct {
     ops      InodeOperations  // to call ReadEntries
     cached   []byte           // formatted entry list
 }
+```
 
-func (d *DirectoryFD) Read(buf []byte) (int, error) {
-    if d.cached == nil {
-        entries := d.ops.ReadEntries(d.kernel)
-        var b strings.Builder
-        for _, e := range entries {
-            fmt.Fprintf(&b, "%s\t%d\n", e.Name, e.Inum)
-        }
-        d.cached = []byte(b.String())
-    }
-    if d.offset >= uint64(len(d.cached)) {
-        return 0, io.EOF
-    }
-    n := copy(buf, d.cached[d.offset:])
-    d.offset += uint64(n)
-    return n, nil
-}
-
-func (d *DirectoryFD) Write(data []byte) (int, error) {
-    return 0, ErrIsDirectory  // can't write to a directory
-}
-
-func (d *DirectoryFD) Close() error {
-    d.cached = nil
-    return nil
-}
+```
+Read(buf):
+  - if cached == nil: ops.ReadEntries → format as "name\tinum\n" lines → cached
+  - copy from cached[offset:], advance offset (EOF when done)
+Write(data): ErrIsDirectory
+Close():     clear cached
 ```
 
 The DirectoryFD reuses `ReadEntries` from the ops — same function
@@ -1097,21 +884,7 @@ touch /etc/newfile
    now:      ["passwd" → 17, "hosts" → 18, "newfile" → 47]
 
 5. Write both the new inode and the updated directory blocks to disk
-```
-
-```go
-func (k *Kernel) Create(proc *Process, path string, fType InodeType) (int, error) {
-    parentPath, name := splitPath(path)       // "/etc", "newfile"
-    parentInode := k.resolveAndGetInode(parentPath)
-
-    newInodeNum := k.fs.AllocInode()           // grab from bitmap
-    newInode := &Inode{fType: fType, refs: 1}
-    k.fs.WriteInodeToDisk(newInodeNum, newInode)
-
-    k.addDirEntry(parentInode, name, newInodeNum)  // update parent's blocks
-
-    return k.Open(proc, path, O_RDWR)          // open it and return fd
-}
+6. Open the new file and return the fd
 ```
 
 ### Deleting a File
@@ -1131,56 +904,15 @@ rm /etc/newfile
 5. If refs == 0:
    - Free all data blocks (return to block bitmap)
    - Free inode 47 (return to inode bitmap)
-```
-
-```go
-func (k *Kernel) Delete(proc *Process, path string) error {
-    parentPath, name := splitPath(path)
-    parentInode := k.resolveAndGetInode(parentPath)
-
-    inodeNum := k.lookupInDir(parentInode, name)
-    k.removeDirEntry(parentInode, name)
-
-    inode := k.getInode(inodeNum)
-    inode.refs--
-    if inode.refs == 0 {
-        k.fs.FreeBlocks(inode)
-        k.fs.FreeInode(inodeNum)
-        delete(k.inodeCache, inodeNum)
-    } else {
-        k.fs.WriteInodeToDisk(inodeNum, inode)
-    }
-    return nil
-}
+   - Evict from inode cache
+   Else: persist the updated inode to disk
 ```
 
 ### Creating a Directory (mkdir)
 
-Same flow as file creation, but with `fType=S_IFDIR` and the new
-directory's data blocks are initialized with `.` and `..` entries:
-
-```go
-func (k *Kernel) Mkdir(proc *Process, path string) error {
-    parentPath, name := splitPath(path)
-    parentInode := k.resolveAndGetInode(parentPath)
-
-    newInodeNum := k.fs.AllocInode()
-    newInode := &Inode{fType: S_IFDIR, refs: 1}
-
-    // Initialize with . and .. entries
-    block := k.fs.AllocBlock()
-    newInode.direct[0] = block
-    entries := []DirEntry{
-        {".", newInodeNum},
-        {"..", parentInode.num},
-    }
-    k.fs.WriteBlock(block, encodeDirEntries(entries))
-
-    k.fs.WriteInodeToDisk(newInodeNum, newInode)
-    k.addDirEntry(parentInode, name, newInodeNum)
-    return nil
-}
-```
+Same flow as file creation, but with `fType=S_IFDIR` and one extra
+step — allocate a data block and seed it with `.` (→ new inode) and
+`..` (→ parent inode) before adding the entry to the parent.
 
 ### Why the Kernel, Not the FD?
 
@@ -1202,32 +934,19 @@ directly through the filesystem driver without ever allocating a
 
 ### addDirEntry / removeDirEntry
 
-These are internal kernel helpers that read/write the parent
-directory's data blocks directly — no FD, no offset tracking:
+Internal kernel helpers that read/write the parent directory's data
+blocks directly — no FD, no offset tracking:
 
-```go
-func (k *Kernel) addDirEntry(parentInode *Inode, name string, inodeNum uint32) {
-    blockNum := parentInode.direct[0]
-    blockData := k.fs.ReadBlock(blockNum)
+```
+addDirEntry(parent, name, inodeNum):
+  - read parent.direct[0]
+  - append encodeDirEntry(name, inodeNum) to block data
+  - write block back, update parent.size, persist parent inode
 
-    entry := encodeDirEntry(name, inodeNum)
-    blockData = append(blockData, entry...)
-
-    k.fs.WriteBlock(blockNum, blockData)
-    parentInode.size += uint32(len(entry))
-    k.fs.WriteInodeToDisk(parentInode.num, parentInode)
-}
-
-func (k *Kernel) removeDirEntry(parentInode *Inode, name string) {
-    blockNum := parentInode.direct[0]
-    blockData := k.fs.ReadBlock(blockNum)
-
-    blockData = removeDirEntryFromBlock(blockData, name)
-
-    k.fs.WriteBlock(blockNum, blockData)
-    parentInode.size = uint32(len(blockData))
-    k.fs.WriteInodeToDisk(parentInode.num, parentInode)
-}
+removeDirEntry(parent, name):
+  - read parent.direct[0]
+  - remove the named entry from block data
+  - write block back, update parent.size, persist parent inode
 ```
 
 

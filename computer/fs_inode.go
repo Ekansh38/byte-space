@@ -26,22 +26,10 @@ type FD interface {
 	Flags() int
 }
 
-//type DirectoryOps struct {
-//}
-//
-//func (d *DirectoryOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD {
-//	// TODO
-//}
-//
-
-//func (d *DirectoryOps) ReadEntries(kernel *Kernel) []DirEntry {
-//	// TODO
-//}
-//
 
 type InodeOperations interface {
 	CreateFD(kernel *Kernel, inodeNum uint32, path string, flags int) FD
-	ReadEntries(kernel *Kernel) []DirEntry
+	ReadEntries(kernel *Kernel) ([]DirEntry, error)
 }
 
 type DirEntry struct {

@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"slices"
 	"strings"
 	"sync"
 
@@ -126,7 +127,7 @@ type Program interface {
 
 type Kernel struct {
 	computer   *Computer
-	inodeCache map[uint32]*inode               // indexed by inode number
+	inodeCache map[uint32]*inode            // indexed by inode number
 	programs   map[string]func(int) Program // path to the factory, which can later change if I implement a language
 	// later the factory can be just 1 function, and instead of a map, it can just read that file path and do the language stuff, check for shebang and all that.
 	// rn we still need a map.
@@ -178,8 +179,13 @@ func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of b
 	}
 	target = path.Clean(target)
 
-	// --- walk the directory tree to find the inode number ---
+	// walk the directory tree now
 	dirs := strings.Split(target, "/")
+	dirs = slices.DeleteFunc(dirs, func(dir string) bool {
+		return dir == ""
+	}) // so idiomatic!
+
+
 
 	// first get that root inode from the cache
 	root := k.inodeCache[2]
@@ -190,7 +196,7 @@ func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of b
 
 		// runtime fields
 		root.num = 2
-		//root.ops = DirectoryOps{}
+		// root.ops = DirectoryOps{}
 
 		k.inodeCache[2] = root
 	}
@@ -218,9 +224,10 @@ func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of b
 					k.inodeCache[entries[i].Inum] = mostRecentInode
 				}
 
+				dirs = dirs[1:] // remove that entry since we set it to the most recent inode.
+
 			}
 		}
-
 
 	}
 }

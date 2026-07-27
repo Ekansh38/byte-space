@@ -30,7 +30,7 @@ package computer
 //      shrinking on empty tail block is a later optimization.
 //
 // 6. FIX ResolvePath  (kernel.go:151 — currently marked "FULL OF BUGS")
-//    - strings.Split("/a/b", "/") gives ["", "a", "b"] — filter empties.
+//    - strings.Split("/a/b", "/") gives ["", "a", "b"] filter empties.  DONE
 //    - dirs[0] never advances in the loop today, so infinite loop.
 //    - on cache miss `mostRecentInode` is nil BEFORE readInode is called —
 //      allocate an &inode{} first, then read into it.
