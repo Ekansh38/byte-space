@@ -409,3 +409,20 @@ func (fs *FileSystem) WriteBlock(blockNum uint32, data []byte) error { // NOT DA
 
 	return err
 }
+
+// readDataBlock reads a block from the data region. dataBlkIdx is the
+// data-region-relative index (i.e. the values stored in inode.direct /
+// find / sind / tind, and in the data bitmap).
+func (fs *FileSystem) readDataBlock(dataBlkIdx uint32) ([]byte, error) {
+	if dataBlkIdx >= fs.superBlk.dataBlockCount {
+		return nil, errors.New("invalid dataBlkIdx")
+	}
+	return fs.ReadBlock(dataBlkIdx + fs.superBlk.dataBlocksStartBlock)
+}
+
+func (fs *FileSystem) writeDataBlock(dataBlkIdx uint32, data []byte) error {
+	if dataBlkIdx >= fs.superBlk.dataBlockCount {
+		return errors.New("invalid dataBlkIdx")
+	}
+	return fs.WriteBlock(dataBlkIdx+fs.superBlk.dataBlocksStartBlock, data)
+}

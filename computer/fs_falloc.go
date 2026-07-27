@@ -137,8 +137,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 			} else if place == 1 {
 				if findBuf == nil {
-					findBuf = make([]byte, BLOCKSIZE)
-					_, _ = fs.disk.ReadAt(findBuf, (int64(inode.find)*BLOCKSIZE)+int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+					findBuf, _ = fs.readDataBlock(inode.find)
 				}
 
 				idx, status := findFreeBit(dataBitmapBuf)
@@ -151,8 +150,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 			} else if place == 2 {
 				if sindBuf == nil {
-					sindBuf = make([]byte, BLOCKSIZE)
-					_, _ = fs.disk.ReadAt(sindBuf, (int64(inode.sind)*BLOCKSIZE)+int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+					sindBuf, _ = fs.readDataBlock(inode.sind)
 				}
 
 				idx, status := findFreeBit(dataBitmapBuf)
@@ -164,8 +162,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 				binary.LittleEndian.PutUint32(sindBuf[placeRelativeAddress*4:placeRelativeAddress*4+4], idx)
 			} else if place == 3 {
 				if tindBuf == nil {
-					tindBuf = make([]byte, BLOCKSIZE)
-					_, _ = fs.disk.ReadAt(tindBuf, (int64(inode.tind)*BLOCKSIZE)+int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+					tindBuf, _ = fs.readDataBlock(inode.tind)
 				}
 				idx, status := findFreeBit(dataBitmapBuf)
 				if status != true {
@@ -203,8 +200,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 			} else if place == 1 {
 				if findBuf == nil {
-					findBuf = make([]byte, BLOCKSIZE)
-					_, _ = fs.disk.ReadAt(findBuf, (int64(inode.find)*BLOCKSIZE)+int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+					findBuf, _ = fs.readDataBlock(inode.find)
 				}
 
 				blkAddress := binary.LittleEndian.Uint32(findBuf[physicalAddress*4 : physicalAddress*4+4])
@@ -214,8 +210,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 			} else if place == 2 {
 				if sindBuf == nil {
-					sindBuf = make([]byte, BLOCKSIZE)
-					_, _ = fs.disk.ReadAt(sindBuf, (int64(inode.sind)*BLOCKSIZE)+int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+					sindBuf, _ = fs.readDataBlock(inode.sind)
 				}
 
 				blkAddress := binary.LittleEndian.Uint32(sindBuf[physicalAddress*4 : physicalAddress*4+4])
@@ -224,8 +219,7 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 				clearBit(dataBitmapBuf, blkAddress)
 			} else if place == 3 {
 				if tindBuf == nil {
-					tindBuf = make([]byte, BLOCKSIZE)
-					_, _ = fs.disk.ReadAt(tindBuf, (int64(inode.tind)*BLOCKSIZE)+int64(fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+					tindBuf, _ = fs.readDataBlock(inode.tind)
 				}
 
 				blkAddress := binary.LittleEndian.Uint32(tindBuf[physicalAddress*4 : physicalAddress*4+4])
@@ -250,13 +244,13 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 	// write to disk
 	if findBuf != nil {
-		fs.disk.WriteAt(findBuf, int64(inode.find)*BLOCKSIZE+int64(fs.superBlk.dataBlocksStartBlock)*BLOCKSIZE)
+		fs.writeDataBlock(inode.find, findBuf)
 	}
 	if sindBuf != nil {
-		fs.disk.WriteAt(sindBuf, int64(inode.sind)*BLOCKSIZE+int64(fs.superBlk.dataBlocksStartBlock)*BLOCKSIZE)
+		fs.writeDataBlock(inode.sind, sindBuf)
 	}
 	if tindBuf != nil {
-		fs.disk.WriteAt(tindBuf, int64(inode.tind)*BLOCKSIZE+int64(fs.superBlk.dataBlocksStartBlock)*BLOCKSIZE)
+		fs.writeDataBlock(inode.tind, tindBuf)
 	}
 
 	inode.size = newSize

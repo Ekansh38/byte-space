@@ -93,8 +93,7 @@ func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
 
 	resolve := func(indirectPtr uint32, dindBuf *[]byte) uint32 {
 		if *dindBuf == nil {
-			*dindBuf = make([]byte, BLOCKSIZE)
-			_, _ = kernel.computer.fs.disk.ReadAt(*dindBuf, (int64(indirectPtr)*BLOCKSIZE)+int64(kernel.computer.fs.superBlk.dataBlocksStartBlock*BLOCKSIZE))
+			*dindBuf, _ = kernel.computer.fs.readDataBlock(indirectPtr)
 		}
 
 		return binary.LittleEndian.Uint32((*dindBuf)[placeRelativeAddress*4 : placeRelativeAddress*4+4])
@@ -114,6 +113,15 @@ func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
 		} else if place == 3 {
 			blockNumber = resolve(dirInode.tind, &tindBuf)
 		}
+
+		// get the data block content
+		data, err := kernel.computer.fs.readDataBlock(blockNumber)
+		if err != nil {
+			return nil, err
+		}
+
+
+
 
 	}
 }
