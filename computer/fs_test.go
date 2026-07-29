@@ -325,7 +325,12 @@ func TestFalloc(t *testing.T) {
 		setup    func(fs *FileSystem) *inode
 		newSize  uint32
 		wantErr  bool
+		// wantSize is the expected inode.size after falloc; this is the
+		// authoritative bound — the system reads based on size, not zero-checks.
+		wantSize uint32
 		// wantDirect is the expected direct array after falloc runs.
+		// Deallocation does NOT zero block pointers; stale values remain in
+		// freed slots and are simply unreachable via inode.size.
 		wantDirect [12]uint32
 		// blocks that must be marked FREE in the data bitmap afterwards.
 		wantFree []uint32
@@ -347,9 +352,10 @@ func TestFalloc(t *testing.T) {
 					direct: [12]uint32{10, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 				}
 			},
-			newSize:     2*BLOCKSIZE + 1, // still 3 blocks -> no work
-			wantDirect:  [12]uint32{10, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-			wantUsed:    []uint32{10, 11, 12},
+			newSize:    2*BLOCKSIZE + 1, // still 3 blocks -> no work
+			wantSize:   2*BLOCKSIZE + 1,
+			wantDirect: [12]uint32{10, 11, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			wantUsed:   []uint32{10, 11, 12},
 		},
 		{
 			name: "shrink within direct blocks frees tail blocks",
@@ -366,8 +372,11 @@ func TestFalloc(t *testing.T) {
 					direct: [12]uint32{10, 11, 12, 13, 14, 0, 0, 0, 0, 0, 0, 0},
 				}
 			},
-			newSize:    2 * BLOCKSIZE, // 2 blocks needed -> free direct[2..4]
-			wantDirect: [12]uint32{10, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			newSize:  2 * BLOCKSIZE,
+			wantSize: 2 * BLOCKSIZE,
+			// Freed slots (direct[2..4]) retain stale block numbers; they are
+			// unreachable because inode.size == 2*BLOCKSIZE caps valid blocks at 2.
+			wantDirect: [12]uint32{10, 11, 12, 13, 14, 0, 0, 0, 0, 0, 0, 0},
 			wantFree:   []uint32{12, 13, 14},
 			wantUsed:   []uint32{10, 11},
 		},
@@ -395,8 +404,11 @@ func TestFalloc(t *testing.T) {
 					find:   32,
 				}
 			},
-			newSize:    11 * BLOCKSIZE, // 11 blocks needed -> free direct[11] + find[0] + find block itself
-			wantDirect: [12]uint32{20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 0},
+			newSize:  11 * BLOCKSIZE,
+			wantSize: 11 * BLOCKSIZE,
+			// direct[11] retains its stale pointer (31); inode.find retains 32.
+			// Both are unreachable: inode.size == 11*BLOCKSIZE caps valid blocks at 11.
+			wantDirect: [12]uint32{20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31},
 			wantFree:   []uint32{31, 32, 33},
 			wantUsed:   []uint32{20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30},
 		},
@@ -412,6 +424,9 @@ func TestFalloc(t *testing.T) {
 				t.Fatalf("expected err=%v, got %v", tt.wantErr, err)
 			}
 
+			if in.size != tt.wantSize {
+				t.Errorf("size: expected %d, got %d", tt.wantSize, in.size)
+			}
 			if in.direct != tt.wantDirect {
 				t.Errorf("direct: expected %v, got %v", tt.wantDirect, in.direct)
 			}

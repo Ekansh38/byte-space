@@ -15,7 +15,7 @@ func setBit(bitmap []byte, idx uint32) {
 }
 
 func virtualToPlaceRelative(v uint32) (uint32, int) {
-	var placeRelativeAddress uint32 = 0
+	var placeRelativeAddress uint32 = v
 	place := 0
 	if v > 11 && v < 1036 {
 		placeRelativeAddress = v - 12
