@@ -416,7 +416,8 @@ func (fs *FileSystem) WriteBlock(blockNum uint32, data []byte) error { // NOT DA
 // find / sind / tind, and in the data bitmap).
 func (fs *FileSystem) readDataBlock(dataBlkIdx uint32) ([BLOCKSIZE]byte, error) {
 	if dataBlkIdx >= fs.superBlk.dataBlockCount {
-		return nil, errors.New("invalid dataBlkIdx")
+		var zeroed [BLOCKSIZE]byte
+		return zeroed, errors.New("invalid dataBlkIdx")
 	}
 	return fs.ReadBlock(dataBlkIdx + fs.superBlk.dataBlocksStartBlock)
 }
