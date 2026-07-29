@@ -73,6 +73,7 @@ func (d *DirectoryOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, fl
 }
 
 func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
+	dirEntries := make([]DirEntry, 0, 5)
 	dirInode := &inode{}
 	err := kernel.computer.fs.readInode(dirInode, d.inodeNum)
 	if err != nil {
@@ -93,7 +94,8 @@ func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
 
 	resolve := func(indirectPtr uint32, dindBuf *[]byte) uint32 {
 		if *dindBuf == nil {
-			*dindBuf, _ = kernel.computer.fs.readDataBlock(indirectPtr)
+			temp, _ := kernel.computer.fs.readDataBlock(indirectPtr) // call me a bad boy for ignoring that error TODO
+			*dindBuf = temp[:]
 		}
 
 		return binary.LittleEndian.Uint32((*dindBuf)[placeRelativeAddress*4 : placeRelativeAddress*4+4])
@@ -120,10 +122,13 @@ func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
 			return nil, err
 		}
 
+		// now that we have the data. we need to decode the entries
 
-
-
+		newDirEntries := decodeDirEntries(data)
+		dirEntries = append(dirEntries, newDirEntries...)
 	}
+
+	return dirEntries, nil
 }
 
 type DirectoryFD struct {

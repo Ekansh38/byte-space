@@ -379,16 +379,17 @@ func (fs *FileSystem) Shutdown() {
 
 // TODO: think about concurrency with these things in the future.
 
-func (fs *FileSystem) ReadBlock(blockNum uint32) ([]byte, error) { // NOT DATA BLOCK! ANY BLOCK
+func (fs *FileSystem) ReadBlock(blockNum uint32) ([BLOCKSIZE]byte, error) { // NOT DATA BLOCK! ANY BLOCK
 
 	if blockNum >= fs.superBlk.totalBlocks {
-		return nil, errors.New("invalid blockNum")
+		var zero [BLOCKSIZE]byte
+		return zero, errors.New("invalid blockNum")
 	}
 
 	offset := int64(blockNum) * int64(BLOCKSIZE)
 
-	block := make([]byte, BLOCKSIZE)
-	_, err := fs.disk.ReadAt(block, offset)
+	var block [BLOCKSIZE]byte
+	_, err := fs.disk.ReadAt(block[:], offset)
 
 	return block, err
 }
@@ -413,7 +414,7 @@ func (fs *FileSystem) WriteBlock(blockNum uint32, data []byte) error { // NOT DA
 // readDataBlock reads a block from the data region. dataBlkIdx is the
 // data-region-relative index (i.e. the values stored in inode.direct /
 // find / sind / tind, and in the data bitmap).
-func (fs *FileSystem) readDataBlock(dataBlkIdx uint32) ([]byte, error) {
+func (fs *FileSystem) readDataBlock(dataBlkIdx uint32) ([BLOCKSIZE]byte, error) {
 	if dataBlkIdx >= fs.superBlk.dataBlockCount {
 		return nil, errors.New("invalid dataBlkIdx")
 	}

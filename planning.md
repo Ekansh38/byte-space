@@ -958,3 +958,107 @@ removeDirEntry(parent, name):
 - Capability-based security (FDs become capabilities with embedded permissions)
 - First-class DB support in the kernel (new FD type + syscall)
 - Bitmap allocation using Plan 9 assembly for first-free scan
+
+
+---
+
+
+## Session: 2026-07-29 — BS-EXTFS Status Scope
+
+
+### Where Things Stand Right Now
+
+**Solid and tested (disk layer):**
+- `MemDisk`, `Disk` interface, `ReadBlock`/`WriteBlock`
+- `readDataBlock`/`writeDataBlock`
+- SuperBlock struct, serialization, load on boot
+- `readInode`/`writeInode` — full binary serialization, round-trip tested
+- `AllocInode`/`FreeInodeFromBitmap`
+- `Falloc` — grow and shrink path, all indirection levels (direct/find/sind/tind), tested
+- `findFreeBit`/`setBit`/`clearBit`/`virtualToPlaceRelative`
+- `encodeDirEntry`/`decodeDirEntries`
+- Root inode (inum=2) created on fresh format
+- `NewTestFileSystem()` test harness
+
+**Stub or partially broken (interface layer):**
+- `InodeOperations` and `FD` interfaces defined but nothing real implements them yet
+- `DirectoryOps.ReadEntries` — loop body walks blocks but never accumulates entries and has no return statement (explicit TODO in code, won't compile cleanly)
+- `DirectoryFD` — all methods are stubs returning 0/nil
+- `ResolvePath` — multiple known bugs: `root.ops` is commented out (nil panic), cache miss on child inode dereferences nil pointer, no ops assigned on loaded inodes, infinite loop if name not found in a dir
+
+**Not started:**
+- `addDirEntry` / `removeDirEntry`
+- Root dir `.` and `..` entries on fresh format (needs addDirEntry first)
+- `getInode(inum)` helper (cache + load + ops assign in one place)
+- `FileFD` — file read/write
+- `SyncInode` / `SyncAll` (dirty flag exists on inode but nobody flushes it)
+- First-boot FS tree via BS-EXTFS (currently still built with afero in `initFileSystem`)
+- All syscalls still delegate to `k.computer.OS.*` (afero) with `// TODO(fs migration)` markers
+
+
+### MVP Definition
+
+ByteSpace boots and runs using **BS-EXTFS as its only filesystem**. afero is gone.
+
+Concretely:
+- `ls`, `cat`, `mkdir`, `touch`, `rm`, `login`, `adduser` all work through BS-EXTFS inodes
+- `/etc/passwd`, `/etc/hostname`, `/etc/issue`, `/etc/motd` live in BS-EXTFS data blocks
+- Permissions enforced via `inode.ownerMode`/`otherMode`, not the JSON FsMetaData sidecar
+- `computer.go` no longer imports afero; `os.go`, `FsMetaData`, `saveMetaData`, `loadMetaData`, `populateFileMetadata` are deleted
+
+
+### What Must Exist Before ByteSpace Can Use the Filesystem Normally
+
+These are blocking dependencies in order — each one gates the next:
+
+1. **`addDirEntry`** — everything that creates files, dirs, or populates root needs this
+2. **Root dir `.`/`..` populated on format** — without this, path resolution panics at root
+3. **`ReadEntries` completed** — path resolution calls this at every directory level
+4. **`getInode(inum)` helper** — eliminates three separate cache+load+ops-assign code paths
+5. **`ResolvePath` fixed** — all syscalls flow through this; currently nil-panics
+6. **`FileFD`** — once path resolution works, reading and writing file content needs this
+7. **`mkDir` / `createFile` ported to BS-EXTFS** — uses AllocInode + addDirEntry + writeInode
+8. **`readFile` / `writeFile` ported to BS-EXTFS** — uses ResolvePath + FileFD
+9. **First-boot FS tree built via BS-EXTFS** — replaces `initFileSystem(afero)`
+10. **afero deleted** — the finish line; nothing in `computer/` imports it
+
+
+### Next 5 Implementation Steps (high level)
+
+**Step 1 — Finish directory data block primitives (`fs_dir.go`)**
+
+The three raw operations everything above depends on:
+- Fix `ReadEntries`: add the `var dirEntries []DirEntry` accumulation inside the loop, append the decoded entries from each block, and return the slice. The block-walking skeleton is already there; it just drops the data on the floor right now.
+- Write `addDirEntry(dirInode *inode, name string, inum uint32) error`: walk the inode's existing data blocks looking for a 64-byte slot where inum==0 (free). Encode and write it there. If no slot exists, call `Falloc(dirInode, dirInode.size+BLOCKSIZE)` to get a new block, then write to the first slot in that block. Write the data block back to disk. Persist the updated inode.
+- Write `removeDirEntry(dirInode *inode, name string) error`: walk blocks, match by name, zero the 64 bytes, write block back. Leave the block allocated — no shrink for now.
+
+**Step 2 — `getInode` helper + fix `ResolvePath` (`kernel.go`)**
+
+These two go together because fixing ResolvePath requires getInode to be solid first.
+- Add `func (k *Kernel) getInode(inum uint32) (*inode, error)` to Kernel: check `k.inodeCache[inum]`, if miss allocate `&inode{}`, call `fs.readInode`, set `.ops` based on `fType` (`S_IFDIR` → `&DirectoryOps{inodeNum: inum}`, `S_IFREG` → `&RegularFileOps{}`), store in cache, return.
+- Rewrite the `ResolvePath` walk to use `getInode`. Fix the cache-miss nil dereference (currently reads into a nil pointer). Fix the infinite loop (currently never advances `dirs` when name isn't found). Add ENOTDIR guard when a non-dir appears mid-path. Wire in the root's ops on first load.
+
+**Step 3 — Bootstrap root directory and initial FS tree (`fs.go`, `computer.go`)**
+
+The first time the disk is formatted, it's completely empty — even the root inode has no data blocks.
+- Immediately after `fs.writeInode(root, 2)` in `NewFileSystem`, call `addDirEntry` twice: `.` → inum 2, `..` → inum 2. This gives ResolvePath something to actually find.
+- Port `initFileSystem` off afero. Replace the afero `Mkdir`/`Create`/`WriteString` calls with direct BS-EXTFS operations (AllocInode + writeInode + addDirEntry + Falloc + writeDataBlock) to create `/etc`, `/bin`, `/home`, `/var/log`, `/tmp` and the standard text files. Only run on first boot (`!isInitialized`).
+
+**Step 4 — Implement `FileFD` (`fs_fd.go`)**
+
+New file. This is the FD type for regular files — the thing that makes `read()`/`write()` work on file content.
+- `FileFD{kernel *Kernel, inodeNum uint32, offset uint64, flags int}`
+- `RegularFileOps.CreateFD` returns a `&FileFD{...}`
+- `Read(buf)`: load the inode, compute which virtual block `offset` lands in using `virtualToPlaceRelative`, resolve to a physical data block number (walk direct/find/sind/tind), call `readDataBlock`, copy the right slice into `buf`, advance `offset`.
+- `Write(data)`: mirror of Read. If `offset + len(data) > inode.size`, call `Falloc` first to extend, then write the block(s). Persist the updated inode.
+
+**Step 5 — Migrate syscalls off afero, one at a time (`kernel.go`)**
+
+Each syscall has a `// TODO(fs migration):` comment marking where to switch. Do them in order of difficulty:
+1. `readFile`: ResolvePath → getInode → FileFD → fd.Open → fd.Read → return bytes
+2. `writeFile`: ResolvePath → getInode → FileFD → fd.Write (with Falloc inside)
+3. `mkDir`: ResolvePath parent → AllocInode → writeInode (S_IFDIR) → addDirEntry(parent) → addDirEntry(new, ".", "..") 
+4. `createFile`: ResolvePath parent → AllocInode → writeInode (S_IFREG) → addDirEntry(parent)
+5. `removeAll`: ResolvePath → removeDirEntry from parent → FreeInodeFromBitmap → free data blocks
+
+Once all five are migrated and nothing references `k.computer.OS.*` or `k.computer.filesystem`, delete `os.go`, remove the `filesystem afero.Fs` field, delete `FsMetaData`/`saveMetaData`/`loadMetaData`/`populateFileMetadata`. That's the finish line.
