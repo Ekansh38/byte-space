@@ -137,7 +137,8 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 			} else if place == 1 {
 				if findBuf == nil {
-					findBuf, _ = fs.readDataBlock(inode.find)
+					temp, _ := fs.readDataBlock(inode.find)
+					findBuf = temp[:]
 				}
 
 				idx, status := findFreeBit(dataBitmapBuf)
@@ -150,7 +151,8 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 			} else if place == 2 {
 				if sindBuf == nil {
-					sindBuf, _ = fs.readDataBlock(inode.sind)
+					temp, _ := fs.readDataBlock(inode.sind)
+					sindBuf = temp[:]
 				}
 
 				idx, status := findFreeBit(dataBitmapBuf)
@@ -162,7 +164,8 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 				binary.LittleEndian.PutUint32(sindBuf[placeRelativeAddress*4:placeRelativeAddress*4+4], idx)
 			} else if place == 3 {
 				if tindBuf == nil {
-					tindBuf, _ = fs.readDataBlock(inode.tind)
+					temp, _ := fs.readDataBlock(inode.tind)
+					tindBuf = temp[:]
 				}
 				idx, status := findFreeBit(dataBitmapBuf)
 				if status != true {
@@ -200,7 +203,8 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 			} else if place == 1 {
 				if findBuf == nil {
-					findBuf, _ = fs.readDataBlock(inode.find)
+					temp, _ := fs.readDataBlock(inode.find)
+					findBuf = temp[:]
 				}
 
 				blkAddress := binary.LittleEndian.Uint32(findBuf[physicalAddress*4 : physicalAddress*4+4])
@@ -210,7 +214,8 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 			} else if place == 2 {
 				if sindBuf == nil {
-					sindBuf, _ = fs.readDataBlock(inode.sind)
+					temp, _ := fs.readDataBlock(inode.sind)
+					sindBuf = temp[:]
 				}
 
 				blkAddress := binary.LittleEndian.Uint32(sindBuf[physicalAddress*4 : physicalAddress*4+4])
@@ -219,7 +224,8 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 				clearBit(dataBitmapBuf, blkAddress)
 			} else if place == 3 {
 				if tindBuf == nil {
-					tindBuf, _ = fs.readDataBlock(inode.tind)
+					temp, _ := fs.readDataBlock(inode.tind)
+					tindBuf = temp[:]
 				}
 
 				blkAddress := binary.LittleEndian.Uint32(tindBuf[physicalAddress*4 : physicalAddress*4+4])
