@@ -208,7 +208,7 @@ func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of b
 			return mostRecentInode.num
 		}
 
-		entries := mostRecentInode.ops.ReadEntries(k)
+		entries, _ := mostRecentInode.ops.ReadEntries(k)
 		if entries == nil {
 			return 0 // thats a file, its like somebody giving a path /game.py/test
 		}
@@ -219,7 +219,7 @@ func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of b
 					k.computer.fs.readInode(mostRecentInode, entries[i].Inum)
 
 					// mostRecentInode.ops = //bla bla todo
-					mostRecentInode.num = entries[i].Inum
+					mostRecentInode.num = entries[i].Inum // fix this later 
 
 					k.inodeCache[entries[i].Inum] = mostRecentInode
 				}
