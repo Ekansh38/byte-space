@@ -152,6 +152,7 @@ func (k *Kernel) RegisterProgram(path string, factory func(int) Program) {
 func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of bugs rn like im not deleting from dirs and stuff TODO
 	// FULL OF BUGS
 	// we need to parse the path into different directories
+	// needs to use getInode
 
 	// fix da stringy
 	if target == "" {

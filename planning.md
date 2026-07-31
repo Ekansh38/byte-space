@@ -1027,8 +1027,9 @@ These are blocking dependencies in order — each one gates the next:
 
 **Step 1 — Finish directory data block primitives (`fs_dir.go`)**
 
+finish the getInode kernel helper method.
+
 The three raw operations everything above depends on:
-- Fix `ReadEntries`: add the `var dirEntries []DirEntry` accumulation inside the loop, append the decoded entries from each block, and return the slice. The block-walking skeleton is already there; it just drops the data on the floor right now.
 - Write `addDirEntry(dirInode *inode, name string, inum uint32) error`: walk the inode's existing data blocks looking for a 64-byte slot where inum==0 (free). Encode and write it there. If no slot exists, call `Falloc(dirInode, dirInode.size+BLOCKSIZE)` to get a new block, then write to the first slot in that block. Write the data block back to disk. Persist the updated inode.
 - Write `removeDirEntry(dirInode *inode, name string) error`: walk blocks, match by name, zero the 64 bytes, write block back. Leave the block allocated — no shrink for now.
 

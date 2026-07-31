@@ -1,20 +1,10 @@
 package computer
 
-// 3. DATA BLOCK HELPERS  (fs.go, alongside ReadBlock/WriteBlock)
-//    - readDataBlock(dataBlkIdx uint32) []byte — takes a *data-region-relative*
-//      index (the values stored in inode.direct / find / sind / tind),
-//      converts to absolute (dataBlkIdx + dataBlocksStartBlock), returns buf.
-//    - writeDataBlock(dataBlkIdx uint32, data []byte).
-//    - lots of stuff below needs these: dir ops, dir adder, FileFD, etc.
-
-//DONE
-
-//
 // 4. DIRECTORYOPS + InodeOperations impl  (fs_inode.go / fs_dir.go)
-//    - resurrect the commented-out DirectoryOps struct in fs_inode.go.
-//    - ReadEntries(k *Kernel): walk inode.direct[] (later find/sind/tind too),
-//      readDataBlock each, decodeDirEntries, concat the slices.
-//    - CreateFD(...): returns a DirFD (see step 7). ok to stub for now.
+//    - resurrect the commented-out DirectoryOps struct in fs_inode.go. DONE
+//    - ReadEntries(k *Kernel): walk inode.direct[] (later find/sind/tind too), DONE
+//      readDataBlock each, decodeDirEntries, concat/or appened the slices.  Done
+//    - CreateFD(...): returns a DirFD (see step 7). ok to stub for now. DONE
 //    - central place: whenever an inode is loaded, if fType==S_IFDIR set
 //      ops = &DirectoryOps{}, else &FileOps{} (once that exists). do this in
 //      a getInode(inum) helper so it's in ONE place in the kernel btw.

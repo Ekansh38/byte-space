@@ -72,6 +72,21 @@ func (d *DirectoryOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, fl
 	}
 }
 
+func (d *DirectoryOps) addDentry(kernel *Kernel, dentry DirEntry) error { 
+// this is when I kinda discovered Linux calls the dentries and I found it really nice so my code 
+// kind of has a split between DirEntries and Dentries but i vibe with it
+
+
+
+}
+
+func (d *DirectoryOps) removeDentry(kernel *Kernel, dentry DirEntry) error { 
+
+	dirInode := kernel.getInode(d.inodeNum)
+
+
+}
+
 func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
 	dirEntries := make([]DirEntry, 0, 5)
 	dirInode := &inode{}
@@ -141,12 +156,16 @@ type DirectoryFD struct {
 }
 
 func (d *DirectoryFD) Open() error {
+	// setup the stuff needed for the fd to be good right?
+
+	d.offset = 0
+
+
 	return nil
 }
 
 func (d *DirectoryFD) Read(buf []byte) (int, error) {
 	return 0, nil
-	// lowkey just copy from the plan and maybe write in a more verbose manner
 }
 
 func (d *DirectoryFD) Write(data []byte) (int, error) {
