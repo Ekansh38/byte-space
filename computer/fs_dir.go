@@ -109,12 +109,15 @@ func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
 		return nil, err
 	}
 
-	kernel.computer.fs.iterBlocks(dirInode, func(_ uint32, data [BLOCKSIZE]byte) (stop bool, err error) {
+	err = kernel.computer.fs.iterBlocks(dirInode, func(_ uint32, data [BLOCKSIZE]byte) (stop bool, err error) {
 		newDirEntries := decodeDirEntries(data)
 		dirEntries = append(dirEntries, newDirEntries...)
 		return false, nil
 	})
 
+	if err != nil {
+		return nil, err
+	}
 	return dirEntries, nil
 }
 
