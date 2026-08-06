@@ -1063,3 +1063,26 @@ Each syscall has a `// TODO(fs migration):` comment marking where to switch. Do 
 5. `removeAll`: ResolvePath → removeDirEntry from parent → FreeInodeFromBitmap → free data blocks
 
 Once all five are migrated and nothing references `k.computer.OS.*` or `k.computer.filesystem`, delete `os.go`, remove the `filesystem afero.Fs` field, delete `FsMetaData`/`saveMetaData`/`loadMetaData`/`populateFileMetadata`. That's the finish line.
+
+
+## ByteSpace diagramming
+
+Use TLDraw Offline as a thinking/debugging tool for ByteSpace architecture, not as a polished poster tool.
+
+For fuzzy systems like the filesystem, make one ugly-but-true vertical layer diagram:
+
+`process fd -> per-process fd table -> open file object -> inode -> block allocator/free bitmap -> virtual disk blocks`
+
+The diagram should show how operations move through the layers:
+
+- `open(path)`: path lookup -> inode -> open file object -> fd table entry.
+- `read(fd)`: fd table -> file object offset -> inode block pointers -> disk block -> copy bytes -> advance offset.
+- `write(fd)`: fd table -> file object -> maybe allocate block -> update inode -> write disk block -> advance offset.
+- `close(fd)`: remove fd table entry -> decrement ref count -> maybe free file object.
+
+Rule: cap diagramming at ~45 minutes. The goal is to reduce fog and expose missing implementation pieces, not to make pretty boxes.
+
+Success condition: the diagram can answer, "When a process calls `write(fd, "hi")`, what exact objects get touched, in what order?"
+
+
+also do it for networking help.

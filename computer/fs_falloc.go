@@ -87,10 +87,14 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 
 	dataBitmapBuf := make([]byte, BLOCKSIZE) // 4096
 
-	defer fs.mu.Unlock()
 	fs.mu.Lock()
+	defer fs.mu.Unlock()
 
 	fs.disk.ReadAt(dataBitmapBuf, int64(fs.superBlk.dataBitmapStartBlock)*BLOCKSIZE)
+
+	findFreed := false
+	sindFreed := false
+	tindFreed := false
 
 	if totalBlocksNeeded > numOfCurrentBlocks {
 		// grow path
@@ -107,6 +111,9 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 				panic("faahhhhh") // TODO
 			}
 			setBit(dataBitmapBuf, idx)
+
+			var zeroBuf [BLOCKSIZE]byte
+			fs.writeDataBlock(idx, zeroBuf[:])
 
 			return idx
 		}
@@ -239,23 +246,26 @@ func (fs *FileSystem) Falloc(inode *inode, newSize uint32) error {
 		// clear the blocks themselves if needed
 		if numOfCurrentBlocks > 2060 && totalBlocksNeeded <= 2060 {
 			clearBit(dataBitmapBuf, inode.tind)
+			tindFreed = true
 		}
 		if numOfCurrentBlocks > 1036 && totalBlocksNeeded <= 1036 {
 			clearBit(dataBitmapBuf, inode.sind)
+			sindFreed = true
 		}
 		if numOfCurrentBlocks > 12 && totalBlocksNeeded <= 12 {
 			clearBit(dataBitmapBuf, inode.find)
+			findFreed = true
 		}
 	}
 
 	// write to disk
-	if findBuf != nil {
+	if findBuf != nil && !findFreed {
 		fs.writeDataBlock(inode.find, findBuf)
 	}
-	if sindBuf != nil {
+	if sindBuf != nil && !sindFreed {
 		fs.writeDataBlock(inode.sind, sindBuf)
 	}
-	if tindBuf != nil {
+	if tindBuf != nil && !tindFreed {
 		fs.writeDataBlock(inode.tind, tindBuf)
 	}
 

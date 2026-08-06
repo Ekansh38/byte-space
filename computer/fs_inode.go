@@ -183,6 +183,57 @@ func (fs *FileSystem) writeInode(inode *inode, idx uint32) error {
 	return nil
 }
 
+// iterBlocks calls fn for each allocated data block in the inode, in order.
+// fn receives the physical block number and a copy of its contents.
+// Return stop=true from fn to break early.
+func (fs *FileSystem) iterBlocks(in *inode, fn func(blockNum uint32, data [BLOCKSIZE]byte) (stop bool, err error)) error {
+	blocksToRead := (in.size + BLOCKSIZE - 1) / BLOCKSIZE
+
+	var findBuf, sindBuf, tindBuf []byte
+
+	resolve := func(ptr uint32, buf *[]byte, relAddr uint32) (uint32, error) {
+		if *buf == nil {
+			blk, err := fs.readDataBlock(ptr)
+			if err != nil {
+				return 0, err
+			}
+			*buf = blk[:]
+		}
+		return binary.LittleEndian.Uint32((*buf)[relAddr*4 : relAddr*4+4]), nil
+	}
+
+	for i := uint32(0); i < blocksToRead; i++ {
+		relAddr, place := virtualToPlaceRelative(i)
+
+		var blockNum uint32
+		var err error
+		switch place {
+		case 0:
+			blockNum = in.direct[relAddr]
+		case 1:
+			blockNum, err = resolve(in.find, &findBuf, relAddr)
+		case 2:
+			blockNum, err = resolve(in.sind, &sindBuf, relAddr)
+		case 3:
+			blockNum, err = resolve(in.tind, &tindBuf, relAddr)
+		}
+		if err != nil {
+			return err
+		}
+
+		data, err := fs.readDataBlock(blockNum)
+		if err != nil {
+			return err
+		}
+
+		stop, err := fn(blockNum, data)
+		if err != nil || stop {
+			return err
+		}
+	}
+	return nil
+}
+
 // think about concurreny later TODO
 // maybe we aquire locks at a higher kernel level rather than these low level function calls
 

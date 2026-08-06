@@ -72,76 +72,48 @@ func (d *DirectoryOps) CreateFD(kernel *Kernel, inodeNum uint32, path string, fl
 	}
 }
 
-func (d *DirectoryOps) addDentry(kernel *Kernel, dentry DirEntry) error { 
-// this is when I kinda discovered Linux calls the dentries and I found it really nice so my code 
-// kind of has a split between DirEntries and Dentries but i vibe with it
+func (d *DirectoryOps) addDentry(kernel *Kernel, dentry DirEntry) error {
+	// this is when I kinda discovered Linux calls the dentries and I found it really nice so my code
+	// kind of has a split between DirEntries and Dentries but i vibe with it
 
+	// stuff I got to do here
+	// look at all of the data blocks in the inode for space, for a 64 chunk of space
+	// if i find that space
+	// encode that dentry there, and write to disk.
+	// else
+	// falloc inode.size + 64 and then encode it into there and write to disk.
 
+	dirInode := inode{}
+	err := kernel.computer.fs.readInode(&dirInode, d.inodeNum) // TODO migrate this to kernel.getInode later
+	if err != nil {
+		return err
+	}
 
+	return nil
 }
 
-func (d *DirectoryOps) removeDentry(kernel *Kernel, dentry DirEntry) error { 
+// func (d *DirectoryOps) removeDentry(kernel *Kernel, dentry DirEntry) error {
 
-	dirInode := kernel.getInode(d.inodeNum)
+//	dirInode := kernel.getInode(d.inodeNum)
 
-
-}
+//}
 
 func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
-	dirEntries := make([]DirEntry, 0, 5)
+	dirEntries := make([]DirEntry, 0, 8) // my guess is like max 8 entries per folder on the average 
+	                                     // case, i just don't want to have to reallocate
+	
+	// get the inode, later we migrate to kernel.getInode 
 	dirInode := &inode{}
 	err := kernel.computer.fs.readInode(dirInode, d.inodeNum)
 	if err != nil {
 		return nil, err
 	}
 
-	// based on .size lets figure out how many blocks we need to read.
-
-	blocksToRead := (dirInode.size + BLOCKSIZE - 1) / BLOCKSIZE
-	// same: ceil(float(dirInode.size) / float(BLOCKSIZE))
-
-	var findBuf []byte = nil
-	var sindBuf []byte = nil
-	var tindBuf []byte = nil
-
-	var placeRelativeAddress uint32
-	var place int
-
-	resolve := func(indirectPtr uint32, dindBuf *[]byte) uint32 {
-		if *dindBuf == nil {
-			temp, _ := kernel.computer.fs.readDataBlock(indirectPtr) // call me a bad boy for ignoring that error TODO
-			*dindBuf = temp[:]
-		}
-
-		return binary.LittleEndian.Uint32((*dindBuf)[placeRelativeAddress*4 : placeRelativeAddress*4+4])
-	}
-
-	var i uint32
-	for i = 0; i < blocksToRead; i++ {
-		var blockNumber uint32
-		placeRelativeAddress, place = virtualToPlaceRelative(i)
-
-		if place == 0 {
-			blockNumber = dirInode.direct[placeRelativeAddress] // the actual datablock number
-		} else if place == 1 {
-			blockNumber = resolve(dirInode.find, &findBuf)
-		} else if place == 2 {
-			blockNumber = resolve(dirInode.sind, &sindBuf)
-		} else if place == 3 {
-			blockNumber = resolve(dirInode.tind, &tindBuf)
-		}
-
-		// get the data block content
-		data, err := kernel.computer.fs.readDataBlock(blockNumber)
-		if err != nil {
-			return nil, err
-		}
-
-		// now that we have the data. we need to decode the entries
-
+	kernel.computer.fs.iterBlocks(dirInode, func(_ uint32, data [BLOCKSIZE]byte) (stop bool, err error) {
 		newDirEntries := decodeDirEntries(data)
 		dirEntries = append(dirEntries, newDirEntries...)
-	}
+		return false, nil
+	})
 
 	return dirEntries, nil
 }
@@ -159,7 +131,6 @@ func (d *DirectoryFD) Open() error {
 	// setup the stuff needed for the fd to be good right?
 
 	d.offset = 0
-
 
 	return nil
 }
