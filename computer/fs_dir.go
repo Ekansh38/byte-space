@@ -5,26 +5,26 @@ import (
 	"errors"
 )
 
-func encodeDirEntry(name string, inum uint32) ([64]byte, error) {
+func encodeDirEntry(dentry DirEntry) ([64]byte, error) {
 	var buffer [64]byte
 
-	if len(name) > 55 {
+	if len(dentry.Name) > 55 {
 		return buffer, errors.New("name too long")
 	}
 
-	if inum == 0 {
+	if dentry.Inum == 0 {
 		return buffer, errors.New("invalid inum")
 	}
 
-	nameLen := uint8(len(name)) // in bytes
+	nameLen := uint8(len(dentry.Name)) // in bytes
 
 	// Indexing is [inclusive]:[exclusive]
-	binary.LittleEndian.PutUint32(buffer[0:4], inum)
+	binary.LittleEndian.PutUint32(buffer[0:4], dentry.Inum)
 	buffer[4] = nameLen
 
 	// bytes 5, 6 and 7 are padding
 
-	copy(buffer[8:], name)
+	copy(buffer[8:], dentry.Name)
 
 	// the array is zeroed to automatically pads with null-terminators
 
@@ -83,13 +83,49 @@ func (d *DirectoryOps) addDentry(kernel *Kernel, dentry DirEntry) error {
 	// else
 	// falloc inode.size + 64 and then encode it into there and write to disk.
 
+// else falloc size+BLOCKSIZE (not +64), 
+//   place entry at offset 0.
+//
+// perf: iterBlocks passes data by value (4KB copy/block). capturing
+// blockData in the outer scope makes it escape to the heap — 4KB alloc
+// per call. fine for dirs, don't reuse this pattern in hot read paths.
+//
+// concurrency (TOCTOU, multi-threaded FS): scan-then-write is a race —
+// another goroutine can grab the same slot between scan and write.
+// hold a write lock on the dir inode across the whole op (scan + write
+// + falloc); readers take the same lock read-side.
+
+
 	dirInode := inode{}
 	err := kernel.computer.fs.readInode(&dirInode, d.inodeNum) // TODO migrate this to kernel.getInode later
 	if err != nil {
 		return err
 	}
 
-	return nil
+	err = kernel.computer.fs.iterBlocks(&dirInode, func(blockNumber uint32, data [BLOCKSIZE]byte) (stop bool, err error) {
+		for i := 0; i < BLOCKSIZE; i += 64 {
+			if binary.LittleEndian.Uint32(data[i:i+4]) == 0 {
+				// we have a nice 64 byte chunk here, it is free as the inum is 0
+
+				encodedDentry, err := encodeDirEntry(dentry)
+				if err != nil {
+					return true, err
+				}
+
+				copy(data[i:i+64], encodedDentry[:])
+
+				kernel.computer.fs.writeDataBlock(blockNumber, data[:]) // TODO: convert writeBlock to take [0x1000]byte instead for better saftey
+
+				return true, nil
+			}
+		}
+
+		return false, nil
+	})
+
+	// now falloc path:
+
+	return err
 }
 
 // func (d *DirectoryOps) removeDentry(kernel *Kernel, dentry DirEntry) error {
@@ -99,10 +135,10 @@ func (d *DirectoryOps) addDentry(kernel *Kernel, dentry DirEntry) error {
 //}
 
 func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
-	dirEntries := make([]DirEntry, 0, 8) // my guess is like max 8 entries per folder on the average 
-	                                     // case, i just don't want to have to reallocate
-	
-	// get the inode, later we migrate to kernel.getInode 
+	dirEntries := make([]DirEntry, 0, 8) // my guess is like max 8 entries per folder on the average
+	// case, i just don't want to have to reallocate
+
+	// get the inode, later we migrate to kernel.getInode
 	dirInode := &inode{}
 	err := kernel.computer.fs.readInode(dirInode, d.inodeNum)
 	if err != nil {
@@ -114,7 +150,6 @@ func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
 		dirEntries = append(dirEntries, newDirEntries...)
 		return false, nil
 	})
-
 	if err != nil {
 		return nil, err
 	}
