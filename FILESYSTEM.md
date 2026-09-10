@@ -1,37 +1,69 @@
-# Disk Stats
+## Overview
 
-Total disk size: 64 MB (67108864 bytes)
-Block size: 0x1000 bytes (4096 bytes)
-Total blocks: 16384
+Disk size         :   64 MB        :   0x400_0000    (bytes)
+Block size        :   4096 bytes   :   0x1000        (bytes)
+Total blocks      :   16_384       :   0x4000        (count)
 
-LAYOUT
+Inode count       :   8_064        :   0x1F80        (count)
+Data block count  :   16_128       :   0x3F00        (count)
+Ratio             :   2:1          :   N/A           (ratio)
 
-Component Start Block Blocks Bytes
-Super Block 0 1 4,096
-Inode Bitmap 1 1 4,096
-Inode Table 2 252 1,032,192
-Data Bitmap 254 1 4,096
-Data Blocks 255 16,128 66,060,288
-Padding 16,383 1 4,096
------- -----------
-TOTAL 16,384 67,108,864
 
-## CAPACITIES
+## Layout
 
-Inodes: 8,064
-Data blocks: 16,128
-Ratio: 2.0 data blocks per inode (exact)
+```text
+          64MB                   
++----------------------+
+| Super Block          |
++----------------------+
+| Inode Bitmap         |
++----------------------+
+| Inode Table          |
+|                      |
+|                      |
++----------------------+
+| Data Bitmap          |
++----------------------+
+| Data Blocks          |
+|                      |
+|                      |
+|                      |
+|                      |
+|                      |
++----------------------+
+| Padding              |
++----------------------+
+```
 
-## PROOF
+```text
+| Component    | Start Block | Blocks | Bytes      |
+|--------------|-------------|--------|------------|
+| Super Block  | 0           | 1      | 4096       |
+| Inode Bitmap | 1           | 1      | 4096       |
+| Inode Table  | 2           | 252    | 1032192    |
+| Data Bitmap  | 254         | 1      | 4096       |
+| Data Blocks  | 255         | 16128  | 66060288   |
+| Padding      | 16383       | 1      | 4096       |
+| TOTAL        | N/A         | 16384  | 67,108,864 |
+```
 
-Target ratio: 1 inode : 2 data blocks
-Inode size: 128 bytes
-Data block size: 4,096 bytes
-Cost per inode: 128 bytes inode + 8,192 bytes data = 8,320 bytes total
+
+## Reasoning/Proof
+
+### Overall
 
 Total blocks: 16,384
-Reserve for super + bitmaps: 1 + 1 + 1 = 3 blocks
+Extra stuff: 1 + 1 + 1 = 3 blocks
+
 Available: 16,384 - 3 = 16,381 blocks = 67,084,288 bytes
+
+Target ratio: 1 inode : 2 data blocks
+
+Inode size: 128 bytes
+
+Data block size: 4096 bytes
+
+Cost per inode: 128 + 2(4096)  = 8,320 bytes
 
 Inodes: 67,084,288 / 8,320 = 8,064.068...
 Round down: 8,064 inodes
@@ -42,4 +74,92 @@ Data blocks: 8,064 × 2 = 16,128 blocks
 Structure total: 1 + 1 + 252 + 1 = 255 blocks
 Data blocks: 16,128 blocks
 Total used: 255 + 16,128 = 16,383 blocks
-Padding: 16,384 - 16,383 = 1 block ✓
+Padding: 16,384 - 16,383 = 1 block
+
+
+### Bitmap Capacity
+
+Each bitmap occupies 1 block = 4_096 bytes = 32,768 bits.
+
+Inode bitmap:  8_064 inodes  =  8_064  / 32_768 = 24.6% utilization  (24_704 left)
+Data bitmap:   16_128 blocks =  16_128 / 32_768 = 49.2% utilization  (16_640 left)
+
+The unused trailing bits are
+left zeroed and never consulted, it only scans up to the
+known count (InodeCount, DataBlockCount).
+
+
+## Inode Numbering
+
+Inode N lives at disk offset: INODE_TABLE_START + (N * INODE_SIZE)
+
+INODE_SIZE = 128
+
+This gives us O(1) lookup.
+
+
+Inode 0          : invalid (zero means "no inode")
+Inode 1          : reserved
+Inode 2          : root directory (/)
+Inodes 3–8063    : disk inodes
+Inodes 10000+    : virtual inodes (constants or computed)
+Inodes 20000+    : per-pid virtual inodes (20000 + pid)
+
+
+## Directory Entry Format
+
+Fixed-size entries, 64 bytes each. 64 entries per data block (4096 / 64).
+
+```text
+| Field   | Offset | Size     | Description                           |
+|---------|--------|----------|---------------------------------------|
+| inum    | 0      | 4 bytes  | Inode number (0 = entry is free)      |
+| nameLen | 4      | 1 byte   | Length of name in bytes (O(1) extract)|
+| pad     | 5      | 3 bytes  | Padding                               |
+| name    | 8      | 56 bytes | Filename (null-padded, max 55 chars)  |
+```
+
+Max file/dir name length: 55 bytes (56 bytes storage, last byte always null).
+
+Every directory contains at minimum:
+- Entry 0: "."  → own inode number
+- Entry 1: ".." → parent inode number (for root, ".." points to itself)
+
+
+## On-Disk Inode Size Budget
+
+```text
+| Field      | Size  | Running Total |
+|------------|-------|---------------|
+| size       | 4     | 4             |
+| fType      | 1     | 5             |
+| refs       | 2     | 7             |
+| owner      | 14    | 21            |
+| setuid     | 1     | 22            |
+| ownerMode  | 1     | 23            |
+| otherMode  | 1     | 24            |
+| direct[12] | 48    | 72            |
+| find       | 4     | 76            |
+| sind       | 4     | 80            |
+| tind       | 4     | 84            |
+| createdAt  | 8     | 92            |
+| modifiedAt | 8     | 100           |
+| paddding   | 28    | 128           |
+```
+
+28 bytes reserved for future use (capabilities, extended attrs, etc).
+
+
+## On-Disk fType → In-Memory Ops Mapping
+
+Only two file types ever exist on disk:
+- S_IFREG (0) → RegularFileOps
+- S_IFDIR (1) → DirectoryOps
+
+Special files (procfs, sockets, TTY, etc) never touch disk.
+They exist purely in memory with synthetic inode numbers
+(allocated above MAX_DISK_INODES). See planning.md for details.
+
+The uint8 fType field IS the ops discriminator — no string encoding
+or registry needed. On inode load, the kernel maps fType to the
+correct InodeOperations implementation.
