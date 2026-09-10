@@ -1,5 +1,10 @@
 ## Overview
 
+Bull Shit Extended File System
+Its my little thing, its bad, but pretty cool.
+
+## General Info
+
 Disk size         :   64 MB        :   0x400_0000    (bytes)
 Block size        :   4096 bytes   :   0x1000        (bytes)
 Total blocks      :   16_384       :   0x4000        (count)
@@ -35,6 +40,9 @@ Ratio             :   2:1          :   N/A           (ratio)
 +----------------------+
 ```
 
+(I made this myself btw, hope you like it)
+
+
 ```text
 | Component    | Start Block | Blocks | Bytes      |
 |--------------|-------------|--------|------------|
@@ -47,10 +55,10 @@ Ratio             :   2:1          :   N/A           (ratio)
 | TOTAL        | N/A         | 16384  | 67,108,864 |
 ```
 
+(same with this)
 
-## Reasoning/Proof
 
-### Overall
+## My overall Reasoning/Proof
 
 Total blocks: 16,384
 Extra stuff: 1 + 1 + 1 = 3 blocks
@@ -76,6 +84,7 @@ Data blocks: 16,128 blocks
 Total used: 255 + 16,128 = 16,383 blocks
 Padding: 16,384 - 16,383 = 1 block
 
+I realize now that matching the ratio exactly doesn't really matter but, whatever.
 
 ### Bitmap Capacity
 
@@ -153,13 +162,12 @@ Every directory contains at minimum:
 ## On-Disk fType → In-Memory Ops Mapping
 
 Only two file types ever exist on disk:
-- S_IFREG (0) → RegularFileOps
-- S_IFDIR (1) → DirectoryOps
+- S_IFREG (0) -> RegularFileOps
+- S_IFDIR (1) -> DirectoryOps
 
 Special files (procfs, sockets, TTY, etc) never touch disk.
-They exist purely in memory with synthetic inode numbers
-(allocated above MAX_DISK_INODES). See planning.md for details.
+They exist purely in memory with FAKE inode numbers
+(allocated above MAX_DISK_INODES).
 
-The uint8 fType field IS the ops discriminator — no string encoding
-or registry needed. On inode load, the kernel maps fType to the
-correct InodeOperations implementation.
+The uint8 fType field IS the ops discriminator, no string encoding
+or registry needed. On inode load, the kernel maps fType to the  InodeOperations.
