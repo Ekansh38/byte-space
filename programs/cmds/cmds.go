@@ -77,6 +77,14 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 			} else {
 				output += fmt.Sprintf("\033[97m%s\033[0m\n", file.Name)
 			}
+		} else if flag == "-i" {
+			// INODE FORMAT, go find these in disk.img with a hex editor:
+			// inode N lives at byte 8192 + N*128
+			if file.IsDir {
+				output += fmt.Sprintf("\033[90m%4d\033[0m \033[94;1m%s\033[0m\n", file.Inum, file.Name)
+			} else {
+				output += fmt.Sprintf("\033[90m%4d\033[0m \033[97m%s\033[0m\n", file.Inum, file.Name)
+			}
 		} else if flag == "-l" {
 			// LONG FORMAT
 			filePath := path.Join(dir, file.Name)

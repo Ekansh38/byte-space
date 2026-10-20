@@ -630,9 +630,11 @@ func (k *Kernel) readFile(proc *Process, target string) ([]byte, error) { // sys
 
 // FileInfo is what readDir hands back per entry. used to be os.FileInfo from
 // afero but we only ever cared about the name and dir-ness.
+// Inum is in here so ls -i can show off that these are real inodes on disk.
 type FileInfo struct {
 	Name  string
 	IsDir bool
+	Inum  uint32
 }
 
 func (k *Kernel) readDir(proc *Process, target string) ([]FileInfo, error) { // syscall
@@ -669,7 +671,7 @@ func (k *Kernel) readDir(proc *Process, target string) ([]FileInfo, error) { // 
 		if err != nil {
 			return nil, err
 		}
-		infos = append(infos, FileInfo{Name: entry.Name, IsDir: child.fType == S_IFDIR})
+		infos = append(infos, FileInfo{Name: entry.Name, IsDir: child.fType == S_IFDIR, Inum: entry.Inum})
 	}
 	return infos, nil
 }

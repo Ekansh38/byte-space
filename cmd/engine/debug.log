@@ -1401,3 +1401,226 @@
 2026/05/12 20:33:35 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih", "clear"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
 2026/05/12 20:33:35 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih", "clear"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
 2026/05/12 20:33:35 HISTORY []string{"clear", "ls", "cd /", "ls", "v dih", "cat dih", "clear", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:44:09 Disk not created yet.
+2026/10/20 18:44:09 Disk not created yet.
+2026/10/20 18:45:12 Disk not created yet.
+2026/10/20 18:45:35 HISTORY []string(nil), POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:45:35 HISTORY []string(nil), POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:45:36 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:45:37 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/10/20 18:45:37 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/10/20 18:45:37 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER cd , CURSORPOS 3
+2026/10/20 18:45:37 HISTORY []string{"ls"}, POSINHISTORY: -1, BUFFER cd /, CURSORPOS 4
+2026/10/20 18:45:38 HISTORY []string{"ls", "cd /"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:45:38 HISTORY []string{"ls", "cd /"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:45:38 HISTORY []string{"ls", "cd /"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:45:38 HISTORY []string{"ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:45:41 HISTORY []string{"ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/10/20 18:45:41 HISTORY []string{"ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/10/20 18:45:41 HISTORY []string{"ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER cd , CURSORPOS 3
+2026/10/20 18:45:41 HISTORY []string{"ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER cd e, CURSORPOS 4
+2026/10/20 18:45:41 HISTORY []string{"ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER cd et, CURSORPOS 5
+2026/10/20 18:45:41 HISTORY []string{"ls", "cd /", "ls"}, POSINHISTORY: -1, BUFFER cd etc, CURSORPOS 6
+2026/10/20 18:45:42 HISTORY []string{"ls", "cd /", "ls", "cd etc"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:45:42 HISTORY []string{"ls", "cd /", "ls", "cd etc"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:45:42 HISTORY []string{"ls", "cd /", "ls", "cd etc"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:45:42 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:45:43 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/10/20 18:45:44 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER ca, CURSORPOS 2
+2026/10/20 18:45:44 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER cat, CURSORPOS 3
+2026/10/20 18:45:44 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER cat , CURSORPOS 4
+2026/10/20 18:45:44 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER cat p, CURSORPOS 5
+2026/10/20 18:45:44 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER cat pa, CURSORPOS 6
+2026/10/20 18:45:44 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER cat pas, CURSORPOS 7
+2026/10/20 18:45:45 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER cat pass, CURSORPOS 8
+2026/10/20 18:45:45 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER cat passw, CURSORPOS 9
+2026/10/20 18:45:45 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls"}, POSINHISTORY: -1, BUFFER cat passwd, CURSORPOS 10
+2026/10/20 18:45:45 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:45:47 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd"}, POSINHISTORY: -1, BUFFER v, CURSORPOS 1
+2026/10/20 18:45:50 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd"}, POSINHISTORY: -1, BUFFER v , CURSORPOS 2
+2026/10/20 18:45:53 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd"}, POSINHISTORY: -1, BUFFER v p, CURSORPOS 3
+2026/10/20 18:45:53 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd"}, POSINHISTORY: -1, BUFFER v pa, CURSORPOS 4
+2026/10/20 18:45:53 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd"}, POSINHISTORY: -1, BUFFER v pas, CURSORPOS 5
+2026/10/20 18:45:53 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd"}, POSINHISTORY: -1, BUFFER v pass, CURSORPOS 6
+2026/10/20 18:45:53 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd"}, POSINHISTORY: -1, BUFFER v passw, CURSORPOS 7
+2026/10/20 18:45:54 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd"}, POSINHISTORY: -1, BUFFER v passwd, CURSORPOS 8
+2026/10/20 18:45:54 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:45:54 WIDTH: 120
+2026/10/20 18:45:54 ROW: 1 COL: 1
+2026/10/20 18:45:55 ROW: 1 COL: 2
+2026/10/20 18:45:55 ROW: 1 COL: 3
+2026/10/20 18:45:55 ROW: 1 COL: 4
+2026/10/20 18:45:56 ROW: 1 COL: 5
+2026/10/20 18:45:56 ROW: 1 COL: 6
+2026/10/20 18:45:56 ROW: 1 COL: 7
+2026/10/20 18:45:56 ROW: 1 COL: 7
+2026/10/20 18:45:57 ROW: 1 COL: 8
+2026/10/20 18:45:57 ROW: 1 COL: 9
+2026/10/20 18:45:57 ROW: 1 COL: 10
+2026/10/20 18:45:57 ROW: 1 COL: 11
+2026/10/20 18:45:57 ROW: 1 COL: 12
+2026/10/20 18:45:57 ROW: 1 COL: 13
+2026/10/20 18:45:57 ROW: 1 COL: 14
+2026/10/20 18:45:58 ROW: 1 COL: 15
+2026/10/20 18:45:58 ROW: 1 COL: 16
+2026/10/20 18:45:58 ROW: 1 COL: 17
+2026/10/20 18:45:58 ROW: 1 COL: 18
+2026/10/20 18:45:58 ROW: 1 COL: 19
+2026/10/20 18:45:58 ROW: 1 COL: 20
+2026/10/20 18:45:58 ROW: 1 COL: 21
+2026/10/20 18:45:58 ROW: 1 COL: 21
+2026/10/20 18:45:58 ROW: 1 COL: 21
+2026/10/20 18:45:58 ROW: 1 COL: 21
+2026/10/20 18:45:58 ROW: 1 COL: 21
+2026/10/20 18:45:59 ROW: 1 COL: 20
+2026/10/20 18:46:00 ROW: 1 COL: 20
+2026/10/20 18:46:00 ROW: 1 COL: 20
+2026/10/20 18:46:02 ROW: 1 COL: 20
+2026/10/20 18:46:02 ROW: 1 COL: 19
+2026/10/20 18:46:03 ROW: 1 COL: 19
+2026/10/20 18:46:03 ROW: 1 COL: 19
+2026/10/20 18:46:03 ROW: 1 COL: 20
+2026/10/20 18:46:03 ROW: 1 COL: 21
+2026/10/20 18:46:04 ROW: 1 COL: 21
+2026/10/20 18:46:04 ROW: 1 COL: 21
+2026/10/20 18:46:05 ROW: 1 COL: 21
+2026/10/20 18:46:05 ROW: 2 COL: 1
+2026/10/20 18:46:07 ROW: 2 COL: 2
+2026/10/20 18:46:07 ROW: 2 COL: 3
+2026/10/20 18:46:07 ROW: 2 COL: 4
+2026/10/20 18:46:08 ROW: 2 COL: 5
+2026/10/20 18:46:08 ROW: 2 COL: 6
+2026/10/20 18:46:09 ROW: 2 COL: 7
+2026/10/20 18:46:10 ROW: 2 COL: 8
+2026/10/20 18:46:10 ROW: 2 COL: 9
+2026/10/20 18:46:10 ROW: 2 COL: 10
+2026/10/20 18:46:10 ROW: 2 COL: 11
+2026/10/20 18:46:11 ROW: 2 COL: 12
+2026/10/20 18:46:13 ROW: 2 COL: 13
+2026/10/20 18:46:13 ROW: 2 COL: 14
+2026/10/20 18:46:13 ROW: 2 COL: 15
+2026/10/20 18:46:13 ROW: 2 COL: 16
+2026/10/20 18:46:14 ROW: 2 COL: 15
+2026/10/20 18:46:14 ROW: 2 COL: 16
+2026/10/20 18:46:14 ROW: 2 COL: 17
+2026/10/20 18:46:15 ROW: 2 COL: 18
+2026/10/20 18:46:16 ROW: 2 COL: 19
+2026/10/20 18:46:16 ROW: 2 COL: 20
+2026/10/20 18:46:17 ROW: 2 COL: 21
+2026/10/20 18:46:17 ROW: 2 COL: 22
+2026/10/20 18:46:17 ROW: 2 COL: 23
+2026/10/20 18:46:17 ROW: 2 COL: 24
+2026/10/20 18:46:18 ROW: 2 COL: 25
+2026/10/20 18:46:18 ROW: 2 COL: 26
+2026/10/20 18:46:18 ROW: 2 COL: 27
+2026/10/20 18:46:18 ROW: 2 COL: 28
+2026/10/20 18:46:19 ROW: 2 COL: 29
+2026/10/20 18:46:20 ROW: 2 COL: 29
+2026/10/20 18:46:21 ROW: 2 COL: 29
+2026/10/20 18:46:21 ROW: 2 COL: 29
+2026/10/20 18:46:24 ROW: 2 COL: 29
+2026/10/20 18:46:24 ROW: 2 COL: 29
+2026/10/20 18:46:25 ROW: 2 COL: 29
+2026/10/20 18:46:27 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:46:27 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:46:27 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:29 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/10/20 18:46:29 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls"}, POSINHISTORY: -1, BUFFER cl, CURSORPOS 2
+2026/10/20 18:46:29 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls"}, POSINHISTORY: -1, BUFFER cle, CURSORPOS 3
+2026/10/20 18:46:29 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls"}, POSINHISTORY: -1, BUFFER clea, CURSORPOS 4
+2026/10/20 18:46:29 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls"}, POSINHISTORY: -1, BUFFER clear, CURSORPOS 5
+2026/10/20 18:46:29 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:30 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:46:30 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:46:30 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:31 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/10/20 18:46:31 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls"}, POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/10/20 18:46:31 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls"}, POSINHISTORY: -1, BUFFER cd , CURSORPOS 3
+2026/10/20 18:46:31 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls"}, POSINHISTORY: -1, BUFFER cd ., CURSORPOS 4
+2026/10/20 18:46:31 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls"}, POSINHISTORY: -1, BUFFER cd .., CURSORPOS 5
+2026/10/20 18:46:31 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd .."}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:32 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd .."}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:46:32 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd .."}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:46:32 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:33 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER m, CURSORPOS 1
+2026/10/20 18:46:33 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:34 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER t, CURSORPOS 1
+2026/10/20 18:46:34 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER to, CURSORPOS 2
+2026/10/20 18:46:34 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER tou, CURSORPOS 3
+2026/10/20 18:46:34 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touc, CURSORPOS 4
+2026/10/20 18:46:34 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch, CURSORPOS 5
+2026/10/20 18:46:35 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch , CURSORPOS 6
+2026/10/20 18:46:35 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch b, CURSORPOS 7
+2026/10/20 18:46:35 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch ba, CURSORPOS 8
+2026/10/20 18:46:36 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch bal, CURSORPOS 9
+2026/10/20 18:46:36 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch ball, CURSORPOS 10
+2026/10/20 18:46:36 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls"}, POSINHISTORY: -1, BUFFER touch balls, CURSORPOS 11
+2026/10/20 18:46:36 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:36 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:46:36 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:46:36 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:38 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls"}, POSINHISTORY: -1, BUFFER v, CURSORPOS 1
+2026/10/20 18:46:38 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls"}, POSINHISTORY: -1, BUFFER v , CURSORPOS 2
+2026/10/20 18:46:39 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls"}, POSINHISTORY: -1, BUFFER v b, CURSORPOS 3
+2026/10/20 18:46:39 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls"}, POSINHISTORY: -1, BUFFER v ba, CURSORPOS 4
+2026/10/20 18:46:39 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls"}, POSINHISTORY: -1, BUFFER v bal, CURSORPOS 5
+2026/10/20 18:46:39 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls"}, POSINHISTORY: -1, BUFFER v ball, CURSORPOS 6
+2026/10/20 18:46:39 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls"}, POSINHISTORY: -1, BUFFER v balls, CURSORPOS 7
+2026/10/20 18:46:39 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:39 WIDTH: 120
+2026/10/20 18:46:39 ROW: 1 COL: 1
+2026/10/20 18:46:40 ROW: 1 COL: 1
+2026/10/20 18:46:40 ROW: 1 COL: 2
+2026/10/20 18:46:40 ROW: 1 COL: 3
+2026/10/20 18:46:40 ROW: 1 COL: 4
+2026/10/20 18:46:40 ROW: 1 COL: 5
+2026/10/20 18:46:40 ROW: 1 COL: 6
+2026/10/20 18:46:40 ROW: 1 COL: 7
+2026/10/20 18:46:40 ROW: 1 COL: 8
+2026/10/20 18:46:40 ROW: 1 COL: 9
+2026/10/20 18:46:40 ROW: 1 COL: 10
+2026/10/20 18:46:40 ROW: 1 COL: 11
+2026/10/20 18:46:40 ROW: 1 COL: 12
+2026/10/20 18:46:40 ROW: 1 COL: 13
+2026/10/20 18:46:41 ROW: 1 COL: 13
+2026/10/20 18:46:42 ROW: 1 COL: 13
+2026/10/20 18:46:42 ROW: 1 COL: 13
+2026/10/20 18:46:44 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:46:44 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:46:44 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:45 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER m, CURSORPOS 1
+2026/10/20 18:46:45 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mm, CURSORPOS 2
+2026/10/20 18:46:46 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER m, CURSORPOS 1
+2026/10/20 18:46:46 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mk, CURSORPOS 2
+2026/10/20 18:46:46 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkd, CURSORPOS 3
+2026/10/20 18:46:46 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdi, CURSORPOS 4
+2026/10/20 18:46:46 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdiu, CURSORPOS 5
+2026/10/20 18:46:46 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdiur, CURSORPOS 6
+2026/10/20 18:46:46 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdiu, CURSORPOS 5
+2026/10/20 18:46:47 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdi, CURSORPOS 4
+2026/10/20 18:46:47 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdir, CURSORPOS 5
+2026/10/20 18:46:47 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdir , CURSORPOS 6
+2026/10/20 18:46:47 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdir t, CURSORPOS 7
+2026/10/20 18:46:47 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdir te, CURSORPOS 8
+2026/10/20 18:46:47 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdir tes, CURSORPOS 9
+2026/10/20 18:46:47 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls"}, POSINHISTORY: -1, BUFFER mkdir test, CURSORPOS 10
+2026/10/20 18:46:47 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:48 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:46:48 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:46:48 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:49 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls"}, POSINHISTORY: -1, BUFFER c, CURSORPOS 1
+2026/10/20 18:46:49 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls"}, POSINHISTORY: -1, BUFFER cd, CURSORPOS 2
+2026/10/20 18:46:49 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls"}, POSINHISTORY: -1, BUFFER cd , CURSORPOS 3
+2026/10/20 18:46:49 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls"}, POSINHISTORY: -1, BUFFER cd t, CURSORPOS 4
+2026/10/20 18:46:49 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls"}, POSINHISTORY: -1, BUFFER cd te, CURSORPOS 5
+2026/10/20 18:46:50 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls"}, POSINHISTORY: -1, BUFFER cd tes, CURSORPOS 6
+2026/10/20 18:46:50 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls"}, POSINHISTORY: -1, BUFFER cd test, CURSORPOS 7
+2026/10/20 18:46:50 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls", "cd test"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:46:50 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls", "cd test"}, POSINHISTORY: -1, BUFFER l, CURSORPOS 1
+2026/10/20 18:46:50 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls", "cd test"}, POSINHISTORY: -1, BUFFER ls, CURSORPOS 2
+2026/10/20 18:46:50 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls", "cd test", "ls"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
+2026/10/20 18:47:17 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls", "cd test", "ls"}, POSINHISTORY: -1, BUFFER e, CURSORPOS 1
+2026/10/20 18:47:17 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls", "cd test", "ls"}, POSINHISTORY: -1, BUFFER ex, CURSORPOS 2
+2026/10/20 18:47:17 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls", "cd test", "ls"}, POSINHISTORY: -1, BUFFER exi, CURSORPOS 3
+2026/10/20 18:47:17 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls", "cd test", "ls"}, POSINHISTORY: -1, BUFFER exit, CURSORPOS 4
+2026/10/20 18:47:17 HISTORY []string{"ls", "cd /", "ls", "cd etc", "ls", "cat passwd", "v passwd", "ls", "clear", "ls", "cd ..", "ls", "touch balls", "ls", "v balls", "ls", "mkdir test", "ls", "cd test", "ls", "exit"}, POSINHISTORY: -1, BUFFER , CURSORPOS 0
