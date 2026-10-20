@@ -38,6 +38,8 @@ func (e *Engine) handleAdmin(conn net.Conn) {
 			write(e.listNodes(commandP))
 		case "delete":
 			write(e.deleteNode(commandP))
+		case "adduser":
+			write(e.addUser(commandP))
 		case "reset-network":
 			write(e.resetNetwork())
 		case "exit":
@@ -122,6 +124,56 @@ func (e *Engine) spawnNode(commandParsed []string) (string, int) {
 	message := fmt.Sprintf("A %s node named: %s with IP: %s spawned successfully\nTip: adduser %s root <password>\n", nodeType, name, ip, name)
 
 	return message, utils.Success
+}
+
+// addUser is the bootstrap for a fresh node — you cant log in without a user
+// and you cant run adduser without logging in. chicken, meet egg.
+func (e *Engine) addUser(commandParsed []string) (string, int) {
+	if len(commandParsed) != 4 {
+		return "Usage: adduser <node-name> <username> <password>\n", utils.Error
+	}
+
+	nodeName := commandParsed[1]
+	username := commandParsed[2]
+	password := commandParsed[3]
+
+	node, found := getNodeByName(e, nodeName)
+	if !found {
+		return fmt.Sprintf("No node with the name %s found\n", nodeName), utils.Error
+	}
+
+	// go through the kernel like any program would, just as root
+	proc := &computer.Process{UID: "root", EUID: "root", CWD: "/"}
+
+	result, err := node.Kernel.Syscall(proc, computer.SYS_READ, "/etc/passwd")
+	if err != nil {
+		return fmt.Sprintf("Error reading /etc/passwd: %s\n", err), utils.Error
+	}
+	existing, _ := result.([]byte)
+
+	userCount := 0
+	for _, line := range strings.Split(string(existing), "\n") {
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+		fields := strings.Split(line, ":")
+		if len(fields) >= 1 && fields[0] == username {
+			return fmt.Sprintf("User %s already exists on %s\n", username, nodeName), utils.Error
+		}
+		userCount++
+	}
+
+	homedir := "/home/" + username
+	if username == "root" {
+		homedir = "/root"
+	}
+
+	line := fmt.Sprintf("%s:%s:%d:%s\n", username, password, 1000+userCount, homedir)
+	if _, err := node.Kernel.Syscall(proc, computer.SYS_WRITE, "/etc/passwd", append(existing, []byte(line)...)); err != nil {
+		return fmt.Sprintf("Error writing to passwd: %s\n", err), utils.Error
+	}
+
+	return fmt.Sprintf("Added user %s to %s\n", username, nodeName), utils.Success
 }
 
 func (e *Engine) deleteNode(commandParsed []string) (string, int) {

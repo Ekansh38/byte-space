@@ -24,17 +24,6 @@ func (e *Engine) ListMachinesOnNetwork() []computer.Computer {
 	return computers
 }
 
-func (e *Engine) GetFsMetaData(computerName string) map[string]computer.FileMetadata {
-	e.nodesMu.RLock()
-	defer e.nodesMu.RUnlock()
-	for _, c := range e.nodes {
-		if c.Name == computerName {
-			return c.FsMetaData
-		}
-	}
-	return nil
-}
-
 func NewEngine() *Engine {
 	e := &Engine{nodes: make(map[string]*computer.Computer)}
 

@@ -102,37 +102,97 @@ func (d *DirectoryOps) addDentry(kernel *Kernel, dentry DirEntry) error {
 		return err
 	}
 
+	encodedDentry, err := encodeDirEntry(dentry)
+	if err != nil {
+		return err
+	}
+
+	tryInsert := func() (bool, error) {
+		inserted := false
+		err := kernel.computer.fs.iterBlocks(&dirInode, func(blockNumber uint32, data [BLOCKSIZE]byte) (stop bool, err error) {
+			for i := 0; i < BLOCKSIZE; i += 64 {
+				if binary.LittleEndian.Uint32(data[i:i+4]) == 0 {
+					// we have a nice 64 byte chunk here, it is free as the inum is 0
+
+					copy(data[i:i+64], encodedDentry[:])
+
+					inserted = true
+					return true, kernel.computer.fs.writeDataBlock(blockNumber, data[:]) // TODO: convert writeBlock to take [0x1000]byte instead for better saftey
+				}
+			}
+
+			return false, nil
+		})
+		return inserted, err
+	}
+
+	inserted, err := tryInsert()
+	if err != nil {
+		return err
+	}
+	if inserted {
+		return nil
+	}
+
+	// falloc path: no free slot in any block (or the dir has no blocks at all).
+	// grow by one block, persist the inode, and retry — the fresh block is
+	// zeroed so the scan lands in its first slot.
+	if err := kernel.computer.fs.Falloc(&dirInode, dirInode.size+BLOCKSIZE); err != nil {
+		return err
+	}
+	if err := kernel.computer.fs.writeInode(&dirInode, d.inodeNum); err != nil {
+		return err
+	}
+
+	inserted, err = tryInsert()
+	if err != nil {
+		return err
+	}
+	if !inserted {
+		return errors.New("addDentry: no free slot even after falloc??")
+	}
+	return nil
+}
+
+func (d *DirectoryOps) removeDentry(kernel *Kernel, name string) error {
+	dirInode := inode{}
+	err := kernel.computer.fs.readInode(&dirInode, d.inodeNum) // TODO migrate this to kernel.getInode later
+	if err != nil {
+		return err
+	}
+
+	found := false
 	err = kernel.computer.fs.iterBlocks(&dirInode, func(blockNumber uint32, data [BLOCKSIZE]byte) (stop bool, err error) {
 		for i := 0; i < BLOCKSIZE; i += 64 {
 			if binary.LittleEndian.Uint32(data[i:i+4]) == 0 {
-				// we have a nice 64 byte chunk here, it is free as the inum is 0
-
-				encodedDentry, err := encodeDirEntry(dentry)
-				if err != nil {
-					return true, err
-				}
-
-				copy(data[i:i+64], encodedDentry[:])
-
-				kernel.computer.fs.writeDataBlock(blockNumber, data[:]) // TODO: convert writeBlock to take [0x1000]byte instead for better saftey
-
-				return true, nil
+				continue // blank slot
 			}
+
+			nameLen := data[i+4]
+			if string(data[i+8:i+8+int(nameLen)]) != name {
+				continue
+			}
+
+			// zero the whole 64 bytes, inum == 0 marks the slot free again.
+			// the block stays allocated — no shrink for now.
+			for j := i; j < i+64; j++ {
+				data[j] = 0
+			}
+
+			found = true
+			return true, kernel.computer.fs.writeDataBlock(blockNumber, data[:])
 		}
 
 		return false, nil
 	})
-
-	// now falloc path:
-
-	return err
+	if err != nil {
+		return err
+	}
+	if !found {
+		return ENOENT
+	}
+	return nil
 }
-
-// func (d *DirectoryOps) removeDentry(kernel *Kernel, dentry DirEntry) error {
-
-//	dirInode := kernel.getInode(d.inodeNum)
-
-//}
 
 func (d *DirectoryOps) ReadEntries(kernel *Kernel) ([]DirEntry, error) {
 	dirEntries := make([]DirEntry, 0, 8) // my guess is like max 8 entries per folder on the average

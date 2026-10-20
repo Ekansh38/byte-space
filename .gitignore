@@ -3,3 +3,4 @@ cmd/testing/data/networks/
 planning.md
 *.img
 tmp/
+debug.log

@@ -1,21 +1,41 @@
 package computer
 
 import (
-	"os"
 	"testing"
 
-	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
 
 func newPermKernel() *Kernel {
-	memFs := afero.NewMemMapFs()
-	c := &Computer{
-		filesystem: memFs,
-		FsMetaData: make(map[string]FileMetadata),
+	k := newTestKernel()
+	// seed root with . and .. so ResolvePath has something to walk
+	rootOps := &DirectoryOps{inodeNum: 2}
+	rootOps.addDentry(k, DirEntry{Inum: 2, Name: "."})
+	rootOps.addDentry(k, DirEntry{Inum: 2, Name: ".."})
+	return k
+}
+
+// mkPermNode builds the parent chain as root (755) and the final node with
+// the given owner + modes. paths is the chain, the last one is the node
+// under test.
+func mkPermNode(t *testing.T, k *Kernel, fType InodeType, owner string, ownerMode, otherMode uint8, names ...string) uint32 {
+	t.Helper()
+	parent := uint32(2)
+	for i, name := range names {
+		if i == len(names)-1 {
+			inum, err := k.makeInode(parent, name, fType, owner, false, ownerMode, otherMode)
+			if err != nil {
+				t.Fatalf("makeInode failed: %v", err)
+			}
+			return inum
+		}
+		inum, err := k.makeInode(parent, name, S_IFDIR, "root", false, 7, 5)
+		if err != nil {
+			t.Fatalf("makeInode failed: %v", err)
+		}
+		parent = inum
 	}
-	c.OS = &OS{Computer: c}
-	return &Kernel{computer: c}
+	return parent
 }
 
 func TestResolvePath(t *testing.T) {
@@ -249,13 +269,7 @@ func TestChangeDirectoryPermissions(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			k := newPermKernel()
 			if tt.mkDir {
-				k.computer.filesystem.MkdirAll(dir, 0o755)
-				k.computer.FsMetaData[dir] = FileMetadata{
-					Filepath:  dir,
-					Owner:     "alice",
-					OwnerMode: tt.ownerMode,
-					OtherMode: tt.otherMode,
-				}
+				mkPermNode(t, k, S_IFDIR, "alice", tt.ownerMode, tt.otherMode, "home", "alice", "secret")
 			}
 			proc := &Process{CWD: "/", UID: tt.euid, EUID: tt.euid}
 
@@ -320,17 +334,11 @@ func TestReadDirPermissions(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			k := newPermKernel()
-			k.computer.filesystem.MkdirAll(dir, 0o755)
-			k.computer.FsMetaData[dir] = FileMetadata{
-				Filepath:  dir,
-				Owner:     "alice",
-				OwnerMode: tt.ownerMode,
-				OtherMode: tt.otherMode,
-			}
+			mkPermNode(t, k, S_IFDIR, "alice", tt.ownerMode, tt.otherMode, "home", "alice", "docs")
 			proc := &Process{CWD: "/", UID: tt.euid, EUID: tt.euid}
 
 			result, err := k.Syscall(proc, SYS_READDIR, dir)
-			entries, _ := result.([]os.FileInfo)
+			entries, _ := result.([]FileInfo)
 
 			if tt.wantErr == "" {
 				assert.NoError(t, err)
@@ -392,13 +400,11 @@ func TestReadFilePermissions(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			k := newPermKernel()
-			k.computer.filesystem.MkdirAll("/home/alice", 0o755)
-			afero.WriteFile(k.computer.filesystem, file, []byte(content), 0o644)
-			k.computer.FsMetaData[file] = FileMetadata{
-				Filepath:  file,
-				Owner:     "alice",
-				OwnerMode: tt.ownerMode,
-				OtherMode: tt.otherMode,
+			mkPermNode(t, k, S_IFREG, "alice", tt.ownerMode, tt.otherMode, "home", "alice", "secret.txt")
+			// root writes the content, bypasses the perms under test
+			rootProc := &Process{CWD: "/", UID: "root", EUID: "root"}
+			if err := k.writeFile(rootProc, file, []byte(content)); err != nil {
+				t.Fatalf("writeFile failed: %v", err)
 			}
 			proc := &Process{CWD: "/", UID: tt.euid, EUID: tt.euid}
 
@@ -465,25 +471,20 @@ func TestMkDirPermissions(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			k := newPermKernel()
-			k.computer.filesystem.MkdirAll(parent, 0o755)
-			k.computer.FsMetaData[parent] = FileMetadata{
-				Filepath:  parent,
-				Owner:     "alice",
-				OwnerMode: tt.ownerMode,
-				OtherMode: tt.otherMode,
-			}
+			mkPermNode(t, k, S_IFDIR, "alice", tt.ownerMode, tt.otherMode, "home", "alice")
 			proc := &Process{CWD: "/", UID: tt.euid, EUID: tt.euid}
 
 			_, err := k.Syscall(proc, SYS_MKDIR, newDir)
 
+			rootProc := &Process{CWD: "/", UID: "root", EUID: "root"}
 			if tt.wantErr == "" {
 				assert.NoError(t, err)
-				_, metaExists := k.computer.FsMetaData[newDir]
-				assert.True(t, metaExists, "metadata should be created for new dir")
+				_, resolveErr := k.ResolvePath(rootProc, newDir)
+				assert.NoError(t, resolveErr, "new dir should exist on disk")
 			} else {
 				assert.ErrorContains(t, err, tt.wantErr)
-				_, metaExists := k.computer.FsMetaData[newDir]
-				assert.False(t, metaExists, "metadata must not be created on failure")
+				_, resolveErr := k.ResolvePath(rootProc, newDir)
+				assert.Error(t, resolveErr, "dir must not be created on failure")
 			}
 		})
 	}

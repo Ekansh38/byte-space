@@ -2,14 +2,10 @@
 package computer
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/fs"
 	"os"
 
 	"byte-space/utils"
-
-	"github.com/spf13/afero"
 )
 
 type Session struct {
@@ -42,95 +38,86 @@ type FileMetadata struct {
 	// 7: 111
 }
 
+type NetworkAPI interface {
+	// Whatever programs need, like send packet and stuf
+	ListMachinesOnNetwork() []Computer
+	GetNode(ip_address string) (node *Computer, ok bool)
+}
+
 type Computer struct {
-	Name       string
-	IP         string
-	Type       string
-	OS         *OS
-	Kernel     *Kernel
-	filesystem afero.Fs
-	fs         *FileSystem
-	FsMetaData map[string]FileMetadata
+	Name    string
+	IP      string
+	Type    string
+	Network NetworkAPI
+	Kernel  *Kernel
+	fs      *FileSystem
 
 	sessions map[string]*Session
 	ttys     []*TTY
 }
 
-func initFileSystem(fs afero.Fs, hostname string, ip string) {
-	// root:password:uid:homedir
+// initFSTree builds the standard first-boot tree straight into BS-EXTFS.
+// only runs when the disk got freshly formatted.
+func (k *Kernel) initFSTree(hostname string, ip string) {
+	// root dir gets . and .. first, both point at itself (its the root!)
+	rootOps := &DirectoryOps{inodeNum: 2}
+	rootOps.addDentry(k, DirEntry{Inum: 2, Name: "."})
+	rootOps.addDentry(k, DirEntry{Inum: 2, Name: ".."})
 
-	fs.MkdirAll("/var/log/", 0o755)
-	fs.MkdirAll("/etc/", 0o755)
-	fs.MkdirAll("/bin/", 0o755)
+	root := &Process{UID: "root", EUID: "root", CWD: "/"}
 
-	// helper func, good go feature. rating 10/11, cool feature, very good boij
-	createIfNotExists := func(path, content string) {
-		if _, err := fs.Stat(path); os.IsNotExist(err) {
-			f, _ := fs.Create(path)
-			f.WriteString(content)
-			f.Close()
+	mkdir := func(path string) { k.mkDir(root, path) }
+	create := func(path, content string) {
+		k.createFile(root, path)
+		if content != "" {
+			k.writeFile(root, path, []byte(content))
 		}
 	}
 
-	createIfNotExists("/var/log/lastlogin", "")
-	createIfNotExists("/etc/passwd", "")
-	createIfNotExists("/etc/hostname", hostname)
-	createIfNotExists("/etc/issue", fmt.Sprintf(defaultEtcIssue, hostname, ip))
-	createIfNotExists("/etc/motd", fmt.Sprintf(defaultEtcMotd))
-	createIfNotExists("/bin/ls", "")
-	createIfNotExists("/bin/cat", "")
-	createIfNotExists("/bin/clear", "")
-	createIfNotExists("/bin/adduser", "")
-	createIfNotExists("/bin/login", "")
-	createIfNotExists("/bin/sh", "")
-	createIfNotExists("/bin/mkdir", "")
-	createIfNotExists("/bin/touch", "")
-	createIfNotExists("/bin/chmod", "")
-	createIfNotExists("/bin/rm", "")
-	createIfNotExists("/bin/v", "")
-}
+	mkdir("/var")
+	mkdir("/var/log")
+	mkdir("/etc")
+	mkdir("/bin")
+	mkdir("/home")
+	mkdir("/tmp")
+	mkdir("/root")
+	k.chmod(root, "/root", 7, 0) // /root is not accessible to others
 
-func populateFileMetadata(filesystm afero.Fs, computer *Computer) {
-	walkFunc := func(path string, info fs.FileInfo, err error) error {
-		owner := "root"
+	create("/var/log/lastlogin", "")
+	create("/etc/passwd", "")
+	create("/etc/hostname", hostname)
+	create("/etc/issue", fmt.Sprintf(defaultEtcIssue, hostname, ip))
+	create("/etc/motd", defaultEtcMotd)
 
-		fileMetadata := &FileMetadata{
-			Filepath:  path,
-			Owner:     owner,
-			Setuid:    false,
-			OwnerMode: 7,
-			OtherMode: 5,
-		}
-		computer.FsMetaData[path] = *fileMetadata
-		return nil
+	for _, bin := range []string{"ls", "cat", "clear", "adduser", "login", "sh", "mkdir", "touch", "chmod", "rm", "v"} {
+		create("/bin/"+bin, "")
 	}
 
-	afero.Walk(filesystm, "/", walkFunc)
+	// adduser and login run as root (they need to read/write /etc/passwd),
+	// setuid lives on the inode now
+	for _, p := range []string{"/bin/adduser", "/bin/login"} {
+		if inum, err := k.ResolvePath(root, p); err == nil {
+			if in, err := k.getInode(inum); err == nil {
+				in.setuid = true
+				k.computer.fs.writeInode(in, inum)
+			}
+		}
+	}
 }
 
 func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Computer {
 	basePath := fmt.Sprintf("./data/networks/current/nodes/%s", name) // uniqueness of name is checked in the handler.go of the engine package.
 	os.MkdirAll(basePath, 0o755)
 
-	filesystm := afero.NewBasePathFs(afero.NewOsFs(), basePath)
-	initFileSystem(filesystm, name, ip)
-
 	computer := &Computer{
-		Name:       name,
-		IP:         ip,
-		Type:       nodeType,
-		OS:         &OS{},
-		filesystem: filesystm,
-		FsMetaData: map[string]FileMetadata{},
-		sessions:   make(map[string]*Session),
-		fs: NewFileSystem(basePath),
+		Name:     name,
+		IP:       ip,
+		Type:     nodeType,
+		Network:  e,
+		sessions: make(map[string]*Session),
+		fs:       NewFileSystem(basePath),
 	}
 
-	populateFileMetadata(filesystm, computer)
-	computer.loadMetaData() // override defaults with any saved permissions
-
-	computer.OS = &OS{Computer: computer}
-	computer.OS.Network = e
 	computer.Kernel = &Kernel{
 		computer:   computer,
 		inodeCache: make(map[uint32]*inode),
@@ -138,32 +125,11 @@ func NewComputer(name string, ip string, nodeType string, e NetworkAPI) *Compute
 		procs:      map[int]*Process{},
 	}
 
+	if computer.fs.freshFormat {
+		computer.Kernel.initFSTree(name, ip)
+	}
 
 	return computer
-}
-
-func (c *Computer) metaDataPath() string {
-	return fmt.Sprintf("./data/networks/current/nodes/%s.fsmeta.json", c.Name)
-}
-
-func (c *Computer) saveMetaData() {
-	data, err := json.Marshal(c.FsMetaData)
-	if err != nil {
-		return
-	}
-	os.WriteFile(c.metaDataPath(), data, 0o644)
-}
-
-func (c *Computer) loadMetaData() {
-	data, err := os.ReadFile(c.metaDataPath())
-	if err != nil {
-		return // no saved metadata, defaults from populateFileMetadata stand
-	}
-	var metadata map[string]FileMetadata
-	if err := json.Unmarshal(data, &metadata); err != nil {
-		return
-	}
-	c.FsMetaData = metadata
 }
 
 func (c *Computer) GenerateSessionID() string {
@@ -191,18 +157,20 @@ func (node *Computer) NewSession(username string, tty *TTY) (int, string) {
 	}
 	node.sessions[sessionID] = session
 
-	if !(node.OS.HasDirectory(workingDir)) {
-		node.OS.Mkdir(workingDir)
-		var otherMode uint8 = 5
-		if username == "root" {
-			otherMode = 0 // /root is not accessible to others
-		}
-		node.FsMetaData[workingDir] = FileMetadata{
-			Filepath:  workingDir,
-			Owner:     username,
-			Setuid:    false,
-			OwnerMode: 7,
-			OtherMode: otherMode,
+	// make the home dir on first login, owned by the user
+	k := node.Kernel
+	root := &Process{UID: "root", EUID: "root", CWD: "/"}
+	if _, err := k.ResolvePath(root, workingDir); err != nil {
+		k.mkDir(root, workingDir)
+		if inum, err := k.ResolvePath(root, workingDir); err == nil {
+			if in, err := k.getInode(inum); err == nil {
+				in.owner = ownerBytes(username)
+				in.otherMode = 5
+				if username == "root" {
+					in.otherMode = 0 // /root is not accessible to others
+				}
+				k.computer.fs.writeInode(in, inum)
+			}
 		}
 	}
 

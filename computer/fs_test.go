@@ -1,7 +1,11 @@
 package computer
 
 import (
+	"bytes"
 	"encoding/binary"
+	"fmt"
+	"io"
+	"strings"
 	"testing"
 	"time"
 )
@@ -443,5 +447,330 @@ func TestFalloc(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+// newTestKernel wires a Kernel around NewTestFileSystem so ops methods
+// (which go through kernel.computer.fs) can run against the MemDisk.
+func newTestKernel() *Kernel {
+	return &Kernel{
+		computer:   &Computer{fs: NewTestFileSystem()},
+		inodeCache: make(map[uint32]*inode),
+	}
+}
+
+func TestAddDentry(t *testing.T) {
+	tests := []struct {
+		name string
+		// add returns the dentries to add in order; the last add is the one
+		// under test when wantErr is set.
+		add      []DirEntry
+		wantErr  bool
+		wantSize uint32 // expected dir inode size after all adds
+	}{
+		{
+			name:     "first entry fallocs the first block",
+			add:      []DirEntry{{Inum: 2, Name: "."}},
+			wantSize: BLOCKSIZE,
+		},
+		{
+			name:     "second entry reuses a slot in the same block",
+			add:      []DirEntry{{Inum: 2, Name: "."}, {Inum: 2, Name: ".."}},
+			wantSize: BLOCKSIZE,
+		},
+		{
+			name: "65th entry fallocs a second block",
+			add: func() []DirEntry {
+				var entries []DirEntry
+				for i := 0; i < 65; i++ {
+					entries = append(entries, DirEntry{Inum: uint32(i + 3), Name: fmt.Sprintf("file-%d", i)})
+				}
+				return entries
+			}(),
+			wantSize: 2 * BLOCKSIZE,
+		},
+		{
+			name:    "name too long errors",
+			add:     []DirEntry{{Inum: 3, Name: strings.Repeat("a", 56)}},
+			wantErr: true,
+		},
+		{
+			name:    "inum 0 errors",
+			add:     []DirEntry{{Inum: 0, Name: "ghost"}},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			k := newTestKernel()
+			ops := &DirectoryOps{inodeNum: 2}
+
+			var err error
+			for _, dentry := range tt.add {
+				err = ops.addDentry(k, dentry)
+				if err != nil {
+					break
+				}
+			}
+			if (err != nil) != tt.wantErr {
+				t.Fatalf("expected err=%v, got %v", tt.wantErr, err)
+			}
+			if tt.wantErr {
+				return
+			}
+
+			dirInode := &inode{}
+			if err := k.computer.fs.readInode(dirInode, 2); err != nil {
+				t.Fatalf("readInode failed: %v", err)
+			}
+			if dirInode.size != tt.wantSize {
+				t.Errorf("size: expected %d, got %d", tt.wantSize, dirInode.size)
+			}
+
+			entries, err := ops.ReadEntries(k)
+			if err != nil {
+				t.Fatalf("ReadEntries failed: %v", err)
+			}
+			if len(entries) != len(tt.add) {
+				t.Fatalf("entries: expected %d, got %d", len(tt.add), len(entries))
+			}
+			for i := range tt.add {
+				if entries[i] != tt.add[i] {
+					t.Errorf("entry %d: expected %+v, got %+v", i, tt.add[i], entries[i])
+				}
+			}
+		})
+	}
+}
+
+func TestRemoveDentry(t *testing.T) {
+	k := newTestKernel()
+	ops := &DirectoryOps{inodeNum: 2}
+
+	for _, dentry := range []DirEntry{{Inum: 3, Name: "keep"}, {Inum: 4, Name: "gone"}} {
+		if err := ops.addDentry(k, dentry); err != nil {
+			t.Fatalf("addDentry failed: %v", err)
+		}
+	}
+
+	if err := ops.removeDentry(k, "gone"); err != nil {
+		t.Fatalf("removeDentry failed: %v", err)
+	}
+
+	entries, err := ops.ReadEntries(k)
+	if err != nil {
+		t.Fatalf("ReadEntries failed: %v", err)
+	}
+	if len(entries) != 1 || entries[0].Name != "keep" {
+		t.Fatalf("expected only 'keep' left, got %+v", entries)
+	}
+
+	// removing something that isn't there
+	if err := ops.removeDentry(k, "gone"); err != ENOENT {
+		t.Errorf("expected ENOENT, got %v", err)
+	}
+
+	// the freed slot gets reused, no new block falloc'd
+	if err := ops.addDentry(k, DirEntry{Inum: 5, Name: "reuse"}); err != nil {
+		t.Fatalf("addDentry failed: %v", err)
+	}
+	dirInode := &inode{}
+	if err := k.computer.fs.readInode(dirInode, 2); err != nil {
+		t.Fatalf("readInode failed: %v", err)
+	}
+	if dirInode.size != BLOCKSIZE {
+		t.Errorf("size: expected %d, got %d", BLOCKSIZE, dirInode.size)
+	}
+}
+
+// mkTestDir allocates a dir inode, links it into the parent and seeds . / ..
+func mkTestDir(t *testing.T, k *Kernel, parentInum uint32, name string) uint32 {
+	t.Helper()
+	inum, err := k.computer.fs.AllocInode()
+	if err != nil {
+		t.Fatalf("AllocInode failed: %v", err)
+	}
+	if err := k.computer.fs.writeInode(&inode{
+		fType:     S_IFDIR,
+		owner:     [14]byte{'r', 'o', 'o', 't'},
+		ownerMode: 0b111,
+		otherMode: 0b101,
+	}, inum); err != nil {
+		t.Fatalf("writeInode failed: %v", err)
+	}
+
+	parentOps := &DirectoryOps{inodeNum: parentInum}
+	if err := parentOps.addDentry(k, DirEntry{Inum: inum, Name: name}); err != nil {
+		t.Fatalf("addDentry failed: %v", err)
+	}
+
+	ops := &DirectoryOps{inodeNum: inum}
+	if err := ops.addDentry(k, DirEntry{Inum: inum, Name: "."}); err != nil {
+		t.Fatalf("addDentry . failed: %v", err)
+	}
+	if err := ops.addDentry(k, DirEntry{Inum: parentInum, Name: ".."}); err != nil {
+		t.Fatalf("addDentry .. failed: %v", err)
+	}
+	return inum
+}
+
+// mkTestFile allocates a file inode and links it into the parent.
+func mkTestFile(t *testing.T, k *Kernel, parentInum uint32, name string) uint32 {
+	t.Helper()
+	inum, err := k.computer.fs.AllocInode()
+	if err != nil {
+		t.Fatalf("AllocInode failed: %v", err)
+	}
+	if err := k.computer.fs.writeInode(&inode{
+		fType:     S_IFREG,
+		owner:     [14]byte{'r', 'o', 'o', 't'},
+		ownerMode: 0b111,
+		otherMode: 0b101,
+	}, inum); err != nil {
+		t.Fatalf("writeInode failed: %v", err)
+	}
+	parentOps := &DirectoryOps{inodeNum: parentInum}
+	if err := parentOps.addDentry(k, DirEntry{Inum: inum, Name: name}); err != nil {
+		t.Fatalf("addDentry failed: %v", err)
+	}
+	return inum
+}
+
+func TestResolvePathWalk(t *testing.T) {
+	k := newTestKernel()
+
+	// seed root with . and ..
+	rootOps := &DirectoryOps{inodeNum: 2}
+	if err := rootOps.addDentry(k, DirEntry{Inum: 2, Name: "."}); err != nil {
+		t.Fatalf("addDentry failed: %v", err)
+	}
+	if err := rootOps.addDentry(k, DirEntry{Inum: 2, Name: ".."}); err != nil {
+		t.Fatalf("addDentry failed: %v", err)
+	}
+
+	etc := mkTestDir(t, k, 2, "etc")
+	passwd := mkTestFile(t, k, etc, "passwd")
+	home := mkTestDir(t, k, 2, "home")
+	alice := mkTestDir(t, k, home, "alice")
+
+	tests := []struct {
+		name    string
+		path    string
+		cwd     string
+		uid     string
+		want    uint32
+		wantErr error
+	}{
+		{name: "root", path: "/", cwd: "/", uid: "root", want: 2},
+		{name: "abs dir", path: "/etc", cwd: "/", uid: "root", want: etc},
+		{name: "abs file", path: "/etc/passwd", cwd: "/", uid: "root", want: passwd},
+		{name: "relative from root", path: "etc/passwd", cwd: "/", uid: "root", want: passwd},
+		{name: "relative from etc", path: "passwd", cwd: "/etc", uid: "root", want: passwd},
+		{name: "dotdot in path", path: "../etc/passwd", cwd: "/home", uid: "root", want: passwd},
+		{name: "tilde expansion", path: "~", cwd: "/", uid: "alice", want: alice},
+		{name: "empty means cwd", path: "", cwd: "/etc", uid: "root", want: etc},
+		{name: "missing entry", path: "/nope", cwd: "/", uid: "root", wantErr: ENOENT},
+		{name: "file mid path", path: "/etc/passwd/deeper", cwd: "/", uid: "root", wantErr: ENOTDIR},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			proc := &Process{CWD: tt.cwd, UID: tt.uid, EUID: tt.uid}
+			got, err := k.ResolvePath(proc, tt.path)
+			if tt.wantErr != nil {
+				if err != tt.wantErr {
+					t.Fatalf("expected err %v, got %v", tt.wantErr, err)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected err: %v", err)
+			}
+			if got != tt.want {
+				t.Errorf("expected inum %d, got %d", tt.want, got)
+			}
+		})
+	}
+}
+
+func TestFileFDReadWrite(t *testing.T) {
+	tests := []struct {
+		name string
+		data []byte
+	}{
+		{name: "small write within one block", data: []byte("hello bs-extfs")},
+		{name: "write across a block boundary", data: bytes.Repeat([]byte("x"), BLOCKSIZE+100)},
+		{name: "write into the find indirection", data: bytes.Repeat([]byte("y"), 13*BLOCKSIZE)},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			k := newTestKernel()
+			inum := mkTestFile(t, k, 2, "testfile")
+
+			in, err := k.getInode(inum)
+			if err != nil {
+				t.Fatalf("getInode failed: %v", err)
+			}
+
+			wfd := in.ops.CreateFD(k, inum, "/testfile", 0)
+			if err := wfd.Open(); err != nil {
+				t.Fatalf("Open failed: %v", err)
+			}
+			n, err := wfd.Write(tt.data)
+			if err != nil {
+				t.Fatalf("Write failed: %v", err)
+			}
+			if n != len(tt.data) {
+				t.Fatalf("Write: expected %d bytes, got %d", len(tt.data), n)
+			}
+
+			// fresh fd, fresh offset — read it all back
+			rfd := in.ops.CreateFD(k, inum, "/testfile", 0)
+			buf := make([]byte, len(tt.data))
+			n, err = rfd.Read(buf)
+			if err != nil {
+				t.Fatalf("Read failed: %v", err)
+			}
+			if n != len(tt.data) {
+				t.Fatalf("Read: expected %d bytes, got %d", len(tt.data), n)
+			}
+			if !bytes.Equal(buf, tt.data) {
+				t.Errorf("read back data does not match written data")
+			}
+
+			// reading past the end gives EOF
+			if _, err := rfd.Read(buf); err != io.EOF {
+				t.Errorf("expected io.EOF, got %v", err)
+			}
+		})
+	}
+}
+
+func TestFileFDOverwrite(t *testing.T) {
+	k := newTestKernel()
+	inum := mkTestFile(t, k, 2, "notes")
+
+	in, _ := k.getInode(inum)
+
+	fd := in.ops.CreateFD(k, inum, "/notes", 0)
+	if _, err := fd.Write([]byte("aaaaaaaaaa")); err != nil {
+		t.Fatalf("Write failed: %v", err)
+	}
+
+	// overwrite the middle without growing
+	fd.SetOffset(3)
+	if _, err := fd.Write([]byte("BBB")); err != nil {
+		t.Fatalf("Write failed: %v", err)
+	}
+
+	rfd := in.ops.CreateFD(k, inum, "/notes", 0)
+	buf := make([]byte, 10)
+	if _, err := rfd.Read(buf); err != nil {
+		t.Fatalf("Read failed: %v", err)
+	}
+	if string(buf) != "aaaBBBaaaa" {
+		t.Errorf("expected aaaBBBaaaa, got %s", buf)
 	}
 }

@@ -1086,3 +1086,29 @@ Success condition: the diagram can answer, "When a process calls `write(fd, "hi"
 
 
 also do it for networking help.
+
+
+## Session: 2026-10-20 — BS-EXTFS Migration COMPLETE
+
+The MVP from the 2026-07-29 session is done. afero is deleted from the module
+graph entirely. Everything in "Next 5 Implementation Steps" shipped:
+
+- addDentry (incl falloc-and-retry path) + removeDentry, tested
+- getInode + rewritten ResolvePath (ENOENT/ENOTDIR, exec perms checked on
+  every dir traversed, normalizePath factored out for chdir)
+- FileFD read/write across all indirection levels, tested
+- first-boot tree built via initFSTree (root ./.., /etc, /bin, /home, /tmp,
+  /root, /var/log + standard files), setuid set on login/adduser inodes
+- all syscalls migrated: readFile/writeFile/readDir/stat/mkDir/createFile/
+  removeAll (recursive via freeInodeTree)/chdir/chmod
+- perms read from inode owner/ownerMode/otherMode, FsMetaData deleted
+- os.go deleted, NetworkAPI moved onto Computer, readDir returns
+  computer.FileInfo{Name, IsDir} instead of os.FileInfo
+- LATEST_VERSION bumped 10 -> 11 so old (empty) disk images reformat
+- admin panel got `adduser <node> <user> <pass>` for first-user bootstrap
+
+Verified end-to-end over the real socket: spawn, adduser, login, ls/-l, cat,
+mkdir, touch, chmod, rm, cd, setuid adduser from a non-root shell, engine
+restart persistence (disk.img reload), cross-user write denied.
+
+Remaining known gaps are listed at the top of fs.go.

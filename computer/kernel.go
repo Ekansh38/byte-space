@@ -9,11 +9,11 @@ package computer
 import (
 	"context"
 	"fmt"
-	"os"
 	"path"
 	"slices"
 	"strings"
 	"sync"
+	"time"
 
 	"byte-space/utils"
 )
@@ -149,11 +149,33 @@ func (k *Kernel) RegisterProgram(path string, factory func(int) Program) {
 	k.programs[path] = factory
 }
 
-func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of bugs rn like im not deleting from dirs and stuff TODO
-	// FULL OF BUGS
-	// we need to parse the path into different directories
-	// needs to use getInode
+// getInode is the ONE place where inodes get loaded: cache lookup, disk read
+// and ops-assignment all live here. everything else just calls this.
+func (k *Kernel) getInode(inum uint32) (*inode, error) {
+	if in, ok := k.inodeCache[inum]; ok {
+		return in, nil
+	}
 
+	in := &inode{}
+	if err := k.computer.fs.readInode(in, inum); err != nil {
+		return nil, err
+	}
+
+	// the fType byte IS the ops discriminator (see FILESYSTEM.md)
+	switch in.fType {
+	case S_IFDIR:
+		in.ops = &DirectoryOps{inodeNum: inum}
+	case S_IFREG:
+		in.ops = &RegularFileOps{}
+	}
+
+	k.inodeCache[inum] = in
+	return in, nil
+}
+
+// normalizePath does all the stringy cleanup: ~ expansion, relative -> absolute
+// against the proc CWD, and path.Clean. the result is always a clean abs path.
+func (k *Kernel) normalizePath(proc *Process, target string) string {
 	// fix da stringy
 	if target == "" {
 		target = proc.CWD
@@ -180,57 +202,131 @@ func (k *Kernel) ResolvePath(proc *Process, target string) uint32 { // full of b
 	}
 	target = path.Clean(target)
 
+	return target
+}
+
+func (k *Kernel) ResolvePath(proc *Process, target string) (uint32, error) {
+	target = k.normalizePath(proc, target)
+
 	// walk the directory tree now
 	dirs := strings.Split(target, "/")
 	dirs = slices.DeleteFunc(dirs, func(dir string) bool {
 		return dir == ""
 	}) // so idiomatic!
 
-
-
-	// first get that root inode from the cache
-	root := k.inodeCache[2]
-
-	if root == nil {
-		root = &inode{}
-		k.computer.fs.readInode(root, 2)
-
-		// runtime fields
-		root.num = 2
-		// root.ops = DirectoryOps{}
-
-		k.inodeCache[2] = root
+	mostRecentInode, err := k.getInode(2) // start at root
+	if err != nil {
+		return 0, err
 	}
 
-	mostRecentInode := root
-
-	for {
-		if len(dirs) == 0 {
-			return mostRecentInode.num
+	for len(dirs) > 0 {
+		if mostRecentInode.fType != S_IFDIR {
+			return 0, ENOTDIR // thats a file, its like somebody giving a path /game.py/test
+		}
+		// unix style: you need x on every dir you walk through
+		if !k.canExecute(proc.EUID, mostRecentInode) {
+			return 0, EACCES
 		}
 
-		entries, _ := mostRecentInode.ops.ReadEntries(k)
-		if entries == nil {
-			return 0 // thats a file, its like somebody giving a path /game.py/test
+		entries, err := mostRecentInode.ops.ReadEntries(k)
+		if err != nil {
+			return 0, err
 		}
+
+		var nextInum uint32
 		for i := range entries {
 			if entries[i].Name == dirs[0] {
-				mostRecentInode = k.inodeCache[entries[i].Inum]
-				if mostRecentInode == nil {
-					k.computer.fs.readInode(mostRecentInode, entries[i].Inum)
-
-					// mostRecentInode.ops = //bla bla todo
-					mostRecentInode.num = entries[i].Inum // fix this later 
-
-					k.inodeCache[entries[i].Inum] = mostRecentInode
-				}
-
-				dirs = dirs[1:] // remove that entry since we set it to the most recent inode.
-
+				nextInum = entries[i].Inum
+				break
 			}
 		}
+		if nextInum == 0 {
+			return 0, ENOENT
+		}
 
+		mostRecentInode, err = k.getInode(nextInum)
+		if err != nil {
+			return 0, err
+		}
+
+		dirs = dirs[1:] // remove that entry since we set it to the most recent inode.
 	}
+
+	return mostRecentInode.num, nil
+}
+
+// makeInode allocates + writes a fresh inode and links it into the parent dir.
+// for dirs it also seeds . and .. so the new dir is instantly walkable.
+func (k *Kernel) makeInode(parentInum uint32, name string, fType InodeType, owner string, setuid bool, ownerMode uint8, otherMode uint8) (uint32, error) {
+	inum, err := k.computer.fs.AllocInode()
+	if err != nil {
+		return 0, err
+	}
+
+	err = k.computer.fs.writeInode(&inode{
+		fType:      fType,
+		refs:       1,
+		owner:      ownerBytes(owner),
+		setuid:     setuid,
+		ownerMode:  ownerMode,
+		otherMode:  otherMode,
+		createdAt:  uint64(time.Now().Unix()),
+		modifiedAt: uint64(time.Now().Unix()),
+	}, inum)
+	if err != nil {
+		return 0, err
+	}
+	delete(k.inodeCache, inum) // the inum might be a reused one, dont serve a stale inode
+
+	parentOps := &DirectoryOps{inodeNum: parentInum}
+	if err := parentOps.addDentry(k, DirEntry{Inum: inum, Name: name}); err != nil {
+		return 0, err
+	}
+
+	if fType == S_IFDIR {
+		ops := &DirectoryOps{inodeNum: inum}
+		if err := ops.addDentry(k, DirEntry{Inum: inum, Name: "."}); err != nil {
+			return 0, err
+		}
+		if err := ops.addDentry(k, DirEntry{Inum: parentInum, Name: ".."}); err != nil {
+			return 0, err
+		}
+	}
+
+	return inum, nil
+}
+
+// freeInodeTree frees an inode, its data blocks, and (for dirs) everything
+// under it. no hard links yet so freeing is unconditional, refs be damned.
+func (k *Kernel) freeInodeTree(inum uint32) error {
+	in, err := k.getInode(inum)
+	if err != nil {
+		return err
+	}
+
+	if in.fType == S_IFDIR {
+		entries, err := in.ops.ReadEntries(k)
+		if err != nil {
+			return err
+		}
+		for _, entry := range entries {
+			if entry.Name == "." || entry.Name == ".." {
+				continue
+			}
+			if err := k.freeInodeTree(entry.Inum); err != nil {
+				return err
+			}
+		}
+	}
+
+	if err := k.computer.fs.Falloc(in, 0); err != nil { // hands all the data blocks back
+		return err
+	}
+	if err := k.computer.fs.FreeInodeFromBitmap(inum); err != nil {
+		return err
+	}
+	delete(k.inodeCache, inum)
+	return nil
 }
 
 func (k *Kernel) GetTtyID(proc *Process) string {
@@ -350,7 +446,7 @@ func (k *Kernel) NewSession(proc *Process, username string) (int, string) {
 }
 
 func (k *Kernel) GetNodeOnNetwork(ipAdress string) (*Computer, bool) {
-	return k.computer.OS.Network.GetNode(ipAdress)
+	return k.computer.Network.GetNode(ipAdress)
 }
 
 func (k *Kernel) nextPID() int {
@@ -375,7 +471,7 @@ type ExecOpts struct {
 }
 
 func (k *Kernel) ListMachinesOnNetwork(proc *Process) []Computer {
-	return k.computer.OS.Network.ListMachinesOnNetwork()
+	return k.computer.Network.ListMachinesOnNetwork()
 }
 
 // Exec looks up the binary from the path then it creates a Process with correct EUID
@@ -398,9 +494,13 @@ func (k *Kernel) exec(parentProc *Process, parentCtx context.Context, binPath st
 
 	uid := parentProc.UID
 	euid := uid
-	if meta, ok := k.getMetaData(binPath); ok && meta.Setuid {
-		euid = meta.Owner
+	k.fsMu.Lock()
+	if inum, err := k.ResolvePath(parentProc, binPath); err == nil {
+		if in, err := k.getInode(inum); err == nil && in.setuid {
+			euid = ownerString(in.owner)
+		}
 	}
+	k.fsMu.Unlock()
 
 	pgid := opts.PGID
 	if opts.PGID == 0 {
@@ -461,212 +561,304 @@ func (k *Kernel) cleanupProcess(pid int) {
 	k.procsMu.Unlock()
 }
 
-func (k *Kernel) getMetaData(filePath string) (FileMetadata, bool) {
-	k.fsMu.RLock()
-	meta, ok := k.computer.FsMetaData[filePath]
-	k.fsMu.RUnlock()
-
-	return meta, ok
-}
-
-func (k *Kernel) getMetaDataLocked(filePath string) (FileMetadata, bool) {
-	meta, ok := k.computer.FsMetaData[filePath]
-	return meta, ok
-}
-
-func (k *Kernel) canWrite(effectiveUser string, filePath string) bool { // used internally by kernel for checking
+func (k *Kernel) canWrite(effectiveUser string, in *inode) bool { // used internally by kernel for checking
 	if effectiveUser == "root" {
 		return true
 	}
-
-	meta, ok := k.getMetaDataLocked(filePath)
-
-	if !ok {
-		return true
+	if ownerString(in.owner) == effectiveUser {
+		return in.ownerMode&2 != 0 // gets the first bit, like the 2's bit
 	}
-	if meta.Owner == effectiveUser {
-		return meta.OwnerMode&2 != 0 // gets the first bit, like the 2's bit
-	}
-	return meta.OtherMode&2 != 0
+	return in.otherMode&2 != 0
 }
 
-func (k *Kernel) canRead(effectiveUser string, filePath string) bool { // used internally by kernel for checking
+func (k *Kernel) canRead(effectiveUser string, in *inode) bool { // used internally by kernel for checking
 	if effectiveUser == "root" {
 		return true
 	}
-
-	meta, ok := k.getMetaDataLocked(filePath)
-	if !ok {
-		return true
+	if ownerString(in.owner) == effectiveUser {
+		return in.ownerMode&4 != 0 // gets the middle bit, divide by 4
 	}
-	if meta.Owner == effectiveUser {
-		return meta.OwnerMode&4 != 0 // gets the middle bit, divide by 4
-	}
-	return meta.OtherMode&4 != 0
+	return in.otherMode&4 != 0
 }
 
-func (k *Kernel) canExecute(effectiveUser string, filePath string) bool { // used internally by kernel for checking
+func (k *Kernel) canExecute(effectiveUser string, in *inode) bool { // used internally by kernel for checking
 	if effectiveUser == "root" {
 		return true
 	}
-	meta, ok := k.getMetaDataLocked(filePath)
-	if !ok {
-		return true
+	if ownerString(in.owner) == effectiveUser {
+		return in.ownerMode&1 != 0 // bit 0 = execute
 	}
-	if meta.Owner == effectiveUser {
-		return meta.OwnerMode&1 != 0 // bit 0 = execute
-	}
-	return meta.OtherMode&1 != 0
+	return in.otherMode&1 != 0
 }
 
 func (k *Kernel) readFile(proc *Process, target string) ([]byte, error) { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
-	if !k.canRead(proc.EUID, target) {
-		return nil, fmt.Errorf("permission denied")
+	inum, err := k.ResolvePath(proc, target)
+	if err != nil {
+		return nil, err
 	}
-	return k.computer.OS.ReadFile(target)
+	in, err := k.getInode(inum)
+	if err != nil {
+		return nil, err
+	}
+
+	if in.fType == S_IFDIR {
+		return nil, EISDIR
+	}
+	if !k.canRead(proc.EUID, in) {
+		return nil, EACCES
+	}
+
+	if in.size == 0 {
+		return []byte{}, nil
+	}
+
+	fd := in.ops.CreateFD(k, inum, target, 0)
+	if err := fd.Open(); err != nil {
+		return nil, err
+	}
+	defer fd.Close()
+
+	buf := make([]byte, in.size)
+	if _, err := fd.Read(buf); err != nil {
+		return nil, err
+	}
+	return buf, nil
 }
 
-func (k *Kernel) readDir(proc *Process, target string) ([]os.FileInfo, error) { // syscall
+// FileInfo is what readDir hands back per entry. used to be os.FileInfo from
+// afero but we only ever cared about the name and dir-ness.
+type FileInfo struct {
+	Name  string
+	IsDir bool
+}
+
+func (k *Kernel) readDir(proc *Process, target string) ([]FileInfo, error) { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
-	if !k.canRead(proc.EUID, target) {
-		return nil, fmt.Errorf("permission denied")
+	inum, err := k.ResolvePath(proc, target)
+	if err != nil {
+		return nil, err
 	}
-	return k.computer.OS.ReadDir(target)
+	in, err := k.getInode(inum)
+	if err != nil {
+		return nil, err
+	}
+
+	if in.fType != S_IFDIR {
+		return nil, ENOTDIR
+	}
+	if !k.canRead(proc.EUID, in) {
+		return nil, EACCES
+	}
+
+	entries, err := in.ops.ReadEntries(k)
+	if err != nil {
+		return nil, err
+	}
+
+	infos := make([]FileInfo, 0, len(entries))
+	for _, entry := range entries {
+		if entry.Name == "." || entry.Name == ".." {
+			continue // ls doesnt show these, same as the afero days
+		}
+		child, err := k.getInode(entry.Inum)
+		if err != nil {
+			return nil, err
+		}
+		infos = append(infos, FileInfo{Name: entry.Name, IsDir: child.fType == S_IFDIR})
+	}
+	return infos, nil
 }
 
 func (k *Kernel) removeAll(proc *Process, target string) error {
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
-	parentDir := target
-	targetStat, err := k.computer.filesystem.Stat(target)
+	target = k.normalizePath(proc, target)
+	if target == "/" {
+		return EPERM // nice try
+	}
+
+	inum, err := k.ResolvePath(proc, target)
 	if err != nil {
-		return fmt.Errorf("error")
+		return err
 	}
 
-	if !targetStat.IsDir() {
-		parentDir = path.Dir(target)
+	parentInum, err := k.ResolvePath(proc, path.Dir(target))
+	if err != nil {
+		return err
+	}
+	parentIn, err := k.getInode(parentInum)
+	if err != nil {
+		return err
 	}
 
-	if !k.canWrite(proc.EUID, parentDir) || !k.canExecute(proc.EUID, parentDir) {
-		return fmt.Errorf("permission denied")
+	if !k.canWrite(proc.EUID, parentIn) || !k.canExecute(proc.EUID, parentIn) {
+		return EACCES
 	}
-	k.computer.OS.RemoveAll(target)
-	return nil
+
+	parentOps := &DirectoryOps{inodeNum: parentInum}
+	if err := parentOps.removeDentry(k, path.Base(target)); err != nil {
+		return err
+	}
+	return k.freeInodeTree(inum)
 }
 
 func (k *Kernel) stat(proc *Process, target string) (FileMetadata, bool) { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
-	meta, ok := k.computer.FsMetaData[target]
-	return meta, ok
+	inum, err := k.ResolvePath(proc, target)
+	if err != nil {
+		return FileMetadata{}, false
+	}
+	in, err := k.getInode(inum)
+	if err != nil {
+		return FileMetadata{}, false
+	}
+
+	return FileMetadata{
+		Filepath:  k.normalizePath(proc, target),
+		Owner:     ownerString(in.owner),
+		Setuid:    in.setuid,
+		OwnerMode: in.ownerMode,
+		OtherMode: in.otherMode,
+	}, true
 }
 
 func (k *Kernel) mkDir(proc *Process, target string) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
-	parent := path.Dir(target)
-	if !k.canWrite(proc.EUID, parent) {
-		return fmt.Errorf("permission denied")
+	target = k.normalizePath(proc, target)
+	if _, err := k.ResolvePath(proc, target); err == nil {
+		return EEXIST
 	}
-	if err := k.computer.OS.Mkdir(target); err != nil {
+
+	parentInum, err := k.ResolvePath(proc, path.Dir(target))
+	if err != nil {
 		return err
 	}
-	k.computer.FsMetaData[target] = FileMetadata{
-		Filepath:  target,
-		Owner:     proc.EUID,
-		Setuid:    false,
-		OwnerMode: 7,
-		OtherMode: 5,
+	parentIn, err := k.getInode(parentInum)
+	if err != nil {
+		return err
 	}
-	k.computer.saveMetaData()
-	return nil
+	if parentIn.fType != S_IFDIR {
+		return ENOTDIR
+	}
+	if !k.canWrite(proc.EUID, parentIn) {
+		return EACCES
+	}
+
+	_, err = k.makeInode(parentInum, path.Base(target), S_IFDIR, proc.EUID, false, 7, 5)
+	return err
 }
 
 func (k *Kernel) createFile(proc *Process, target string) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
-	parent := path.Dir(target)
-	// TOCTOU racing // no more toctou racing
-	if !k.canWrite(proc.EUID, parent) {
-		return fmt.Errorf("permission denied")
+	target = k.normalizePath(proc, target)
+	if _, err := k.ResolvePath(proc, target); err == nil {
+		return nil // already exists, touch is a no-op
 	}
-	if err := k.computer.OS.CreateFile(target); err != nil {
+
+	parentInum, err := k.ResolvePath(proc, path.Dir(target))
+	if err != nil {
 		return err
 	}
-	k.computer.FsMetaData[target] = FileMetadata{
-		Filepath:  target,
-		Owner:     proc.EUID,
-		Setuid:    false,
-		OwnerMode: 7,
-		OtherMode: 5,
+	parentIn, err := k.getInode(parentInum)
+	if err != nil {
+		return err
 	}
-	k.computer.saveMetaData()
-	return nil
+	if parentIn.fType != S_IFDIR {
+		return ENOTDIR
+	}
+	if !k.canWrite(proc.EUID, parentIn) {
+		return EACCES
+	}
+
+	_, err = k.makeInode(parentInum, path.Base(target), S_IFREG, proc.EUID, false, 7, 5)
+	return err
 }
 
 func (k *Kernel) writeFile(proc *Process, target string, content []byte) error { // syscall
 	k.fsMu.Lock()
 	defer k.fsMu.Unlock()
 
-	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
-	// later will use i-node stuff.
-	var parents []string
-	current := path.Dir(target)
+	target = k.normalizePath(proc, target)
+	// parent exec perms get checked by the ResolvePath walk itself now
 
-	if !k.canWrite(proc.EUID, current) {
-		return fmt.Errorf("permission denied")
-	}
-
-	for {
-		parents = append(parents, current)
-		next := path.Dir(current)
-		if current == next {
-			break // reached ROOT
+	inum, err := k.ResolvePath(proc, target)
+	if err == ENOENT {
+		// afero WriteFile created missing files, keep that behaviour
+		parentInum, perr := k.ResolvePath(proc, path.Dir(target))
+		if perr != nil {
+			return perr
 		}
-
-		current = next
-	}
-	if !k.canWrite(proc.EUID, target) {
-		return fmt.Errorf("permission denied")
-	}
-
-	for i := range parents {
-		parent := parents[i]
-		if !k.canExecute(proc.EUID, parent) {
-			return fmt.Errorf("permission denied")
+		parentIn, perr := k.getInode(parentInum)
+		if perr != nil {
+			return perr
 		}
+		if !k.canWrite(proc.EUID, parentIn) {
+			return EACCES
+		}
+		inum, err = k.makeInode(parentInum, path.Base(target), S_IFREG, proc.EUID, false, 7, 5)
 	}
-
-	if err := k.computer.OS.WriteFile(target, content); err != nil {
+	if err != nil {
 		return err
 	}
 
-	return nil
+	in, err := k.getInode(inum)
+	if err != nil {
+		return err
+	}
+	if in.fType == S_IFDIR {
+		return EISDIR
+	}
+	if !k.canWrite(proc.EUID, in) {
+		return EACCES
+	}
+
+	// truncate to the new size (grow or shrink), then write from offset 0
+	if err := k.computer.fs.Falloc(in, uint32(len(content))); err != nil {
+		return err
+	}
+	if len(content) == 0 {
+		return k.computer.fs.writeInode(in, inum)
+	}
+
+	fd := in.ops.CreateFD(k, inum, target, 0)
+	if err := fd.Open(); err != nil {
+		return err
+	}
+	defer fd.Close()
+
+	_, err = fd.Write(content)
+	return err
 }
 
 func (k *Kernel) changeDirectory(proc *Process, target string) error { // syscall
-	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
-	if !k.computer.OS.HasDirectory(target) {
+	target = k.normalizePath(proc, target)
+
+	k.fsMu.Lock()
+	inum, err := k.ResolvePath(proc, target)
+	if err != nil {
+		k.fsMu.Unlock()
 		return fmt.Errorf("%s: no such file or directory", target)
 	}
-	k.fsMu.RLock()
-	canExec := k.canExecute(proc.EUID, target)
-	k.fsMu.RUnlock()
+	in, err := k.getInode(inum)
+	if err != nil || in.fType != S_IFDIR {
+		k.fsMu.Unlock()
+		return fmt.Errorf("%s: no such file or directory", target)
+	}
+	canExec := k.canExecute(proc.EUID, in)
+	k.fsMu.Unlock()
+
 	if !canExec {
 		return fmt.Errorf("%s: permission denied", target)
 	}
@@ -676,22 +868,23 @@ func (k *Kernel) changeDirectory(proc *Process, target string) error { // syscal
 
 func (k *Kernel) chmod(proc *Process, target string, newOwnerMode uint8, newOtherMode uint8) error { // syscall
 	k.fsMu.Lock()
-	// TODO(fs migration): target = k.ResolvePath(proc, target) // now returns uint32 inode num
+	defer k.fsMu.Unlock()
 
-	meta, ok := k.getMetaDataLocked(target)
-
-	if !ok {
+	inum, err := k.ResolvePath(proc, target)
+	if err != nil {
 		return fmt.Errorf("no such file or directory")
 	}
-	if proc.EUID != "root" && meta.Owner != proc.EUID {
+	in, err := k.getInode(inum)
+	if err != nil {
+		return err
+	}
+
+	if proc.EUID != "root" && ownerString(in.owner) != proc.EUID {
 		return fmt.Errorf("permission denied")
 	}
-	meta.OwnerMode = newOwnerMode
-	meta.OtherMode = newOtherMode
-	k.computer.FsMetaData[target] = meta
-	k.computer.saveMetaData()
-	k.fsMu.Unlock()
-	return nil
+	in.ownerMode = newOwnerMode
+	in.otherMode = newOtherMode
+	return k.computer.fs.writeInode(in, inum)
 }
 
 // Syscall is the single kernel entry point. Pass args in order, type-assert the result.

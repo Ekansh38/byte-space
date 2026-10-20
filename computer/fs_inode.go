@@ -80,6 +80,23 @@ type inode struct {
 	ops InodeOperations
 }
 
+func ownerString(owner [14]byte) string {
+	end := 0
+	for end < len(owner) && owner[end] != 0 {
+		end++
+	}
+	return string(owner[:end])
+}
+
+func ownerBytes(name string) [14]byte {
+	var owner [14]byte
+	if len(name) > 13 {
+		name = name[:13] // cap at 13 so theres always a null byte at the end
+	}
+	copy(owner[:], name)
+	return owner
+}
+
 func (fs *FileSystem) readInode(inode *inode, idx uint32) error {
 	// offset
 	inode.num = idx
