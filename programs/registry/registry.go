@@ -26,14 +26,5 @@ func Register(c *computer.Computer) {
 	k.RegisterProgram("/bin/adduser", adduser.New)
 	k.RegisterProgram("/bin/login", login.New)
 
-	// adduser and login run as root (they need to read/write /etc/passwd)
-	for _, path := range []string{"/bin/adduser", "/bin/login"} {
-		c.FsMetaData[path] = computer.FileMetadata{
-			Filepath:  path,
-			Owner:     "root",
-			Setuid:    true,
-			OwnerMode: 7,
-			OtherMode: 5,
-		}
-	}
+	// adduser and login run as root via setuid, set on their inodes at format time
 }

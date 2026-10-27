@@ -1,8 +1,5 @@
 ## Overview
 
-Bull Shit Extended File System
-Its my little thing, its bad, but pretty cool.
-
 ## General Info
 
 Disk size         :   64 MB        :   0x400_0000    (bytes)
@@ -159,7 +156,7 @@ Every directory contains at minimum:
 28 bytes reserved for future use (capabilities, extended attrs, etc).
 
 
-## On-Disk fType → In-Memory Ops Mapping
+## On-Disk fType -> In-Memory Ops Mapping
 
 Only two file types ever exist on disk:
 - S_IFREG (0) -> RegularFileOps

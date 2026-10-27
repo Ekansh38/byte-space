@@ -6,7 +6,6 @@ package computer
 // The TTY is represented by a FD and is a regular I/O device managed by the kernel in RAM.
 
 import (
-	"byte-space/utils"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -14,6 +13,8 @@ import (
 	"log"
 	"net"
 	"strings"
+
+	"byte-space/utils"
 )
 
 type TTY struct {
@@ -72,16 +73,11 @@ func (t *TTY) HandleKeystroke(keystroke string) {
 	case "\x03": // ctrl-c
 		t.writeToClient("^C", utils.Success)
 		if t.ForegroundPGID != -1 {
-			var foregroundPrograms []*Process
-
 			procs := t.Session.Computer.Kernel.GetProcs()
 			for _, proc := range procs {
 				if proc.PGID == t.ForegroundPGID {
-					foregroundPrograms = append(foregroundPrograms, proc)
+					proc.Program.HandleSignal(SIGINT)
 				}
-			}
-			for _, proc := range foregroundPrograms {
-				proc.Program.HandleSignal(SIGINT)
 			}
 		}
 	default:
@@ -119,7 +115,7 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 
 	var foregroundPrograms []*Process
 
-	procs := t.Session.Computer.Kernel.procs
+	procs := t.Session.Computer.Kernel.GetProcs()
 	for _, proc := range procs {
 		if proc.PGID == t.ForegroundPGID {
 			foregroundPrograms = append(foregroundPrograms, proc)
@@ -214,7 +210,6 @@ func (t *TTY) Read(proc *Process, ctx context.Context) (string, int) {
 			case "\x1b[A", "\x1b[B", "\x1b\x7f", "\x1bw", "\x15", "\x02", "\x1b":
 				continue
 			default:
-
 				index := t.CursorPosition
 				data := receivedData
 				if data == "\t" {

@@ -3,7 +3,6 @@ package cmds
 import (
 	"context"
 	"fmt"
-	"os"
 	"path"
 	"strings"
 
@@ -56,13 +55,13 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 		returnStatus <- utils.Error
 		return
 	}
-	files, _ := result.([]os.FileInfo)
+	files, _ := result.([]computer.FileInfo)
 
 	output := ""
 	longestOwnerName := -1
 
 	for _, file := range files {
-		filePath := path.Join(dir, file.Name())
+		filePath := path.Join(dir, file.Name)
 		statResult, _ := p.Kernel.Syscall(p.proc, computer.SYS_STAT, filePath)
 		meta, _ := statResult.(computer.FileMetadata)
 		if len(meta.Owner) > longestOwnerName {
@@ -73,23 +72,31 @@ func (p *Ls) Run(ctx context.Context, returnStatus chan int, params []string) {
 	for _, file := range files {
 		if flag == "" {
 			// REGULAR FORMAT
-			if file.IsDir() {
-				output += fmt.Sprintf("\033[94;1m%s\033[0m\n", file.Name())
+			if file.IsDir {
+				output += fmt.Sprintf("\033[94;1m%s\033[0m\n", file.Name)
 			} else {
-				output += fmt.Sprintf("\033[97m%s\033[0m\n", file.Name())
+				output += fmt.Sprintf("\033[97m%s\033[0m\n", file.Name)
+			}
+		} else if flag == "-i" {
+			// INODE FORMAT, go find these in disk.img with a hex editor:
+			// inode N lives at byte 8192 + N*128
+			if file.IsDir {
+				output += fmt.Sprintf("\033[90m%4d\033[0m \033[94;1m%s\033[0m\n", file.Inum, file.Name)
+			} else {
+				output += fmt.Sprintf("\033[90m%4d\033[0m \033[97m%s\033[0m\n", file.Inum, file.Name)
 			}
 		} else if flag == "-l" {
 			// LONG FORMAT
-			filePath := path.Join(dir, file.Name())
+			filePath := path.Join(dir, file.Name)
 			statResult2, _ := p.Kernel.Syscall(p.proc, computer.SYS_STAT, filePath)
 			meta, _ := statResult2.(computer.FileMetadata)
 			perms := formatMode(meta.OwnerMode, meta.OtherMode, meta.Setuid)
 			owner := fmt.Sprintf("\033[96m%s\033[0m", meta.Owner)
 			var name string
-			if file.IsDir() {
-				name = fmt.Sprintf("\033[94;1m%s\033[0m", file.Name())
+			if file.IsDir {
+				name = fmt.Sprintf("\033[94;1m%s\033[0m", file.Name)
 			} else {
-				name = fmt.Sprintf("\033[97m%s\033[0m", file.Name())
+				name = fmt.Sprintf("\033[97m%s\033[0m", file.Name)
 			}
 			spacesToAdd := longestOwnerName - len(meta.Owner)
 			for range spacesToAdd {

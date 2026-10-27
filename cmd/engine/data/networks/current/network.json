@@ -9,6 +9,11 @@
       "name": "test",
       "ip": "1234",
       "type": "computer"
+    },
+    {
+      "name": "a",
+      "ip": "103",
+      "type": "computer"
     }
   ]
 }

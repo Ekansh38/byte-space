@@ -46,11 +46,11 @@ Terminal-based internet simulator from the early internet era. Build networks, b
 - standard unix utils: `ls -l`, `cat`, `chmod`, `rm`, `mkdir`, `touch`, `clear`
 
 **Filesystem + Permissions**
-- Full owner/other `rwx` permission enforcement
+- BS-EXTFS (Bull-Shit Extended FileSystem): a hand-rolled inode-based filesystem on a 64MB disk image — superblock, bitmaps, 128-byte inodes, direct + indirect block pointers, 64-byte directory entries. See [FILESYSTEM.md](/FILESYSTEM.md)
+- Full owner/other `rwx` permission enforcement, stored on the inode
 - `chmod` with `u`/`o`/`a` and `+`/`-`/`=` operators
-- Filesystem and metadata (ownership, permissions) persisted per node
-
-> **Note:** BS-EXTFS (Bull-Shit Extended FileSystem), an inode-based filesystem, is in progress. Currently backed by afero.
+- setuid programs (`login`, `adduser`) via the inode setuid bit
+- Everything persists in each node's `disk.img`
 
 ## Installation
 
@@ -79,9 +79,10 @@ cd cmd/admin && go run .
 ```
 ```
 admin> spawn computer mypc 192.168.1.1
+admin> adduser mypc root hunter2
 ```
 
-Then connect as a user, pick your machine, and log in. Run `adduser` to create your first account.
+Then connect as a user, pick your machine, and log in. Once you're in, run `adduser` to create more accounts.
 
 ## Architecture
 
@@ -94,3 +95,8 @@ See [CONTRIBUTING](/CONTRIBUTING.md)
 ## License
 
 MIT - see [LICENSE](LICENSE) file for details
+
+
+
+
+

@@ -65,8 +65,14 @@ func (e *Engine) handleClient(conn net.Conn) {
 				write("\b \b", utils.Success)
 			}
 		default:
-			buf.WriteString(msg.Keystroke)
-			write(msg.Keystroke, utils.Success)
+			//allow only numbers and full stops
+			if len(msg.Keystroke) == 1 {
+				ch := msg.Keystroke[0]
+				if (ch >= '0' && ch <= '9') || ch == '.' {
+					buf.WriteString(msg.Keystroke)
+					write(msg.Keystroke, utils.Success)
+				}
+			}
 		}
 	}
 
