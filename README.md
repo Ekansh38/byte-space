@@ -34,10 +34,6 @@ with a real on-disk format you can open in a hex editor.
 
 </div>
 
-Two minutes, no sound needed: creating a machine, logging in, making a file, locking another
-user out of it, then finding that file's inode and its actual contents in the raw disk image
-with a hex editor.
-
 ## How It Works
 
 There are three binaries that all talk over a Unix domain socket at `/tmp/engine.sock`,
