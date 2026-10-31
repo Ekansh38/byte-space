@@ -11,7 +11,7 @@
 [![Built with Go](https://img.shields.io/badge/Built%20with-Go-00ADD8?style=flat&logo=go)](https://go.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[Installation](#installation) • [Quick Start](#quick-start) • [How It Works](#how-it-works) • [BS-EXTFS](#bs-extfs) • [Features](#features) • [Contributing](#contributing)
+[Installation](#installation) • [Quick Start](#quick-start) • [How It Works](#how-it-works) • [BS-EXTFS](#bs-extfs) • [Features](#features)
 
 ---
 
@@ -240,10 +240,6 @@ day I'll write a real operating system.
 
 Finished for now. The plan was to put websites, email and packet routing on top of this, and
 the machines and the filesystem were the groundwork for that. Never got to it.
-
-## Contributing
-
-See [CONTRIBUTING](/CONTRIBUTING.md)
 
 ## License
 
