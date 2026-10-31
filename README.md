@@ -11,7 +11,7 @@
 [![Built with Go](https://img.shields.io/badge/Built%20with-Go-00ADD8?style=flat&logo=go)](https://go.dev)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[Installation](#installation) • [Quick Start](#quick-start) • [How It Works](#how-it-works) • [BS-EXTFS](#bs-extfs) • [Features](#features)
+[Demo](#demo) • [Installation](#installation) • [Quick Start](#quick-start) • [How It Works](#how-it-works) • [BS-EXTFS](#bs-extfs) • [Features](#features)
 
 ---
 
@@ -25,6 +25,18 @@ The machines are a simulation. There is no hardware, nothing boots, and the proc
 Go structs. The filesystem is not a simulation. BS-EXTFS is an ext2-inspired filesystem
 written from scratch, and every file you make is written as bytes into a 64MB `disk.img`
 with a real on-disk format you can open in a hex editor.
+
+## Demo
+
+<div align="center">
+
+[![byte-space demo](https://img.youtube.com/vi/vdaF-tQtVg4/maxresdefault.jpg)](https://youtu.be/vdaF-tQtVg4)
+
+</div>
+
+Two minutes, no sound needed: creating a machine, logging in, making a file, locking another
+user out of it, then finding that file's inode and its actual contents in the raw disk image
+with a hex editor.
 
 ## How It Works
 
