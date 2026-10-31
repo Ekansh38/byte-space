@@ -30,7 +30,7 @@ with a real on-disk format you can open in a hex editor.
 
 <div align="center">
 
-[![byte-space demo](https://img.youtube.com/vi/vdaF-tQtVg4/maxresdefault.jpg)](https://youtu.be/vdaF-tQtVg4)
+[![byte-space demo](https://img.youtube.com/vi/WTvQF0hlO1s/maxresdefault.jpg)](https://youtu.be/WTvQF0hlO1s)
 
 </div>
 
